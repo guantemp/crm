@@ -16,7 +16,6 @@
 
 package crm.hoprxi.domain.model.card;
 
-import crm.hoprxi.domain.model.bonus.Bonus;
 import event.hoprxi.domain.model.DomainEvent;
 
 import java.time.LocalDateTime;
@@ -26,11 +25,16 @@ import java.time.LocalDateTime;
  * @since JDK8.0
  * @version 0.0.1 2019-12-16
  */
-public class AnonymousCardIntgralAdded implements DomainEvent {
+public class AnonymousCardBonusAdded implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
-    private Bonus bonus;
+    private Number bonus;
+
+    public AnonymousCardBonusAdded(String id, Number bonus) {
+        this.id = id;
+        this.bonus = bonus;
+    }
 
     @Override
     public LocalDateTime occurredOn() {

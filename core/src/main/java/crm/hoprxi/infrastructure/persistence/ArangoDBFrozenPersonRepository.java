@@ -29,7 +29,6 @@ import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.FrozenPerson;
 import crm.hoprxi.domain.model.customer.person.FrozenPersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
-import crm.hoprxi.domain.model.customer.person.SmallChange;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.rmf.Credit;
 import org.slf4j.Logger;

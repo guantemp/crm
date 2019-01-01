@@ -15,6 +15,7 @@
  */
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
 import crm.hoprxi.domain.model.balance.Rounded;
 import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
@@ -22,7 +23,6 @@ import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.collaborator.Reference;
 
 import javax.money.MonetaryAmount;
 import java.util.StringJoiner;
@@ -34,10 +34,9 @@ import java.util.StringJoiner;
  */
 public class AnonymousCard extends Card {
     private Bonus bonus;
-    private Reference reference;
 
-    public AnonymousCard(String id, Issuer issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+    public AnonymousCard(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
+        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         this.bonus = bonus;
     }
 
@@ -46,15 +45,19 @@ public class AnonymousCard extends Card {
     }
 
     public void addBonus(Bonus bonus) {
-        this.bonus = this.bonus.add(bonus);
+        Bonus temp = this.bonus.add(bonus);
+        if (temp != this.bonus) {
+            this.bonus = temp;
+            DomainRegistry.domainEventPublisher().publish(new AnonymousCardBonusAdded(id, bonus.value()));
+        }
     }
 
     public void subtractBonus(Bonus bonus) {
-        this.bonus = this.bonus.subtract(bonus);
-    }
-
-    public Reference reference() {
-        return reference;
+        Bonus temp = this.bonus.subtract(bonus);
+        if (temp != this.bonus) {
+            this.bonus = temp;
+            DomainRegistry.domainEventPublisher().publish(new AnonymousCardBonusSubtracted(id, bonus.value()));
+        }
     }
 
     @Override
@@ -72,11 +75,6 @@ public class AnonymousCard extends Card {
             smallChange = smallChange.pay(rounded.remainder().negate());
         }
         balance = balance.pay(rounded.integer());
-    }
-
-    @Override
-    protected boolean isCardFaceNumberSpec() {
-        return true;
     }
 
     @Override

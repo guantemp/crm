@@ -174,7 +174,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         //bonus
         Bonus bonus = new Bonus(slice.get("bonus").get("value").getAsLong());
 
-        return new AnonymousCard(id, issuer, cardFaceNumber, termOfValidity, balance, smallChange, bonus, null);
+        return new AnonymousCard(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, bonus, null);
     }
 
 

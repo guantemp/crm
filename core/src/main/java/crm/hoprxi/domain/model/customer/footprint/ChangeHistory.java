@@ -18,7 +18,6 @@ package crm.hoprxi.domain.model.customer.footprint;
 
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.collaborator.Operator;
-import crm.hoprxi.domain.model.customer.person.SmallChange;
 
 import java.net.URL;
 import java.time.LocalDateTime;

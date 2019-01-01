@@ -16,10 +16,34 @@
 
 package crm.hoprxi.domain.model.card;
 
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-12-16
  */
-public class AnonymousCardIntgralSubtracted {
+public class AnonymousCardBonusSubtracted implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+    private Number bonus;
+
+    public AnonymousCardBonusSubtracted(String id, Number bonus) {
+        this.id = id;
+        this.bonus = bonus;
+    }
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return version;
+    }
+
 }

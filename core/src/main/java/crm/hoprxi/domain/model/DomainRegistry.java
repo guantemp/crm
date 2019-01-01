@@ -18,6 +18,8 @@ package crm.hoprxi.domain.model;
 
 import event.hoprxi.domain.model.DomainEventPublisher;
 import event.hoprxi.infrastruture.simple.SimpleDomainEventPublisher;
+import mi.hoprxi.crypto.EncryptionService;
+import mi.hoprxi.crypto.SM3Encryption;
 
 /***
  * @author <a href="mailto:myis1000@gmail.com">guan xiangHuan</a>
@@ -46,5 +48,9 @@ public class DomainRegistry {
         if (categoryId == null || categoryId.isEmpty())
             return false;
         return true;
+    }
+
+    public static EncryptionService getEncryptionService() {
+        return new SM3Encryption();
     }
 }

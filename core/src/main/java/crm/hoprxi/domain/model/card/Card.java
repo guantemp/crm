@@ -37,7 +37,7 @@ import java.util.StringJoiner;
  */
 public abstract class Card {
     @DocumentField(DocumentField.Type.KEY)
-    private String id;
+    protected String id;
     private Issuer issuer;
     protected TermOfValidity termOfValidity;
     private Appearance appearance;
@@ -57,9 +57,9 @@ public abstract class Card {
      * @throws IllegalArgumentException if issuer does not exist
      * @throws IllegalArgumentException if issuer does not exist
      */
-    public Card(String id, Issuer issuer, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
-        setId(id);
+    public Card(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
         setIssuer(issuer);
+        setId(id);
         setCardFaceNumber(cardFaceNumber);
         setTermOfValidity(termOfValidity);
         setBalance(balance);
@@ -68,7 +68,7 @@ public abstract class Card {
     }
 
     public Card(String id, Issuer issuer) {
-        this(id, issuer, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
+        this(issuer, id, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
@@ -140,8 +140,6 @@ public abstract class Card {
     public SmallChange smallChangeBalance() {
         return smallChange;
     }
-
-    protected abstract boolean isCardFaceNumberSpec();
 
     public void credit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())

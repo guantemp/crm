@@ -20,7 +20,6 @@ import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.rmf.Credit;
 import mi.hoprxi.crypto.EncryptionService;
-import mi.hoprxi.crypto.SM3Encryption;
 
 import java.net.URI;
 import java.util.Objects;
@@ -39,7 +38,7 @@ public abstract class Customer {
         }
     };
     private static final int MAX_LENGTH = 255;
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
+    private static final Pattern TRANSACTION_PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
@@ -66,13 +65,13 @@ public abstract class Customer {
     }
 
     private void setPassword(String transactionPassword) {
-        Objects.requireNonNull(transactionPassword, "password is required");
+        transactionPassword = Objects.requireNonNull(transactionPassword, "password is required").trim();
         if (!transactionPassword.isEmpty()) {
-            Matcher matcher = PASSWORD_PATTERN.matcher(transactionPassword);
+            Matcher matcher = TRANSACTION_PASSWORD_PATTERN.matcher(transactionPassword);
             if (!matcher.matches())
                 throw new IllegalArgumentException("password must 6 digit number");
         }
-        EncryptionService encryption = new SM3Encryption();
+        EncryptionService encryption = DomainRegistry.getEncryptionService();
         this.transactionPassword = encryption.encrypt(transactionPassword);
     }
 

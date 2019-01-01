@@ -23,10 +23,13 @@ import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
+import mi.hoprxi.crypto.EncryptionService;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -34,12 +37,25 @@ import java.util.StringJoiner;
  * @version 0.0.2 builder 2019-11-06
  */
 public class DebitCard extends Card {
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     private String customerId;
     private String password;
 
-    public DebitCard(String id, Issuer issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
+        setPassword(password);
+    }
+
+    private void setPassword(String password) {
+        password = Objects.requireNonNull(password, "password is required").trim();
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("password is 6 digit number");
+        }
+        EncryptionService encryption = DomainRegistry.getEncryptionService();
+        this.password = encryption.encrypt(password);
     }
 
     private void setCustomerId(String customerId) {
@@ -71,11 +87,6 @@ public class DebitCard extends Card {
             smallChange = smallChange.pay(rounded.remainder().negate());
         }
         balance = balance.pay(rounded.integer());
-    }
-
-    @Override
-    protected boolean isCardFaceNumberSpec() {
-        return false;
     }
 
     @Override

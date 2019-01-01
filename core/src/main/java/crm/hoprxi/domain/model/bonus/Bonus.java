@@ -58,17 +58,18 @@ public class Bonus implements Comparable<Bonus> {
     }
 
     public Bonus add(Bonus bonus) {
-        long temp = value + bonus.value;
-        if (temp == 0)
-            return ZERO;
-        return new Bonus(temp);
+        if (bonus == Bonus.ZERO || bonus.value == 0l)
+            return this;
+        return new Bonus(value + bonus.value);
     }
 
     public Bonus subtract(Bonus bonus) {
-        if (bonus.value > value)
-            throw new BonusDeficiencyException("bonus deficiency");
+        if (bonus == Bonus.ZERO || bonus.value == 0l)
+            return this;
         if (bonus.value == value)
             return ZERO;
+        if (bonus.value > value)
+            throw new BonusDeficiencyException("bonus deficiency");
         return new Bonus(value - bonus.value);
     }
 
