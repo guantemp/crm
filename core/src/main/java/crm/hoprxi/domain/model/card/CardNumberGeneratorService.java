@@ -16,7 +16,7 @@
 
 package crm.hoprxi.domain.model.card;
 
-import mi.foxtail.to.StringToNumber;
+import mi.hoprxi.to.StringToNumber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,7 +199,7 @@ public final class CardNumberGeneratorService {
      * Constructor pattern
      */
     public static class Builder implements
-            mi.foxtail.util.Builder<CardNumberGeneratorService> {
+            mi.hoprxi.util.Builder<CardNumberGeneratorService> {
         private int[] filter = new int[0];
         private Format format = Format.EAN_13;
         private boolean global = false;

@@ -17,7 +17,7 @@
 package crm.hoprxi.infrastructure.resource;
 
 
-import mi.foxtail.util.NLS;
+import mi.hoprxi.util.NLS;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>

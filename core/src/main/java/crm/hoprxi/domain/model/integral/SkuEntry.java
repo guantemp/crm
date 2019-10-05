@@ -18,7 +18,7 @@
 
 package crm.hoprxi.domain.model.integral;
 
-import mi.foxtail.to.ByteToHex;
+import mi.hoprxi.to.ByteToHex;
 
 import java.util.Objects;
 

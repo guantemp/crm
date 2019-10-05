@@ -16,7 +16,7 @@
 package crm.hoprxi.domain.model.customer.person;
 
 import crm.hoprxi.domain.model.customer.Customer;
-import mi.foxtail.id.ObjectId;
+import mi.hoprxi.id.ObjectId;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>

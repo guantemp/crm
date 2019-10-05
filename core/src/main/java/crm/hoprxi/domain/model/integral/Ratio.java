@@ -15,8 +15,7 @@
  */
 package crm.hoprxi.domain.model.integral;
 
-
-import mi.foxtail.to.NumberToBigDecimal;
+import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;
 

@@ -18,8 +18,8 @@ package crm.hoprxi.domain.model.card;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import mi.foxtail.crypto.EncryptionService;
-import mi.foxtail.crypto.SM3Encryption;
+import mi.hoprxi.crypto.EncryptionService;
+import mi.hoprxi.crypto.SM3Encryption;
 import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

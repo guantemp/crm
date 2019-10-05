@@ -1,6 +1,6 @@
 package crm.hoprxi.domain.model.card;
 
-import mi.foxtail.id.ObjectId;
+import mi.hoprxi.id.ObjectId;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
