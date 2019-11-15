@@ -78,7 +78,8 @@ public class ArangoDBCardRepository implements CardRepository {
             graph.vertexCollection("customer").updateVertex(card.id(), card, UPDATE_OPTIONS);
         } else {
             VertexEntity cardVertex = graph.vertexCollection("card").insertVertex(card);
-            insertBelongEdgeOfCustomer(graph, cardVertex, card.customerId());
+            insertBelongEdgeOfCustomer(graph, cardVertex, "");
+            //card.customerId()
         }
     }
 
@@ -162,6 +163,7 @@ public class ArangoDBCardRepository implements CardRepository {
         VPackSlice balanceSlice = slice.get("balance");
         MonetaryAmount recharge = Money.parse("");
         MonetaryAmount give = Money.parse("");
+        /*
         Balance balance = new Balance(recharge, give);
         // Change
         MonetaryAmount amount = null;
@@ -171,7 +173,8 @@ public class ArangoDBCardRepository implements CardRepository {
         Card card = new Card(identity, issuerId, number, password, contact, termOfValidity, null,
                 balance, change, integral, "");
         //passwordField.set(card,password);
-        return card;
+        */
+        return null;
     }
 
 

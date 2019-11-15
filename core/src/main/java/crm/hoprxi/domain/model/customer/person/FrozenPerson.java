@@ -22,7 +22,6 @@ import crm.hoprxi.domain.model.rmf.Credit;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.MonthDay;
-import java.util.Objects;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -33,23 +32,14 @@ public class FrozenPerson extends Customer {
     private PostalAddressBook postalAddressBook;
     private IdentityCard identityCard;
     private MonthDay birthday;
-    private SmallChange smallChange;
 
-    protected FrozenPerson(String id, String name, Credit credit, URI headPortrait, MonthDay birthday, SmallChange smallChange, PostalAddressBook postalAddressBook, IdentityCard identityCard) {
+    protected FrozenPerson(String id, String name, Credit credit, URI headPortrait, MonthDay birthday, PostalAddressBook postalAddressBook, IdentityCard identityCard) {
         super(id, name, credit, headPortrait);
-        setSmallChange(smallChange);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
     }
 
-    public SmallChange smallChange() {
-        return smallChange;
-    }
-
-    private void setSmallChange(SmallChange smallChange) {
-        this.smallChange = Objects.requireNonNull(smallChange, "change is required");
-    }
 
     public PostalAddressBook postalAddressBook() {
         return postalAddressBook;
@@ -71,6 +61,6 @@ public class FrozenPerson extends Customer {
     }
 
     public Person unfreeze() {
-        return new Person(id(), name(), credit(), headPortrait(), birthday, smallChange, postalAddressBook, identityCard);
+        return new Person(id(), name(), credit(), headPortrait(), birthday, postalAddressBook, identityCard);
     }
 }

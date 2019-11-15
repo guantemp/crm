@@ -15,7 +15,7 @@
  */
 package crm.hoprxi.domain.model.customer.person;
 
-import event.foxtail.alpha.domain.model.DomainEvent;
+import event.hoprxi.domain.model.DomainEvent;
 
 import javax.money.MonetaryAmount;
 import java.time.LocalDateTime;

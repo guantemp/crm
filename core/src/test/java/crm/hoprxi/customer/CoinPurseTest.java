@@ -28,7 +28,7 @@ import javax.money.MonetaryAmount;
  * @since JDK8.0
  * @version 0.0.1 2019-08-22
  */
-public class SmallChangeTest {
+public class CoinPurseTest {
 
     @Test
     public void round() {

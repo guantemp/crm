@@ -46,26 +46,23 @@ public abstract class Card {
     private String password;
     private TermOfValidity termOfValidity;
     private Appearance appearance;
-    private String customerId;
 
-    public Card(String id, String issuerId, String customerId, String password) {
-        this(id, issuerId, customerId, "", TermOfValidity.PERMANENCE, null);
+    public Card(String id, String issuerId, String password) {
+        this(id, issuerId, "", TermOfValidity.PERMANENCE, null);
     }
 
     /**
      * @param id
      * @param issuerId
-     * @param customerId
      * @param password
      * @param termOfValidity
      * @param appearance
      * @throws IllegalArgumentException if id or issuerId or customerId is null or empty
      * @throws IllegalArgumentException if  password isn't six digit number
      */
-    public Card(String id, String issuerId, String customerId, String password, TermOfValidity termOfValidity, Appearance appearance) {
+    public Card(String id, String issuerId, String password, TermOfValidity termOfValidity, Appearance appearance) {
         setId(id);
         setIssuerId(issuerId);
-        setCuomerId(customerId);
         setPassword(password);
         setTermOfValidity(termOfValidity);
         setAppearance(appearance);
@@ -99,13 +96,6 @@ public abstract class Card {
         this.issuerId = issuerId;
     }
 
-    private void setCuomerId(String customerId) {
-        customerId = Objects.requireNonNull(customerId, "customerId is required").trim();
-        if (customerId.isEmpty())
-            throw new IllegalArgumentException("Must provide a customer id.");
-        this.customerId = customerId;
-    }
-
     private void setTermOfValidity(TermOfValidity termOfValidity) {
         if (termOfValidity == null)
             termOfValidity = TermOfValidity.PERMANENCE;
@@ -132,10 +122,6 @@ public abstract class Card {
 
     public Appearance appearance() {
         return appearance;
-    }
-
-    public String customerId() {
-        return customerId;
     }
 
     @Override

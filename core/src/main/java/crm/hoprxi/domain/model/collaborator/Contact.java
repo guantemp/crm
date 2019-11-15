@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
  * @version 0.0.1 builder 2018-07-13
  */
 public class Contact {
-    private static final Pattern MOBILE_PHONE = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
-    private static final Pattern TELEPHONE = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
+    private static final Pattern CHINA_MOBILE_PHONE = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
+    private static final Pattern CHINA_TELEPHONE = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
     private String telephone;
     private String mobilePhone;
     private String fullName;
@@ -52,14 +52,14 @@ public class Contact {
     }
 
     private void setMobilePhone(String mobilePhone) {
-        Matcher matcher = MOBILE_PHONE.matcher(mobilePhone);
+        Matcher matcher = CHINA_MOBILE_PHONE.matcher(mobilePhone);
         if (!matcher.matches())
             throw new IllegalArgumentException("Not a valid cell phone number!");
         this.mobilePhone = mobilePhone;
     }
 
     private void setTelephone(String telephone) {
-        Matcher matcher = TELEPHONE.matcher(telephone);
+        Matcher matcher = CHINA_TELEPHONE.matcher(telephone);
         if (!matcher.matches())
             throw new IllegalArgumentException("Not a valid telephone number!");
         this.telephone = telephone;

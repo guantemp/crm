@@ -19,6 +19,8 @@
 package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.card.appearance.Appearance;
+import crm.hoprxi.domain.model.coinPurse.CoinPurse;
+import crm.hoprxi.domain.model.integral.Integral;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;
@@ -33,6 +35,9 @@ public class DebitCard extends Card {
     private MonetaryAmount principal;
     private MonetaryAmount give;
     private MonetaryAmount freeze;
+    private CoinPurse coinPurse;
+    private Integral integral;
+    private String customerId;
 
     /**
      * @param id
@@ -49,7 +54,7 @@ public class DebitCard extends Card {
     }
 
     public DebitCard(String id, String issuerId, String customerId, String password, TermOfValidity termOfValidity, Appearance appearance, MonetaryAmount principal, MonetaryAmount give, MonetaryAmount freeze) {
-        super(id, issuerId, customerId, password, termOfValidity, appearance);
+        super(id, issuerId, password, termOfValidity, appearance);
         setPrincipal(principal);
         setGive(give);
         setFreeze(freeze);
@@ -244,7 +249,7 @@ public class DebitCard extends Card {
                 .add("password='" + password() + "'")
                 .add("termOfValidity=" + termOfValidity())
                 .add("appearance=" + appearance())
-                .add("customerId='" + customerId() + "'")
+                .add("customerId='" + customerId + "'")
                 .add("principal=" + principal)
                 .add("give=" + give)
                 .add("freeze=" + freeze)

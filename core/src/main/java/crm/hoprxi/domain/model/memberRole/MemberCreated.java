@@ -19,7 +19,7 @@ package crm.hoprxi.domain.model.memberRole;
 
 import crm.hoprxi.domain.model.power.PowerBook;
 import crm.hoprxi.domain.model.rmf.Credit;
-import event.foxtail.alpha.domain.model.DomainEvent;
+import event.hoprxi.domain.model.DomainEvent;
 
 import javax.swing.*;
 import java.time.LocalDateTime;

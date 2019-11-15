@@ -28,11 +28,8 @@ import crm.hoprxi.domain.model.collaborator.Contact;
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.certificates.IdentityCard;
-import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
-import crm.hoprxi.domain.model.customer.person.SmallChange;
-import crm.hoprxi.domain.model.rmf.Credit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +110,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
         MonthDay birthday = null;
         if (!slice.get("birthday").isNull())
             birthday = MonthDay.from(LocalDate.parse(slice.get("birthday").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
-        return new Person(id, name, Credit.NO_CREDIT, headPortrait, birthday, SmallChange.ZERO, book, identityCard);
+        return null;//new Person(id, name, Credit.NO_CREDIT, headPortrait, birthday, SmallChange.ZERO, book, identityCard);
     }
 
     @Override

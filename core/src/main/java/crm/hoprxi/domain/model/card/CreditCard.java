@@ -16,12 +16,12 @@ public class CreditCard extends Card {
     private MonetaryAmount quota;
     private MonetaryAmount balance;
 
-    public CreditCard(String id, String issuerId, String customerId, String password, MonetaryAmount quota, MonetaryAmount balance) {
-        this(id, issuerId, customerId, password, TermOfValidity.PERMANENCE, null, quota, balance);
+    public CreditCard(String id, String issuerId, String password, MonetaryAmount quota, MonetaryAmount balance) {
+        this(id, issuerId, password, TermOfValidity.PERMANENCE, null, quota, balance);
     }
 
-    public CreditCard(String id, String issuerId, String customerId, String password, TermOfValidity termOfValidity, Appearance appearance, MonetaryAmount quota, MonetaryAmount balance) {
-        super(id, issuerId, customerId, password, termOfValidity, appearance);
+    public CreditCard(String id, String issuerId, String password, TermOfValidity termOfValidity, Appearance appearance, MonetaryAmount quota, MonetaryAmount balance) {
+        super(id, issuerId, password, termOfValidity, appearance);
         setQuota(quota);
         setBalance(balance);
     }

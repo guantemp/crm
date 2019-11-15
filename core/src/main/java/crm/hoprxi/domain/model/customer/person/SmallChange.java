@@ -30,7 +30,7 @@ import java.util.StringJoiner;
  * @version 0.0.1 builder 2019-07-23
  */
 public class SmallChange {
-    private static final MonetaryAmount MONETARY_ZERO = Money.of(0, Monetary.getCurrency(Locale.getDefault()));
+    private static final MonetaryAmount MONETARY_ZERO = Money.zero(Monetary.getCurrency(Locale.getDefault()));
     public static final SmallChange ZERO = new SmallChange(MONETARY_ZERO, false);
     private static final MonetaryAmount MONETARY_ONE = Money.of(1, Monetary.getCurrency(Locale.getDefault()));
     private static final int DIVISOR = 1;

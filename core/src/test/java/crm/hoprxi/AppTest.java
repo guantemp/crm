@@ -33,7 +33,7 @@ public class AppTest {
         messageDigest.update("".getBytes(StandardCharsets.UTF_8));
         System.out.println(ByteToHex.toHexStr(messageDigest.digest()));
 
-        MonetaryAmount amount = Money.of(new BigDecimal("-223.525436464565457567564"), "CNY");
+        MonetaryAmount amount = Money.of(new BigDecimal("223.525436464565457567564"), "CNY");
         MonetaryAmount amount1 = Money.of(1051.45, Monetary.getCurrency(Locale.getDefault()));
         System.out.println("amount.signum():" + amount.signum());
         System.out.println("amount.abs():" + amount.abs());
