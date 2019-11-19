@@ -16,15 +16,15 @@ public class Round {
     private static final MonetaryAmount MONETARY_ZERO = Money.zero(Monetary.getCurrency(Locale.getDefault()));
     public static Round ZERO = new Round(MONETARY_ZERO, MONETARY_ZERO);
     private MonetaryAmount integer;
-    private MonetaryAmount decimal;
+    private MonetaryAmount remainder;
 
-    public Round(MonetaryAmount integer, MonetaryAmount decimal) {
+    public Round(MonetaryAmount integer, MonetaryAmount remainder) {
         setInteger(integer);
-        setDecimal(decimal);
+        setRemainder(remainder);
     }
 
-    private void setDecimal(MonetaryAmount decimal) {
-        this.decimal = decimal;
+    private void setRemainder(MonetaryAmount remainder) {
+        this.remainder = remainder;
     }
 
     private void setInteger(MonetaryAmount integer) {
@@ -36,12 +36,12 @@ public class Round {
         this.integer = integer;
     }
 
-    public MonetaryAmount neat() {
+    public MonetaryAmount integer() {
         return integer;
     }
 
-    public MonetaryAmount fragment() {
-        return decimal;
+    public MonetaryAmount remainder() {
+        return remainder;
     }
 
     @Override
@@ -52,21 +52,21 @@ public class Round {
         Round round = (Round) o;
 
         if (integer != null ? !integer.equals(round.integer) : round.integer != null) return false;
-        return decimal != null ? decimal.equals(round.decimal) : round.decimal == null;
+        return remainder != null ? remainder.equals(round.remainder) : round.remainder == null;
     }
 
     @Override
     public int hashCode() {
         int result = integer != null ? integer.hashCode() : 0;
-        result = 31 * result + (decimal != null ? decimal.hashCode() : 0);
+        result = 31 * result + (remainder != null ? remainder.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Round.class.getSimpleName() + "[", "]")
-                .add("neat=" + integer)
-                .add("fragment=" + decimal)
+                .add("integer=" + integer)
+                .add("remainder=" + remainder)
                 .toString();
     }
 }

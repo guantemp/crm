@@ -2,6 +2,7 @@
 package crm.hoprxi;
 
 import mi.hoprxi.to.ByteToHex;
+import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.junit.Test;
 
@@ -30,27 +31,27 @@ public class AppTest {
     @Test
     public void shouldAnswerWithTrue() throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.update("".getBytes(StandardCharsets.UTF_8));
-        System.out.println(ByteToHex.toHexStr(messageDigest.digest()));
+        messageDigest.update("Qwe123465".getBytes(StandardCharsets.UTF_8));
+        System.out.println("Qwe123465 Sha-256" + ByteToHex.toHexStr(messageDigest.digest()));
 
-        MonetaryAmount amount = Money.of(new BigDecimal("223.525436464565457567564"), "CNY");
-        MonetaryAmount amount1 = Money.of(1051.45, Monetary.getCurrency(Locale.getDefault()));
+        MonetaryAmount amount = Money.of(new BigDecimal("223.4536575763474262634657686795745643647678083534654"), "CNY");
         System.out.println("amount.signum():" + amount.signum());
         System.out.println("amount.abs():" + amount.abs());
         System.out.println("amount.remainder(1):" + amount.remainder(1));
+        System.out.println("amount.remainder(5):" + amount.remainder(5));
         System.out.println("amount.divideToIntegralValue(1):" + amount.divideToIntegralValue(1));
         System.out.println("amount.scaleByPowerOfTen(1):" + amount.scaleByPowerOfTen(1));
         System.out.println("amount.stripTrailingZeros():" + amount.stripTrailingZeros());
         System.out.println("amount.negate():" + amount.negate());
         System.out.println("amount.getNumber():" + amount.getNumber());
         System.out.println("amount.etNumberStripped():" + ((Money) amount).getNumberStripped());
-        double d1 = amount.abs().getNumber().doubleValueExact();
-        double d2 = amount1.getNumber().doubleValue();
-        System.out.println(d1);
-        System.out.println(amount.abs().getNumber().doubleValue());
-        double d3 = d1 / (d1 + d2);
-        MonetaryAmount amount2 = amount.multiply(d3);
-        System.out.println(amount2);
+        System.out.println("amount.abs().getNumber().doubleValueExact():" + amount.abs().getNumber().doubleValueExact());
+
+
+        System.out.println("\nFastMoney:");
+        MonetaryAmount amount1 = FastMoney.of(1051.45365, Monetary.getCurrency(Locale.getDefault()));
+        System.out.println("amount1.getNumber().doubleValue():" + amount1.getNumber().doubleValue());
+
 
         CurrencyUnit usd = Monetary.getCurrency("USD");
         MonetaryAmount dollars = Money.of(12.34567, usd);

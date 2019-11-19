@@ -24,7 +24,7 @@ public class CreditCardTest {
 
     @Test
     public void all() {
-        CreditCard card = new CreditCard("001", "32", "214", "136796", Money.of(1500, "CNY"), zero);
+        CreditCard card = new CreditCard("001", "214", "136796", Money.of(1500, "CNY"), zero);
         card.pay(Money.of(500, "CNY"));
         Assert.assertTrue(Money.of(-500, "CNY").isEqualTo(card.balance()));
         card.pay(Money.of(1000, "CNY"));

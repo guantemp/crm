@@ -1,6 +1,8 @@
 package crm.hoprxi.domain.model.coinPurse;
 
 
+import org.javamoney.moneta.FastMoney;
+
 import javax.money.MonetaryAmount;
 import java.util.Objects;
 
@@ -10,38 +12,33 @@ import java.util.Objects;
  * @version 0.0.1 2019-11-15
  */
 public enum Quota {
-    ONE_YUAN(1) {
+    ZERO(0) {
         @Override
         public Round round(MonetaryAmount receivables, MonetaryAmount balance) {
-            Objects.requireNonNull(receivables, "receivables required");
-            if (receivables.isNegative())
-                throw new IllegalArgumentException("receivables must larger zero");
-            MonetaryAmount remainder = receivables.remainder(divisor);
-            if (balance.isGreaterThanOrEqualTo(remainder))
-                return new Round(receivables.divideToIntegralValue(divisor), remainder.negate());
-            return new Round(receivables.divideToIntegralValue(divisor), remainder);
+            return Round.ZERO;
         }
-    }, FIVE_YUAN(5) {
-        @Override
-        public Round round(MonetaryAmount receivables, MonetaryAmount balance) {
-            Objects.requireNonNull(receivables, "receivables required");
-            if (receivables.isNegative())
-                throw new IllegalArgumentException("receivables must larger zero");
-            MonetaryAmount remainder = receivables.remainder(divisor);
-            if (balance.isGreaterThanOrEqualTo(remainder))
-                return new Round(receivables.divideToIntegralValue(divisor), balance.subtract(remainder));
-            return new Round(receivables.divideToIntegralValue(divisor), remainder);
-        }
-    };
+    },
 
-    protected int divisor;
+    ONE(1), FIVE(5);
 
-    Quota(int divisor) {
-        this.divisor = divisor;
+    protected int factor;
+
+    Quota(int factor) {
+        this.factor = factor;
     }
 
     public Round round(MonetaryAmount receivables, MonetaryAmount balance) {
-        return Round.ZERO;
+        Objects.requireNonNull(receivables, "receivables required");
+        if (receivables.isNegative())
+            throw new IllegalArgumentException("receivables must larger zero");
+        MonetaryAmount integer = receivables.divideToIntegralValue(factor);
+        MonetaryAmount remainder = receivables.remainder(factor);
+        if (balance.isGreaterThanOrEqualTo(remainder))
+            return new Round(integer.multiply(factor), remainder.negate());
+        return new Round(integer.add(FastMoney.of(1, balance.getCurrency())).multiply(factor), FastMoney.of(factor, balance.getCurrency()).subtract(remainder));
     }
-    //CoinPurse access(MonetaryAmount receivables, MonetaryAmount balance);
+
+    public int factor() {
+        return factor;
+    }
 }

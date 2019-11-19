@@ -11,11 +11,28 @@ public class CoinPurse {
     private MonetaryAmount balance;
     private Quota quota;
 
-    public CoinPurse(MonetaryAmount balance) {
+    public CoinPurse(MonetaryAmount balance, Quota quota) {
         this.balance = balance;
+        this.quota = quota;
     }
 
     public MonetaryAmount balance() {
         return balance;
+    }
+
+    public Quota quota() {
+        return quota;
+    }
+
+    public Round round(MonetaryAmount receivables) {
+        return quota.round(receivables, balance);
+    }
+
+    public CoinPurse changeBalance() {
+        return this;
+    }
+
+    public CoinPurse changeQuota() {
+        return this;
     }
 }
