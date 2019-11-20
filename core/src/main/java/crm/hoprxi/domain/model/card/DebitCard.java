@@ -1,31 +1,32 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com rights Reserved.
+ * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ *  Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package crm.hoprxi.domain.model.card;
 
-import crm.hoprxi.domain.model.InsufficientBalanceException;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.coinPurse.CoinPurse;
+import crm.hoprxi.domain.model.card.coinWallet.CoinWallet;
 import crm.hoprxi.domain.model.integral.Integral;
+import mi.hoprxi.crypto.EncryptionService;
+import mi.hoprxi.crypto.SM3Encryption;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -36,7 +37,9 @@ public class DebitCard extends Card {
     private MonetaryAmount principal;
     private MonetaryAmount give;
     private MonetaryAmount freeze;
-    private CoinPurse coinPurse;
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
+    private String password;
+    private CoinWallet coinWallet;
     private Integral integral;
     private String customerId;
 
@@ -75,6 +78,17 @@ public class DebitCard extends Card {
         if (give.isNegative())
             throw new IllegalArgumentException("give must large zero");
         this.give = give;
+    }
+
+    private void setPassword(String password) {
+        Objects.requireNonNull(password, "password is required");
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("password must 6 digit number");
+        }
+        EncryptionService encryption = new SM3Encryption();
+        this.password = encryption.encrypt(password);
     }
 
     public MonetaryAmount principal() {
@@ -247,7 +261,6 @@ public class DebitCard extends Card {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
                 .add("id='" + id() + "'")
                 .add("issuerId='" + issuerId() + "'")
-                .add("password='" + password() + "'")
                 .add("termOfValidity=" + termOfValidity())
                 .add("appearance=" + appearance())
                 .add("customerId='" + customerId + "'")

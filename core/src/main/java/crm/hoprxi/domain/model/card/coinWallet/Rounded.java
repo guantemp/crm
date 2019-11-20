@@ -1,4 +1,20 @@
-package crm.hoprxi.domain.model.coinPurse;
+/*
+ * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package crm.hoprxi.domain.model.card.coinWallet;
 
 import org.javamoney.moneta.Money;
 
@@ -12,13 +28,13 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 2019-11-15
  */
-public class Round {
+public class Rounded {
     private static final MonetaryAmount MONETARY_ZERO = Money.zero(Monetary.getCurrency(Locale.getDefault()));
-    public static Round ZERO = new Round(MONETARY_ZERO, MONETARY_ZERO);
+    public static Rounded ZERO = new Rounded(MONETARY_ZERO, MONETARY_ZERO);
     private MonetaryAmount integer;
     private MonetaryAmount remainder;
 
-    public Round(MonetaryAmount integer, MonetaryAmount remainder) {
+    public Rounded(MonetaryAmount integer, MonetaryAmount remainder) {
         setInteger(integer);
         setRemainder(remainder);
     }
@@ -49,10 +65,10 @@ public class Round {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Round round = (Round) o;
+        Rounded rounded = (Rounded) o;
 
-        if (integer != null ? !integer.equals(round.integer) : round.integer != null) return false;
-        return remainder != null ? remainder.equals(round.remainder) : round.remainder == null;
+        if (integer != null ? !integer.equals(rounded.integer) : rounded.integer != null) return false;
+        return remainder != null ? remainder.equals(rounded.remainder) : rounded.remainder == null;
     }
 
     @Override
@@ -64,7 +80,7 @@ public class Round {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Round.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Rounded.class.getSimpleName() + "[", "]")
                 .add("integer=" + integer)
                 .add("remainder=" + remainder)
                 .toString();
