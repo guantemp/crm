@@ -18,6 +18,7 @@
 
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.InsufficientBalanceException;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.coinPurse.CoinPurse;
 import crm.hoprxi.domain.model.integral.Integral;

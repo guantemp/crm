@@ -1,6 +1,7 @@
 package crm.hoprxi.domain.model.card;
 
 
+import crm.hoprxi.domain.model.InsufficientBalanceException;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 
 import javax.money.MonetaryAmount;

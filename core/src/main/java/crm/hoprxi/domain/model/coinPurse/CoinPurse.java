@@ -1,6 +1,9 @@
 package crm.hoprxi.domain.model.coinPurse;
 
+import crm.hoprxi.domain.model.InsufficientBalanceException;
+
 import javax.money.MonetaryAmount;
+import java.util.Objects;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -12,8 +15,25 @@ public class CoinPurse {
     private Quota quota;
 
     public CoinPurse(MonetaryAmount balance, Quota quota) {
-        this.balance = balance;
+        setBalance(balance);
+        setQuota(quota);
+    }
+
+    public CoinPurse(MonetaryAmount balance) {
+        this(balance, Quota.ZERO);
+    }
+
+    private void setQuota(Quota quota) {
+        if (quota == null)
+            quota = Quota.ZERO;
         this.quota = quota;
+    }
+
+    private void setBalance(MonetaryAmount balance) {
+        Objects.requireNonNull(balance, "balance required");
+        if (balance.isNegative())
+            throw new IllegalArgumentException("balance must large or equal zero");
+        this.balance = balance;
     }
 
     public MonetaryAmount balance() {
@@ -28,11 +48,26 @@ public class CoinPurse {
         return quota.round(receivables, balance);
     }
 
-    public CoinPurse changeBalance() {
-        return this;
+    public CoinPurse pay(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "newBalance required");
+        if (amount.isNegativeOrZero())
+            throw new IllegalArgumentException("pay amount must large zero");
+        if(amount.isGreaterThan(balance))
+            throw new InsufficientBalanceException("Sorry, your credit is running low");
+        return new CoinPurse(balance.subtract(amount), quota);
     }
 
-    public CoinPurse changeQuota() {
+    public CoinPurse deposit(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "amount required");
+        if (amount.isNegativeOrZero())
+            throw new IllegalArgumentException("deposit amount must large zero");
+        return new CoinPurse(balance.add(amount), quota);
+    }
+
+    public CoinPurse changeQuota(Quota newQuota) {
+        Objects.requireNonNull(newQuota, "newQuota required");
+        if (quota != newQuota)
+            return new CoinPurse(balance, newQuota);
         return this;
     }
 }
