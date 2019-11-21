@@ -13,25 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model;
 
-
-import event.hoprxi.domain.model.DomainEventPublisher;
-import event.hoprxi.infrastruture.simple.SimpleDomainEventPublisher;
+package crm.hoprxi.domain.model.card;
 
 /***
- * @author <a href="mailto:myis1000@gmail.com">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2016-10-24
+ * @version 0.0.1 2019-11-20
  */
-public class DomainRegistry {
-    public static DomainEventPublisher domainEventPublisher() {
-        return SimpleDomainEventPublisher.instance();
-    }
-
-    public static boolean validIssuerId(String issuerId) {
-        if (issuerId == null || issuerId.isEmpty())
-            return false;
-        return true;
-    }
+public enum PaymentStrategy {
+    BALANCE_FIRST, RED_ENVELOPES_FIRST, RATIO
 }

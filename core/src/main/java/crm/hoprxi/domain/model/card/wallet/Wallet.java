@@ -15,9 +15,12 @@
  */
 package crm.hoprxi.domain.model.card.wallet;
 
+import crm.hoprxi.domain.model.card.PaymentStrategy;
 import org.javamoney.moneta.FastMoney;
 
+import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+import java.util.Locale;
 import java.util.Objects;
 
 /***
@@ -26,34 +29,129 @@ import java.util.Objects;
  * @version 0.0.1 2019-11-20
  */
 public class Wallet {
-    private MonetaryAmount limit;
+    private static final Wallet RMB_ZERO = new Wallet(FastMoney.zero(Monetary.getCurrency(Locale.CHINESE)), FastMoney.zero(Monetary.getCurrency(Locale.CHINESE)));
+    private static final Wallet USD_ZERO = new Wallet(FastMoney.zero(Monetary.getCurrency(Locale.US)), FastMoney.zero(Monetary.getCurrency(Locale.US)));
     private MonetaryAmount balance;
     private MonetaryAmount give;
 
-    public Wallet(MonetaryAmount balance, MonetaryAmount give, MonetaryAmount limit) {
-        this.limit = limit;
-        this.balance = balance;
+    /**
+     * @param balance
+     * @param give    required positive
+     */
+    public Wallet(MonetaryAmount balance, MonetaryAmount give) {
+        setBalance(balance);
+        setGive(give);
+    }
+
+    public Wallet zero(Locale locale) {
+        if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
+            return RMB_ZERO;
+        if (locale == Locale.US)
+            return USD_ZERO;
+        MonetaryAmount zero = FastMoney.zero(Monetary.getCurrency(locale));
+        return new Wallet(zero, zero);
+    }
+
+    private void setGive(MonetaryAmount give) {
+        if (give == null || give.isNegative())
+            throw new IllegalArgumentException("give required positive");
         this.give = give;
     }
 
-    /**
-     * @param amount
-     * @param give
-     * @throws IllegalArgumentException if amount is null
-     * @throws IllegalArgumentException if  principalAmount  or giveAmount is negative
-     */
-    public Wallet prepay(MonetaryAmount amount, MonetaryAmount give) {
-        Objects.requireNonNull(amount, "amount required");
-        if (give == null)
-            give = FastMoney.zero(balance.getCurrency());
-        if (amount.isNegative() || give.isNegative())
-            throw new IllegalArgumentException("amount and giveAmount must large zero");
-        if (amount.isZero() && give.isZero())
-            return this;
-        MonetaryAmount temp = balance.add(amount);
-        if (temp.isGreaterThan(limit))
-            throw new IllegalArgumentException("");
-        return new Wallet(temp, give, limit);
+    private void setBalance(MonetaryAmount balance) {
+        Objects.requireNonNull(balance, "balance required");
+        this.balance = balance;
     }
 
+    /**
+     * @param balanceAmount must is positive
+     * @param giveAmount    must is positive
+     * @throws ExceedQuotaException if balance or give is greater limit(when the limit is positive)
+     */
+    public Wallet prepay(MonetaryAmount balanceAmount, MonetaryAmount giveAmount) {
+        if ((balanceAmount == null || balanceAmount.isNegativeOrZero()) && (giveAmount == null || giveAmount.isNegativeOrZero()))
+            return this;
+        if (balanceAmount == null)
+            balanceAmount = FastMoney.zero(balance.getCurrency());
+        if (giveAmount == null)
+            giveAmount = FastMoney.zero(give.getCurrency());
+        MonetaryAmount balanceTemp = balance.add(balanceAmount);
+        MonetaryAmount giveTemp = give.add(giveAmount);
+        return new Wallet(balanceTemp, giveTemp);
+    }
+
+    public Wallet prepay(MonetaryAmount balanceAmount) {
+        return prepay(balanceAmount, FastMoney.zero(balance.getCurrency()));
+    }
+
+    public Wallet withdrawal(MonetaryAmount amount) {
+        if (amount == null || amount.isNegativeOrZero())
+            return this;
+        if (amount.isGreaterThan(balance))
+            throw new InsufficientBalanceException("insufficient balance");
+        return new Wallet(balance.subtract(amount), give);
+    }
+
+    public Wallet withdrawalOfGive(MonetaryAmount amount) {
+        if (amount == null || amount.isNegativeOrZero())
+            return this;
+        if (amount.isGreaterThan(give))
+            throw new InsufficientBalanceException("give amount insufficient balance");
+        return new Wallet(balance, give.subtract(amount));
+    }
+
+    public Wallet pay(MonetaryAmount amount, PaymentStrategy strategy) {
+        MonetaryAmount available = balance.add(give);
+        if (available.isLessThan(amount))
+            throw new InsufficientBalanceException("insufficient balance");
+        switch (strategy) {
+            case BALANCE_FIRST:
+                balance = balance.subtract(amount);
+                if (balance.isNegative()) {
+                    balance = FastMoney.zero(balance.getCurrency());
+                    give = give.add(balance);
+                }
+                break;
+            case RED_ENVELOPES_FIRST:
+                MonetaryAmount g = give.subtract(amount);
+                if (g.isNegative()) {
+                    give = FastMoney.zero(give.getCurrency());
+                    balance = balance.add(g);
+                } else {
+                    give = g;
+                }
+                break;
+            case RATIO:
+                double d1 = balance.getNumber().doubleValue();
+                double d2 = give.getNumber().doubleValue();
+                double d3 = d1 / (d1 + d2);
+                MonetaryAmount temp = amount.multiply(d3);
+                balance = balance.subtract(temp);
+                give = give.subtract(amount.subtract(temp));
+                break;
+        }
+        return new Wallet(balance, give);
+    }
+
+    public Wallet pay(MonetaryAmount amount) {
+        return pay(amount, PaymentStrategy.BALANCE_FIRST);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Wallet wallet = (Wallet) o;
+
+        if (balance != null ? !balance.equals(wallet.balance) : wallet.balance != null) return false;
+        return give != null ? give.equals(wallet.give) : wallet.give == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = balance != null ? balance.hashCode() : 0;
+        result = 31 * result + (give != null ? give.hashCode() : 0);
+        return result;
+    }
 }

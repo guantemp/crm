@@ -16,9 +16,9 @@
 
 package crm.hoprxi.domain.model.coinWallet;
 
-import crm.hoprxi.domain.model.card.coinWallet.CoinWallet;
-import crm.hoprxi.domain.model.card.coinWallet.Quota;
-import crm.hoprxi.domain.model.card.coinWallet.Rounded;
+import crm.hoprxi.domain.model.card.wallet.CoinWallet;
+import crm.hoprxi.domain.model.card.wallet.QuotaEnum;
+import crm.hoprxi.domain.model.card.wallet.Rounded;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class CoinWalletTest {
 
     @Test
     public void balance() {
-        CoinWallet coinWallet = new CoinWallet(Money.of(0.55, "CNY"), Quota.ONE);
+        CoinWallet coinWallet = new CoinWallet(Money.of(0.55, "CNY"), QuotaEnum.ONE);
         Rounded rounded = coinWallet.round(Money.of(5.25, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.25, "CNY").isEqualTo(rounded.remainder()));
@@ -43,7 +43,7 @@ public class CoinWalletTest {
         coinWallet = coinWallet.deposit(rounded.remainder());
         Assert.assertTrue(Money.of(0.55, "CNY").isEqualTo(coinWallet.balance()));
 
-        coinWallet = new CoinWallet(Money.of(4.55, "CNY"), Quota.FIVE);
+        coinWallet = new CoinWallet(Money.of(4.55, "CNY"), QuotaEnum.FIVE);
         rounded = coinWallet.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
@@ -59,7 +59,7 @@ public class CoinWalletTest {
         Assert.assertTrue(Money.of(-3.02, "CNY").isEqualTo(rounded.remainder()));
         coinWallet = coinWallet.pay(rounded.remainder().negate());
 
-        coinWallet = coinWallet.changeQuota(Quota.ONE);
+        coinWallet = coinWallet.changeQuota(QuotaEnum.ONE);
         rounded = coinWallet.round(Money.of(6.73, "CNY"));
         Assert.assertTrue(Money.of(7, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.27, "CNY").isEqualTo(rounded.remainder()));
@@ -71,7 +71,7 @@ public class CoinWalletTest {
         coinWallet = coinWallet.pay(rounded.remainder().negate());
         Assert.assertTrue(Money.of(0, "CNY").isEqualTo(coinWallet.balance()));
 
-        coinWallet = new CoinWallet(Money.of(0, "CNY"), Quota.ZERO);
+        coinWallet = new CoinWallet(Money.of(0, "CNY"), QuotaEnum.ZERO);
         rounded = coinWallet.round(Money.of(3.28, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
         Assert.assertTrue(rounded.integer().isZero());

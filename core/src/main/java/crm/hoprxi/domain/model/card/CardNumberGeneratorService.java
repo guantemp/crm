@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @since JDK8.0
  * @version 0.0.1 builder 2018-05-29
  */
-public final class CardNumberGeneratorService {
+public class CardNumberGeneratorService {
     private int[] filter;
     private Format format;
     private boolean global = false;

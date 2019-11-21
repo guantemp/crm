@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model.card.coinWallet;
+package crm.hoprxi.domain.model.card.wallet;
 
-import crm.hoprxi.domain.model.card.InsufficientBalanceException;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 
@@ -30,14 +29,19 @@ import java.util.Objects;
  * @version 0.0.1 2019-11-14
  */
 public class CoinWallet {
-    private static final CoinWallet RMB_ZERO = new CoinWallet(Money.zero(Monetary.getCurrency(Locale.CHINA)), Quota.ZERO);
-    private static final CoinWallet USD_ZERO = new CoinWallet(Money.zero(Monetary.getCurrency(Locale.US)), Quota.ZERO);
+    private static final CoinWallet RMB_ZERO = new CoinWallet(Money.zero(Monetary.getCurrency(Locale.CHINA)), QuotaEnum.ZERO) {
+        @Override
+        public CoinWallet pay(MonetaryAmount amount) {
+            return this;
+        }
+    };
+    private static final CoinWallet USD_ZERO = new CoinWallet(Money.zero(Monetary.getCurrency(Locale.US)), QuotaEnum.ZERO);
     private MonetaryAmount balance;
-    private Quota quota;
+    private QuotaEnum quotaEnum;
 
-    public CoinWallet(MonetaryAmount balance, Quota quota) {
+    public CoinWallet(MonetaryAmount balance, QuotaEnum quotaEnum) {
         setBalance(balance);
-        setQuota(quota);
+        setQuotaEnum(quotaEnum);
     }
 
     public static CoinWallet zero(Locale locale) {
@@ -45,13 +49,13 @@ public class CoinWallet {
             return RMB_ZERO;
         if (locale == Locale.US)
             return USD_ZERO;
-        return new CoinWallet(FastMoney.zero(Monetary.getCurrency(locale)), Quota.ZERO);
+        return new CoinWallet(FastMoney.zero(Monetary.getCurrency(locale)), QuotaEnum.ZERO);
     }
 
-    private void setQuota(Quota quota) {
-        if (quota == null)
-            quota = Quota.ZERO;
-        this.quota = quota;
+    private void setQuotaEnum(QuotaEnum quotaEnum) {
+        if (quotaEnum == null)
+            quotaEnum = QuotaEnum.ZERO;
+        this.quotaEnum = quotaEnum;
     }
 
     private void setBalance(MonetaryAmount balance) {
@@ -65,12 +69,12 @@ public class CoinWallet {
         return balance;
     }
 
-    public Quota quota() {
-        return quota;
+    public QuotaEnum quota() {
+        return quotaEnum;
     }
 
     public Rounded round(MonetaryAmount receivables) {
-        return quota.round(receivables, balance);
+        return quotaEnum.round(receivables, balance);
     }
 
     public CoinWallet pay(MonetaryAmount amount) {
@@ -79,20 +83,20 @@ public class CoinWallet {
             throw new IllegalArgumentException("pay amount must large zero");
         if (amount.isGreaterThan(balance))
             throw new InsufficientBalanceException("Sorry, your credit is running low");
-        return new CoinWallet(balance.subtract(amount), quota);
+        return new CoinWallet(balance.subtract(amount), quotaEnum);
     }
 
     public CoinWallet deposit(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("deposit amount must large zero");
-        return new CoinWallet(balance.add(amount), quota);
+        return new CoinWallet(balance.add(amount), quotaEnum);
     }
 
-    public CoinWallet changeQuota(Quota newQuota) {
-        Objects.requireNonNull(newQuota, "newQuota required");
-        if (quota != newQuota)
-            return new CoinWallet(balance, newQuota);
+    public CoinWallet changeQuota(QuotaEnum newQuotaEnum) {
+        Objects.requireNonNull(newQuotaEnum, "newQuota required");
+        if (quotaEnum != newQuotaEnum)
+            return new CoinWallet(balance, newQuotaEnum);
         return this;
     }
 }

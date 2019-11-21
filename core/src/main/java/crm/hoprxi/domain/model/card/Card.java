@@ -17,14 +17,13 @@ package crm.hoprxi.domain.model.card;
 
 
 import com.arangodb.entity.DocumentField;
+import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import org.javamoney.moneta.Money;
+import crm.hoprxi.domain.model.card.wallet.CoinWallet;
+import crm.hoprxi.domain.model.card.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.money.Monetary;
-import javax.money.MonetaryAmount;
-import java.util.Locale;
 import java.util.Objects;
 
 /***
@@ -33,8 +32,6 @@ import java.util.Objects;
  * @version 0.0.1 builder 2019-08-12
  */
 public abstract class Card {
-    protected static final MonetaryAmount MONETARY_ZERO = Money.of(0, Monetary.getCurrency(Locale.getDefault()));
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
     @DocumentField(DocumentField.Type.KEY)
     private String id;
@@ -42,10 +39,13 @@ public abstract class Card {
     protected TermOfValidity termOfValidity;
     private Appearance appearance;
     private String cardFaceNumber;
+    private Wallet wallet;
+    private CoinWallet coinWallet;
 
     public Card(String id, String issuerId, String cardFaceNumber) {
         this(id, issuerId, cardFaceNumber, TermOfValidity.PERMANENCE, null);
     }
+
 
     /**
      * @param id
@@ -53,16 +53,33 @@ public abstract class Card {
      * @param cardFaceNumber
      * @param termOfValidity
      * @param appearance
+     * @throws IllegalArgumentException if id is null or empty
+     * @throws IllegalArgumentException if Issuer does not exist
      */
     public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Appearance appearance) {
         setId(id);
         setIssuerId(issuerId);
         setTermOfValidity(termOfValidity);
-        setAppearance(appearance);
         setCardFaceNumber(cardFaceNumber);
+        setAppearance(appearance);
+    }
+
+    private void setId(String id) {
+        id = Objects.requireNonNull(id, "id required").trim();
+        if (id.isEmpty())
+            throw new IllegalArgumentException("Must provide a card id.");
+        this.id = id;
+    }
+
+    private void setIssuerId(String issuerId) {
+        issuerId = Objects.requireNonNull(issuerId, "issuerId required").trim();
+        if (!DomainRegistry.validIssuerId(issuerId))
+            throw new IllegalArgumentException("issuerId not valid");
+        this.issuerId = issuerId;
     }
 
     private void setCardFaceNumber(String cardFaceNumber) {
+        cardFaceNumber = Objects.requireNonNull(cardFaceNumber, "cardFaceNumber").trim();
         this.cardFaceNumber = cardFaceNumber;
     }
 
@@ -82,25 +99,10 @@ public abstract class Card {
         return termOfValidity;
     }
 
-    private void setIssuerId(String issuerId) {
-        issuerId = Objects.requireNonNull(issuerId, "issuerId required").trim();
-        if (issuerId.isEmpty())
-            throw new IllegalArgumentException("Must provide a issuer id.");
-        this.issuerId = issuerId;
-    }
-
     private void setTermOfValidity(TermOfValidity termOfValidity) {
         if (termOfValidity == null)
             termOfValidity = TermOfValidity.PERMANENCE;
         this.termOfValidity = termOfValidity;
-    }
-
-
-    private void setId(String id) {
-        id = Objects.requireNonNull(id, "id required").trim();
-        if (id.isEmpty())
-            throw new IllegalArgumentException("Must provide a card id.");
-        this.id = id;
     }
 
     public Appearance appearance() {

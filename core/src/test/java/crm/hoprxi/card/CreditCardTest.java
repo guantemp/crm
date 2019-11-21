@@ -17,7 +17,7 @@
 package crm.hoprxi.card;
 
 import crm.hoprxi.domain.model.card.CreditCard;
-import crm.hoprxi.domain.model.card.InsufficientBalanceException;
+import crm.hoprxi.domain.model.card.wallet.InsufficientBalanceException;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
 import org.junit.Rule;

@@ -18,6 +18,7 @@ package crm.hoprxi.domain.model.card;
 
 
 import crm.hoprxi.domain.model.card.appearance.Appearance;
+import crm.hoprxi.domain.model.card.wallet.InsufficientBalanceException;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;
@@ -52,7 +53,7 @@ public class CreditCard extends Card {
 
     private void setBalance(MonetaryAmount balance) {
         if (balance == null)
-            balance = MONETARY_ZERO;
+            balance = null;
         if (balance.isNegative() && balance.abs().isGreaterThan(quota))
             throw new IllegalArgumentException("above the quota");
         this.balance = balance;
