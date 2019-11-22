@@ -1,10 +1,23 @@
+/*
+ * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package crm.hoprxi.card;
 
-import crm.hoprxi.domain.model.card.DebitCard;
 import org.javamoney.moneta.Money;
-import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.money.Monetary;
@@ -25,7 +38,7 @@ public class DebitCardTest {
     MonetaryAmount thirty = Money.of(30, "CNY");
     MonetaryAmount two_hundred = Money.of(200, Monetary.getCurrency(locale));
     MonetaryAmount one_hundred = Money.of(100, Monetary.getCurrency(locale));
-
+/*
     @Test
     public void all() {
         DebitCard card = new DebitCard("600256", "宜宾总店", "327885095", "123456", zero, zero, zero);
@@ -83,4 +96,5 @@ public class DebitCardTest {
         System.out.println(card);
     }
 
+ */
 }

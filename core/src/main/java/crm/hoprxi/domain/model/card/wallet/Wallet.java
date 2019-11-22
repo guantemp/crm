@@ -22,6 +22,7 @@ import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -29,7 +30,27 @@ import java.util.Objects;
  * @version 0.0.1 2019-11-20
  */
 public class Wallet {
-    private static final Wallet RMB_ZERO = new Wallet(FastMoney.zero(Monetary.getCurrency(Locale.CHINESE)), FastMoney.zero(Monetary.getCurrency(Locale.CHINESE)));
+    private static final Wallet RMB_ZERO = new Wallet(FastMoney.zero(Monetary.getCurrency(Locale.CHINA)), FastMoney.zero(Monetary.getCurrency(Locale.CHINA))) {
+        @Override
+        public Wallet withdrawal(MonetaryAmount amount) {
+            return this;
+        }
+
+        @Override
+        public Wallet withdrawalOfGive(MonetaryAmount amount) {
+            return this;
+        }
+
+        @Override
+        public Wallet pay(MonetaryAmount amount, PaymentStrategy strategy) {
+            return this;
+        }
+
+        @Override
+        public Wallet pay(MonetaryAmount amount) {
+            return this;
+        }
+    };
     private static final Wallet USD_ZERO = new Wallet(FastMoney.zero(Monetary.getCurrency(Locale.US)), FastMoney.zero(Monetary.getCurrency(Locale.US)));
     private MonetaryAmount balance;
     private MonetaryAmount give;
@@ -43,7 +64,7 @@ public class Wallet {
         setGive(give);
     }
 
-    public Wallet zero(Locale locale) {
+    public static Wallet zero(Locale locale) {
         if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
             return RMB_ZERO;
         if (locale == Locale.US)
@@ -61,6 +82,14 @@ public class Wallet {
     private void setBalance(MonetaryAmount balance) {
         Objects.requireNonNull(balance, "balance required");
         this.balance = balance;
+    }
+
+    public MonetaryAmount balance() {
+        return balance;
+    }
+
+    public MonetaryAmount give() {
+        return give;
     }
 
     /**
@@ -153,5 +182,13 @@ public class Wallet {
         int result = balance != null ? balance.hashCode() : 0;
         result = 31 * result + (give != null ? give.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Wallet.class.getSimpleName() + "[", "]")
+                .add("balance=" + balance)
+                .add("give=" + give)
+                .toString();
     }
 }

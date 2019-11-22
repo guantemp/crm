@@ -16,18 +16,21 @@
 
 package crm.hoprxi.domain.model.card;
 
-
-import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
-import crm.hoprxi.domain.model.card.wallet.Wallet;
-
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-15
+ * @version 0.0.1 2019-11-22
  */
-public class CreditCard extends Card {
-    public CreditCard(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, wallet, changeWallet, appearance);
-    }
+public interface AnonymousCardRepository {
+    void save(AnonymousCard anonymousCard);
+
+    AnonymousCard find(String id);
+
+    int size();
+
+    String nextIdentity();
+
+    AnonymousCard[] findAll(int offset, int limit);
+
+    void remove(String id);
 }

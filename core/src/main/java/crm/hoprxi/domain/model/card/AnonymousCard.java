@@ -15,29 +15,37 @@
  */
 package crm.hoprxi.domain.model.card;
 
-import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.CoinWallet;
+import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
 import crm.hoprxi.domain.model.card.wallet.Wallet;
 import crm.hoprxi.domain.model.integral.Integral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-11-14
  */
-public class AnonymousCard {
+public class AnonymousCard extends Card {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousCard.class);
-    @DocumentField(DocumentField.Type.KEY)
-    private String id;
-    private String issuerId;
-    private TermOfValidity termOfValidity;
-    private Appearance appearance;
-    private String cardFaceNumber;
-    private Wallet wallet;
-    private CoinWallet coinWallet;
     private Integral integral;
 
+    public AnonymousCard(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Integral integral, Appearance appearance) {
+        super(id, issuerId, cardFaceNumber, termOfValidity, wallet, changeWallet, appearance);
+        this.integral = integral;
+    }
+
+    public Integral integral() {
+        return integral;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
+                .add("integral=" + integral)
+                .toString();
+    }
 }

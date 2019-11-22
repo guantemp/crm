@@ -17,9 +17,8 @@
 package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.CoinWallet;
+import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
 import crm.hoprxi.domain.model.card.wallet.Wallet;
-import crm.hoprxi.domain.model.integral.Integral;
 import mi.hoprxi.crypto.EncryptionService;
 import mi.hoprxi.crypto.SM3Encryption;
 
@@ -36,27 +35,12 @@ import java.util.regex.Pattern;
 public class DebitCard extends Card {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     private String password;
-    private Wallet wallet;
-    private CoinWallet coinWallet;
-    private Integral integral;
     private String customerId;
 
-    /**
-     * @param id
-     * @param issuerId
-     * @param customerId
-     * @param password
-     * @param principal
-     * @param give
-     * @param freeze
-     * @throws IllegalArgumentException if principal or give less zero
-     */
-    public DebitCard(String id, String issuerId, String customerId, String password, MonetaryAmount principal, MonetaryAmount give, MonetaryAmount freeze) {
-        this(id, issuerId, customerId, password, TermOfValidity.PERMANENCE, null, principal, give, freeze);
-    }
-
-    public DebitCard(String id, String issuerId, String customerId, String password, TermOfValidity termOfValidity, Appearance appearance, MonetaryAmount principal, MonetaryAmount give, MonetaryAmount freeze) {
-        super(id, issuerId, password, termOfValidity, appearance);
+    public DebitCard(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Appearance appearance, String password, String customerId) {
+        super(id, issuerId, cardFaceNumber, termOfValidity, wallet, changeWallet, appearance);
+        this.password = password;
+        this.customerId = customerId;
     }
 
     private void setPassword(String password) {
@@ -77,7 +61,7 @@ public class DebitCard extends Card {
      * @throws IllegalArgumentException if  principalAmount  or giveAmount is negative
      */
     public void prepay(MonetaryAmount principalAmount, MonetaryAmount giveAmount) {
-        if (!termOfValidity().isNowValid())
+        if (!termOfValidity().isLimitedPeriod())
             throw new IncorrectExpirationDateException("Not in validity");
 
     }
@@ -96,7 +80,7 @@ public class DebitCard extends Card {
      * @param amount
      */
     public void withdrawal(MonetaryAmount amount) {
-        if (!termOfValidity().isNowValid())
+        if (!termOfValidity().isLimitedPeriod())
             throw new IncorrectExpirationDateException("Not in validity");
 
         //domain event
@@ -107,7 +91,7 @@ public class DebitCard extends Card {
      * @return negative if insufficient funds
      */
     public void pay(MonetaryAmount amount, PaymentStrategy strategy) {
-        if (!termOfValidity().isNowValid())
+        if (!termOfValidity().isLimitedPeriod())
             throw new IncorrectExpirationDateException("Not in validity");
 
     }

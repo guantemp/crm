@@ -19,12 +19,14 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.CoinWallet;
+import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
+import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
 import crm.hoprxi.domain.model.card.wallet.Wallet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import javax.money.MonetaryAmount;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -32,36 +34,39 @@ import java.util.Objects;
  * @version 0.0.1 builder 2019-08-12
  */
 public abstract class Card {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String issuerId;
-    protected TermOfValidity termOfValidity;
+    private TermOfValidity termOfValidity;
     private Appearance appearance;
     private String cardFaceNumber;
     private Wallet wallet;
-    private CoinWallet coinWallet;
-
-    public Card(String id, String issuerId, String cardFaceNumber) {
-        this(id, issuerId, cardFaceNumber, TermOfValidity.PERMANENCE, null);
-    }
-
+    private ChangeWallet changeWallet;
 
     /**
      * @param id
      * @param issuerId
      * @param cardFaceNumber
      * @param termOfValidity
+     * @param wallet
+     * @param changeWallet
      * @param appearance
      * @throws IllegalArgumentException if id is null or empty
-     * @throws IllegalArgumentException if Issuer does not exist
+     * @throws IllegalArgumentException if issuer does not exist
+     * @throws IllegalArgumentException if issuer does not exist
      */
-    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Appearance appearance) {
+    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Appearance appearance) {
         setId(id);
         setIssuerId(issuerId);
-        setTermOfValidity(termOfValidity);
         setCardFaceNumber(cardFaceNumber);
+        setTermOfValidity(termOfValidity);
+        setWallet(wallet);
+        setChangeWallet(changeWallet);
         setAppearance(appearance);
+    }
+
+    public Card(String id, String issuerId) {
+        this(id, issuerId, id, TermOfValidity.PERMANENCE, Wallet.zero(Locale.getDefault()), ChangeWallet.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
@@ -79,8 +84,27 @@ public abstract class Card {
     }
 
     private void setCardFaceNumber(String cardFaceNumber) {
-        cardFaceNumber = Objects.requireNonNull(cardFaceNumber, "cardFaceNumber").trim();
+        if (cardFaceNumber == null)
+            cardFaceNumber = id;
         this.cardFaceNumber = cardFaceNumber;
+    }
+
+    private void setTermOfValidity(TermOfValidity termOfValidity) {
+        if (termOfValidity == null)
+            termOfValidity = TermOfValidity.PERMANENCE;
+        this.termOfValidity = termOfValidity;
+    }
+
+    private void setChangeWallet(ChangeWallet changeWallet) {
+        if (changeWallet == null)
+            changeWallet = ChangeWallet.zero(Locale.getDefault());
+        this.changeWallet = changeWallet;
+    }
+
+    private void setWallet(Wallet wallet) {
+        if (wallet == null)
+            wallet = Wallet.zero(Locale.getDefault());
+        this.wallet = wallet;
     }
 
     private void setAppearance(Appearance appearance) {
@@ -99,14 +123,42 @@ public abstract class Card {
         return termOfValidity;
     }
 
-    private void setTermOfValidity(TermOfValidity termOfValidity) {
-        if (termOfValidity == null)
-            termOfValidity = TermOfValidity.PERMANENCE;
-        this.termOfValidity = termOfValidity;
+    public boolean isLimitedPeriod() {
+        return termOfValidity.isLimitedPeriod();
     }
 
     public Appearance appearance() {
         return appearance;
+    }
+
+    public String cardFaceNumber() {
+        return cardFaceNumber;
+    }
+
+    public Wallet wallet() {
+        return wallet;
+    }
+
+    public ChangeWallet changeWallet() {
+        return changeWallet;
+    }
+
+    public void pay(MonetaryAmount amount) {
+        if (isLimitedPeriod()) {
+
+        }
+    }
+
+    public void prepay(MonetaryAmount amount, MonetaryAmount give) {
+
+    }
+
+    public void withdrawal(MonetaryAmount amount) {
+
+    }
+
+    public void withdrawalSmallChange(MonetaryAmount amount) {
+
     }
 
     @Override
@@ -122,5 +174,18 @@ public abstract class Card {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("issuerId='" + issuerId + "'")
+                .add("termOfValidity=" + termOfValidity)
+                .add("appearance=" + appearance)
+                .add("cardFaceNumber='" + cardFaceNumber + "'")
+                .add("wallet=" + wallet)
+                .add("changeWallet=" + changeWallet)
+                .toString();
     }
 }
