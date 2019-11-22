@@ -65,8 +65,11 @@ public class WalletTest {
         assertEquals(rmb.balance(), FastMoney.of(5.5, Monetary.getCurrency(Locale.CHINA)));
         rmb = rmb.pay(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RED_ENVELOPES_FIRST);
         assertEquals(rmb.give(), FastMoney.of(4.5, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.pay(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RATIO);
+        assertEquals(rmb.balance(), FastMoney.of(2.2, Monetary.getCurrency(Locale.CHINA)));
+        assertEquals(rmb.give(), FastMoney.of(1.8, Monetary.getCurrency(Locale.CHINA)));
         thrown.expect(InsufficientBalanceException.class);
-        rmb = rmb.pay(FastMoney.of(10.1, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.pay(FastMoney.of(4.00001, Monetary.getCurrency(Locale.CHINA)));
     }
 
 }
