@@ -34,4 +34,10 @@ public class DomainRegistry {
             return false;
         return true;
     }
+
+    public static boolean validCustomerId(String customerId) {
+        if (customerId == null || customerId.isEmpty())
+            return false;
+        return true;
+    }
 }

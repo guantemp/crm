@@ -139,17 +139,13 @@ public abstract class Card {
         return wallet;
     }
 
-    public ChangeWallet changeWallet() {
-        return changeWallet;
-    }
-
-    public void pay(MonetaryAmount amount) {
+    public void debit(MonetaryAmount amount) {
         if (isLimitedPeriod()) {
 
         }
     }
 
-    public void prepay(MonetaryAmount amount, MonetaryAmount give) {
+    public void credit(MonetaryAmount amount, MonetaryAmount give) {
 
     }
 

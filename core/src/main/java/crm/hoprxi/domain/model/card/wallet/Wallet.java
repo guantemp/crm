@@ -42,12 +42,12 @@ public class Wallet {
         }
 
         @Override
-        public Wallet pay(MonetaryAmount amount, PaymentStrategy strategy) {
+        public Wallet debit(MonetaryAmount amount, PaymentStrategy strategy) {
             return this;
         }
 
         @Override
-        public Wallet pay(MonetaryAmount amount) {
+        public Wallet debit(MonetaryAmount amount) {
             return this;
         }
     };
@@ -95,9 +95,8 @@ public class Wallet {
     /**
      * @param balanceAmount must is positive
      * @param giveAmount    must is positive
-     * @throws ExceedQuotaException if balance or give is greater limit(when the limit is positive)
      */
-    public Wallet prepay(MonetaryAmount balanceAmount, MonetaryAmount giveAmount) {
+    public Wallet credit(MonetaryAmount balanceAmount, MonetaryAmount giveAmount) {
         if ((balanceAmount == null || balanceAmount.isNegativeOrZero()) && (giveAmount == null || giveAmount.isNegativeOrZero()))
             return this;
         if (balanceAmount == null)
@@ -109,8 +108,8 @@ public class Wallet {
         return new Wallet(balanceTemp, giveTemp);
     }
 
-    public Wallet prepay(MonetaryAmount balanceAmount) {
-        return prepay(balanceAmount, FastMoney.zero(balance.getCurrency()));
+    public Wallet credit(MonetaryAmount balanceAmount) {
+        return credit(balanceAmount, FastMoney.zero(balance.getCurrency()));
     }
 
     public Wallet withdrawal(MonetaryAmount amount) {
@@ -129,7 +128,7 @@ public class Wallet {
         return new Wallet(balance, give.subtract(amount));
     }
 
-    public Wallet pay(MonetaryAmount amount, PaymentStrategy strategy) {
+    public Wallet debit(MonetaryAmount amount, PaymentStrategy strategy) {
         MonetaryAmount available = balance.add(give);
         if (available.isLessThan(amount))
             throw new InsufficientBalanceException("insufficient balance");
@@ -162,8 +161,12 @@ public class Wallet {
         return new Wallet(balance, give);
     }
 
-    public Wallet pay(MonetaryAmount amount) {
-        return pay(amount, PaymentStrategy.BALANCE_FIRST);
+    public Wallet debit(MonetaryAmount amount) {
+        return debit(amount, PaymentStrategy.RATIO);
+    }
+
+    public Wallet subtract(Wallet wallet) {
+        return new Wallet(balance.subtract(wallet.balance), give.subtract(wallet.give));
     }
 
     @Override

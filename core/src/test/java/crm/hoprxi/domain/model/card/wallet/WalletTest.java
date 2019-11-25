@@ -42,7 +42,7 @@ public class WalletTest {
     public void zero() {
         Wallet rmb = Wallet.zero(Locale.getDefault());
         assertTrue(rmb == Wallet.zero(Locale.CHINESE));
-        rmb.pay(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
+        rmb.debit(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         rmb.withdrawal(FastMoney.of(120, Monetary.getCurrency(Locale.CHINA)));
         assertTrue(rmb == Wallet.zero(Locale.PRC));
         assertTrue(rmb == Wallet.zero(Locale.CHINA));
@@ -53,23 +53,24 @@ public class WalletTest {
     @Test
     public void trade() {
         Wallet rmb = Wallet.zero(Locale.getDefault());
-        rmb = rmb.prepay(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.credit(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.balance(), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(0, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.prepay(FastMoney.of(200, Monetary.getCurrency(Locale.CHINA)), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.credit(FastMoney.of(200, Monetary.getCurrency(Locale.CHINA)), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.balance(), FastMoney.of(220, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         rmb = rmb.withdrawal(FastMoney.of(150, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.balance(), FastMoney.of(70, Monetary.getCurrency(Locale.CHINA)));
-        rmb.pay(FastMoney.of(64.50, Monetary.getCurrency(Locale.CHINA)));
+        rmb.debit(FastMoney.of(64.50, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.balance(), FastMoney.of(5.5, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.pay(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RED_ENVELOPES_FIRST);
+        rmb = rmb.debit(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RED_ENVELOPES_FIRST);
         assertEquals(rmb.give(), FastMoney.of(4.5, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.pay(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RATIO);
+        rmb = rmb.debit(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RATIO);
         assertEquals(rmb.balance(), FastMoney.of(2.2, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(1.8, Monetary.getCurrency(Locale.CHINA)));
         thrown.expect(InsufficientBalanceException.class);
-        rmb = rmb.pay(FastMoney.of(4.00001, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.debit(FastMoney.of(4.00001, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.withdrawal(FastMoney.of(2.20001, Monetary.getCurrency(Locale.CHINA)));
     }
 
 }

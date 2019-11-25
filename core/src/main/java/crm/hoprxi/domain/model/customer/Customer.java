@@ -19,9 +19,13 @@ import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.rmf.Credit;
+import mi.hoprxi.crypto.EncryptionService;
+import mi.hoprxi.crypto.SM3Encryption;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -35,12 +39,13 @@ public abstract class Customer {
         }
     };
     private static final int MAX_LENGTH = 255;
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
     private URI headPortrait;
     private Credit credit;
-
+    private String transactionPassword;
     private Issuer issuer;
 
 
@@ -58,6 +63,17 @@ public abstract class Customer {
 
     protected void setId(String id) {
         this.id = Objects.requireNonNull(id, "id required");
+    }
+
+    private void setPassword(String transactionPassword) {
+        Objects.requireNonNull(transactionPassword, "password is required");
+        if (!transactionPassword.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(transactionPassword);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("password must 6 digit number");
+        }
+        EncryptionService encryption = new SM3Encryption();
+        this.transactionPassword = encryption.encrypt(transactionPassword);
     }
 
     public void rename(String newName) {

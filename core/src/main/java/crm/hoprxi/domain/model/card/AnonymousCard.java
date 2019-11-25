@@ -45,6 +45,7 @@ public class AnonymousCard extends Card {
     @Override
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
+                .add("super=" + super.toString())
                 .add("integral=" + integral)
                 .toString();
     }
