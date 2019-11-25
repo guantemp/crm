@@ -141,7 +141,7 @@ public abstract class Card {
 
     public void debit(MonetaryAmount amount) {
         if (isLimitedPeriod()) {
-
+            wallet.debit(amount);
         }
     }
 

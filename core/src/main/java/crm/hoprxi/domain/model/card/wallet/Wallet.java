@@ -161,6 +161,7 @@ public class Wallet {
         return new Wallet(balance, give);
     }
 
+
     public Wallet debit(MonetaryAmount amount) {
         return debit(amount, PaymentStrategy.RATIO);
     }

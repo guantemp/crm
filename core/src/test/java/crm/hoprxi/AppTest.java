@@ -53,8 +53,9 @@ public class AppTest {
         System.out.println(Monetary.getCurrency(Locale.US).getNumericCode() + " " + Monetary.getCurrency(Locale.US).getCurrencyCode());
         System.out.println(Monetary.getCurrency(Locale.CHINA).getNumericCode() + " " + Monetary.getCurrency(Locale.CHINA).getCurrencyCode());
 
-        MonetaryAmount amount = Money.of(new BigDecimal("223.4536575763474262634657686795745643647678083534654"), "CNY");
-        System.out.println("amount.signum():" + amount.signum());
+        MonetaryAmount amount = Money.of(new BigDecimal("-223.4536575763474262634657686795745643647678083534654"), "CNY");
+        System.out.println("amount.signum() +-:" + amount.signum());
+        System.out.println("amount.plus():" + amount.plus());
         System.out.println("amount.abs():" + amount.abs());
         System.out.println("amount.remainder(1):" + amount.remainder(1));
         System.out.println("amount.remainder(5):" + amount.remainder(5));
@@ -64,7 +65,7 @@ public class AppTest {
         System.out.println("amount.negate():" + amount.negate());
         System.out.println("amount.getNumber():" + amount.getNumber());
         System.out.println("amount.etNumberStripped():" + ((Money) amount).getNumberStripped());
-        System.out.println("amount.abs().getNumber().doubleValueExact():" + amount.abs().getNumber().doubleValueExact());
+        System.out.println("amount.getNumber().doubleValueExact():" + amount.getNumber().doubleValueExact());
 
 
         System.out.println("\nFastMoney:");

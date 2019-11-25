@@ -17,7 +17,7 @@
 package crm.hoprxi.domain.model.customer.person;
 
 import crm.hoprxi.domain.model.customer.Customer;
-import crm.hoprxi.domain.model.customer.certificates.IdentityCard;
+import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.rmf.Credit;
 
 import java.net.URI;
@@ -33,7 +33,6 @@ public class Person extends Customer {
     private PostalAddressBook postalAddressBook;
     private IdentityCard identityCard;
     private MonthDay birthday;
-    private SmallChange smallChange;
 
     public Person(String id, String name) {
         this(id, name, Credit.NO_CREDIT, null, null, null, null);
@@ -45,11 +44,6 @@ public class Person extends Customer {
         this.identityCard = identityCard;
         this.birthday = birthday;
     }
-
-    public SmallChange smallChange() {
-        return smallChange;
-    }
-
 
     public PostalAddressBook postalAddressBook() {
         return postalAddressBook;

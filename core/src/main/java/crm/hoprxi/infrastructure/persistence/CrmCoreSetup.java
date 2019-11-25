@@ -29,14 +29,10 @@ import java.util.Collection;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2018-05-14
+ * @version 0.0.1 2019-11-25
  */
 
-public final class CrmCoreSetup {
-
-    public static void main(String[] args) {
-        CrmCoreSetup.setup("crm");
-    }
+public class CrmCoreSetup {
 
     public static void setup(String databaseName) {
         ArangoDB arangoDB = ArangoDBUtil.getResource();
@@ -46,7 +42,7 @@ public final class CrmCoreSetup {
         }
         arangoDB.createDatabase(databaseName);
         //vertex
-        for (String s : new String[]{"customer", "frozen_customer", "card", "frozen_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
+        for (String s : new String[]{"customer", "frozen_customer", "card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);
@@ -60,13 +56,9 @@ public final class CrmCoreSetup {
         arangoDB.db(databaseName).collection("frozen_customer").ensureSkiplistIndex(index, skiplistIndexOptions);
         //name.mnemonic
         index.clear();
-        index.add("number");
-        index.add("contact.telephone");
-        index.add("contact.mobilePhone");
-        index.add("issuerId");
-        HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(false).sparse(true);
+        index.add("cardFaceNumber");
+        HashIndexOptions hashIndexOptions = new HashIndexOptions().sparse(true);
         arangoDB.db(databaseName).collection("card").ensureHashIndex(index, hashIndexOptions);
-        arangoDB.db(databaseName).collection("frozen_card").ensureHashIndex(index, hashIndexOptions);
 
         //edge
         for (String s : new String[]{"belong", "next", "has"}) {

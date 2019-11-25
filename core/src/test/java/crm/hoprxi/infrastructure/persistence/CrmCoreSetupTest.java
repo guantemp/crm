@@ -14,13 +14,19 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.customer.certificates;
+package crm.hoprxi.infrastructure.persistence;
+
+import org.junit.Test;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-07-18
+ * @version 0.0.1 2019-11-25
  */
-public enum Sex {
-    WOMEN, MAN,
+public class CrmCoreSetupTest {
+
+    @Test
+    public void setup() {
+        CrmCoreSetup.setup("crm");
+    }
 }

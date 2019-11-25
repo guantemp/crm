@@ -55,18 +55,12 @@ public class CreditCard extends Card {
         super.debit(amount);
     }
 
-    @Override
-    public void credit(MonetaryAmount amount, MonetaryAmount give) {
-        super.credit(amount, give);
-    }
-
-    @Override
-    public void withdrawal(MonetaryAmount amount) {
-        super.withdrawal(amount);
-    }
-
-    @Override
-    public void withdrawalSmallChange(MonetaryAmount amount) {
-        super.withdrawalSmallChange(amount);
+    public void overdraw(MonetaryAmount amount) {
+        if (wallet().balance().isPositive()) {
+            double d1 = wallet().balance().getNumber().doubleValue();
+            double d2 = wallet().give().getNumber().doubleValue();
+            double d3 = d1 / (d1 + d2);
+            MonetaryAmount temp = amount.multiply(d3);
+        }
     }
 }

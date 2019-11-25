@@ -16,21 +16,52 @@
 
 package crm.hoprxi.domain.model.card;
 
+import mi.hoprxi.id.ObjectId;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-11-22
  */
 public interface AnonymousCardRepository {
+    /**
+     * @param anonymousCard
+     */
     void save(AnonymousCard anonymousCard);
 
+    /**
+     * @param id
+     * @return
+     */
     AnonymousCard find(String id);
 
+    /**
+     * @return
+     */
     int size();
 
-    String nextIdentity();
+    /**
+     * @return
+     */
+    default String nextIdentity() {
+        return new ObjectId().id();
+    }
 
+    /**
+     * @param offset
+     * @param limit
+     * @return
+     */
     AnonymousCard[] findAll(int offset, int limit);
 
+    /**
+     * @param id
+     */
     void remove(String id);
+
+    /**
+     * @param cardFaceNumber
+     * @return
+     */
+    AnonymousCard findByCardFaceNumber(String cardFaceNumber);
 }

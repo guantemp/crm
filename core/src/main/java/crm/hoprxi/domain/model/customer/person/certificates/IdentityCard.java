@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model.customer.certificates;
+package crm.hoprxi.domain.model.customer.person.certificates;
 
 
 import crm.hoprxi.domain.model.collaborator.Address;

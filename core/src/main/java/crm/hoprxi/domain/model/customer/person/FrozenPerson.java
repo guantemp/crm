@@ -16,7 +16,7 @@
 package crm.hoprxi.domain.model.customer.person;
 
 import crm.hoprxi.domain.model.customer.Customer;
-import crm.hoprxi.domain.model.customer.certificates.IdentityCard;
+import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.rmf.Credit;
 
 import java.net.URI;

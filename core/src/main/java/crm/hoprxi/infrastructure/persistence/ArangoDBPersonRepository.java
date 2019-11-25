@@ -27,9 +27,9 @@ import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
-import crm.hoprxi.domain.model.customer.certificates.IdentityCard;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
+import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
