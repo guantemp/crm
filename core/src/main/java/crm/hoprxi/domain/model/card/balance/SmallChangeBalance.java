@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model.card.wallet;
+package crm.hoprxi.domain.model.card.balance;
 
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -28,34 +28,39 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 2019-11-14
  */
-public class ChangeWallet {
-    private static final ChangeWallet RMB_ZERO = new ChangeWallet(Money.zero(Monetary.getCurrency(Locale.CHINA)), QuotaEnum.ZERO) {
+public class SmallChangeBalance {
+    private static final SmallChangeBalance RMB_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.CHINA)), ChangDenominationEnum.ZERO) {
         @Override
-        public ChangeWallet pay(MonetaryAmount amount) {
+        public SmallChangeBalance pay(MonetaryAmount amount) {
             return this;
         }
     };
-    private static final ChangeWallet USD_ZERO = new ChangeWallet(Money.zero(Monetary.getCurrency(Locale.US)), QuotaEnum.ZERO);
+    private static final SmallChangeBalance USD_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.US)), ChangDenominationEnum.ZERO) {
+        @Override
+        public SmallChangeBalance pay(MonetaryAmount amount) {
+            return this;
+        }
+    };
     private MonetaryAmount balance;
-    private QuotaEnum quotaEnum;
+    private ChangDenominationEnum changDenominationEnum;
 
-    public ChangeWallet(MonetaryAmount balance, QuotaEnum quotaEnum) {
+    public SmallChangeBalance(MonetaryAmount balance, ChangDenominationEnum changDenominationEnum) {
         setBalance(balance);
-        setQuotaEnum(quotaEnum);
+        setChangDenominationEnum(changDenominationEnum);
     }
 
-    public static ChangeWallet zero(Locale locale) {
+    public static SmallChangeBalance zero(Locale locale) {
         if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
             return RMB_ZERO;
         if (locale == Locale.US)
             return USD_ZERO;
-        return new ChangeWallet(FastMoney.zero(Monetary.getCurrency(locale)), QuotaEnum.ZERO);
+        return new SmallChangeBalance(FastMoney.zero(Monetary.getCurrency(locale)), ChangDenominationEnum.ZERO);
     }
 
-    private void setQuotaEnum(QuotaEnum quotaEnum) {
-        if (quotaEnum == null)
-            quotaEnum = QuotaEnum.ZERO;
-        this.quotaEnum = quotaEnum;
+    private void setChangDenominationEnum(ChangDenominationEnum changDenominationEnum) {
+        if (changDenominationEnum == null)
+            changDenominationEnum = ChangDenominationEnum.ZERO;
+        this.changDenominationEnum = changDenominationEnum;
     }
 
     private void setBalance(MonetaryAmount balance) {
@@ -69,34 +74,34 @@ public class ChangeWallet {
         return balance;
     }
 
-    public QuotaEnum quota() {
-        return quotaEnum;
+    public ChangDenominationEnum changDenomination() {
+        return changDenominationEnum;
     }
 
     public Rounded round(MonetaryAmount receivables) {
-        return quotaEnum.round(receivables, balance);
+        return changDenominationEnum.round(receivables, balance);
     }
 
-    public ChangeWallet pay(MonetaryAmount amount) {
+    public SmallChangeBalance pay(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "newBalance required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("pay amount must large zero");
         if (amount.isGreaterThan(balance))
             throw new InsufficientBalanceException("Sorry, your credit is running low");
-        return new ChangeWallet(balance.subtract(amount), quotaEnum);
+        return new SmallChangeBalance(balance.subtract(amount), changDenominationEnum);
     }
 
-    public ChangeWallet deposit(MonetaryAmount amount) {
+    public SmallChangeBalance deposit(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("deposit amount must large zero");
-        return new ChangeWallet(balance.add(amount), quotaEnum);
+        return new SmallChangeBalance(balance.add(amount), changDenominationEnum);
     }
 
-    public ChangeWallet changeQuota(QuotaEnum newQuotaEnum) {
-        Objects.requireNonNull(newQuotaEnum, "newQuota required");
-        if (quotaEnum != newQuotaEnum)
-            return new ChangeWallet(balance, newQuotaEnum);
+    public SmallChangeBalance changeChangDenominationEnum(ChangDenominationEnum newChangDenominationEnum) {
+        Objects.requireNonNull(newChangDenominationEnum, "newQuota required");
+        if (changDenominationEnum != newChangDenominationEnum)
+            return new SmallChangeBalance(balance, newChangDenominationEnum);
         return this;
     }
 }

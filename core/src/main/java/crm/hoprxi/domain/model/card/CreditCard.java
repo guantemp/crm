@@ -20,8 +20,8 @@ package crm.hoprxi.domain.model.card;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.LineOfCredit;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
-import crm.hoprxi.domain.model.card.wallet.Wallet;
+import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.SmallChangeBalance;
 
 import javax.money.MonetaryAmount;
 
@@ -34,8 +34,8 @@ public class CreditCard extends Card {
     private String customerId;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(String id, String issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, LineOfCredit lineOfCredit, Wallet wallet, ChangeWallet changeWallet, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, wallet, changeWallet, appearance);
+    public CreditCard(String id, String issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, LineOfCredit lineOfCredit, Balance balance, SmallChangeBalance smallChangeBalance, Appearance appearance) {
+        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChangeBalance, appearance);
         setCustomerId(customerId);
         setLineOfCredit(lineOfCredit);
     }
@@ -56,9 +56,9 @@ public class CreditCard extends Card {
     }
 
     public void overdraw(MonetaryAmount amount) {
-        if (wallet().balance().isPositive()) {
-            double d1 = wallet().balance().getNumber().doubleValue();
-            double d2 = wallet().give().getNumber().doubleValue();
+        if (balance().valuable().isPositive()) {
+            double d1 = balance().valuable().getNumber().doubleValue();
+            double d2 = balance().give().getNumber().doubleValue();
             double d3 = d1 / (d1 + d2);
             MonetaryAmount temp = amount.multiply(d3);
         }

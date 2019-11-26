@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.card.wallet;
+package crm.hoprxi.domain.model.card.balance;
 
 import org.javamoney.moneta.Money;
 

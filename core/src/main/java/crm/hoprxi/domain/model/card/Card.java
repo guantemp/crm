@@ -20,8 +20,8 @@ import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
-import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
-import crm.hoprxi.domain.model.card.wallet.Wallet;
+import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.SmallChangeBalance;
 
 import javax.money.MonetaryAmount;
 import java.util.Locale;
@@ -40,33 +40,33 @@ public abstract class Card {
     private TermOfValidity termOfValidity;
     private Appearance appearance;
     private String cardFaceNumber;
-    private Wallet wallet;
-    private ChangeWallet changeWallet;
+    private Balance balance;
+    private SmallChangeBalance smallChangeBalance;
 
     /**
      * @param id
      * @param issuerId
      * @param cardFaceNumber
      * @param termOfValidity
-     * @param wallet
-     * @param changeWallet
+     * @param balance
+     * @param smallChangeBalance
      * @param appearance
      * @throws IllegalArgumentException if id is null or empty
      * @throws IllegalArgumentException if issuer does not exist
      * @throws IllegalArgumentException if issuer does not exist
      */
-    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Appearance appearance) {
+    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChangeBalance smallChangeBalance, Appearance appearance) {
         setId(id);
         setIssuerId(issuerId);
         setCardFaceNumber(cardFaceNumber);
         setTermOfValidity(termOfValidity);
-        setWallet(wallet);
-        setChangeWallet(changeWallet);
+        setBalance(balance);
+        setSmallChangeBalance(smallChangeBalance);
         setAppearance(appearance);
     }
 
     public Card(String id, String issuerId) {
-        this(id, issuerId, id, TermOfValidity.PERMANENCE, Wallet.zero(Locale.getDefault()), ChangeWallet.zero(Locale.getDefault()), AppearanceFactory.getDefault());
+        this(id, issuerId, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChangeBalance.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
@@ -95,16 +95,16 @@ public abstract class Card {
         this.termOfValidity = termOfValidity;
     }
 
-    private void setChangeWallet(ChangeWallet changeWallet) {
-        if (changeWallet == null)
-            changeWallet = ChangeWallet.zero(Locale.getDefault());
-        this.changeWallet = changeWallet;
+    private void setSmallChangeBalance(SmallChangeBalance smallChangeBalance) {
+        if (smallChangeBalance == null)
+            smallChangeBalance = SmallChangeBalance.zero(Locale.getDefault());
+        this.smallChangeBalance = smallChangeBalance;
     }
 
-    private void setWallet(Wallet wallet) {
-        if (wallet == null)
-            wallet = Wallet.zero(Locale.getDefault());
-        this.wallet = wallet;
+    private void setBalance(Balance balance) {
+        if (balance == null)
+            balance = Balance.zero(Locale.getDefault());
+        this.balance = balance;
     }
 
     private void setAppearance(Appearance appearance) {
@@ -135,13 +135,13 @@ public abstract class Card {
         return cardFaceNumber;
     }
 
-    public Wallet wallet() {
-        return wallet;
+    public Balance balance() {
+        return balance;
     }
 
     public void debit(MonetaryAmount amount) {
         if (isLimitedPeriod()) {
-            wallet.debit(amount);
+            balance.debit(amount);
         }
     }
 
@@ -180,8 +180,8 @@ public abstract class Card {
                 .add("termOfValidity=" + termOfValidity)
                 .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
-                .add("wallet=" + wallet)
-                .add("changeWallet=" + changeWallet)
+                .add("wallet=" + balance)
+                .add("changeWallet=" + smallChangeBalance)
                 .toString();
     }
 }

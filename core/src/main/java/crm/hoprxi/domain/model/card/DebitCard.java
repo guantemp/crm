@@ -18,8 +18,8 @@ package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
-import crm.hoprxi.domain.model.card.wallet.Wallet;
+import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.SmallChangeBalance;
 
 import java.util.StringJoiner;
 
@@ -31,8 +31,8 @@ import java.util.StringJoiner;
 public class DebitCard extends Card {
     private String customerId;
 
-    public DebitCard(String id, String issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, wallet, changeWallet, appearance);
+    public DebitCard(String id, String issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChangeBalance smallChangeBalance, Appearance appearance) {
+        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChangeBalance, appearance);
         setCustomerId(customerId);
     }
 

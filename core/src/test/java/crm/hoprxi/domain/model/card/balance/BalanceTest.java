@@ -14,9 +14,8 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.card.wallet;
+package crm.hoprxi.domain.model.card.balance;
 
-import crm.hoprxi.domain.model.card.PaymentStrategy;
 import org.javamoney.moneta.FastMoney;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,40 +32,40 @@ import static org.junit.Assert.assertTrue;
  * @since JDK8.0
  * @version 0.0.1 2019-11-22
  */
-public class WalletTest {
+public class BalanceTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void zero() {
-        Wallet rmb = Wallet.zero(Locale.getDefault());
-        assertTrue(rmb == Wallet.zero(Locale.CHINESE));
+        Balance rmb = Balance.zero(Locale.getDefault());
+        assertTrue(rmb == Balance.zero(Locale.CHINESE));
         rmb.debit(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         rmb.withdrawal(FastMoney.of(120, Monetary.getCurrency(Locale.CHINA)));
-        assertTrue(rmb == Wallet.zero(Locale.PRC));
-        assertTrue(rmb == Wallet.zero(Locale.CHINA));
-        Wallet usd = Wallet.zero(Locale.US);
-        assertTrue(usd == Wallet.zero(Locale.US));
+        assertTrue(rmb == Balance.zero(Locale.PRC));
+        assertTrue(rmb == Balance.zero(Locale.CHINA));
+        Balance usd = Balance.zero(Locale.US);
+        assertTrue(usd == Balance.zero(Locale.US));
     }
 
     @Test
     public void trade() {
-        Wallet rmb = Wallet.zero(Locale.getDefault());
+        Balance rmb = Balance.zero(Locale.getDefault());
         rmb = rmb.credit(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
-        assertEquals(rmb.balance(), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
+        assertEquals(rmb.valuable(), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(0, Monetary.getCurrency(Locale.CHINA)));
         rmb = rmb.credit(FastMoney.of(200, Monetary.getCurrency(Locale.CHINA)), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
-        assertEquals(rmb.balance(), FastMoney.of(220, Monetary.getCurrency(Locale.CHINA)));
+        assertEquals(rmb.valuable(), FastMoney.of(220, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         rmb = rmb.withdrawal(FastMoney.of(150, Monetary.getCurrency(Locale.CHINA)));
-        assertEquals(rmb.balance(), FastMoney.of(70, Monetary.getCurrency(Locale.CHINA)));
+        assertEquals(rmb.valuable(), FastMoney.of(70, Monetary.getCurrency(Locale.CHINA)));
         rmb.debit(FastMoney.of(64.50, Monetary.getCurrency(Locale.CHINA)));
-        assertEquals(rmb.balance(), FastMoney.of(5.5, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.debit(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RED_ENVELOPES_FIRST);
+        assertEquals(rmb.valuable(), FastMoney.of(5.5, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.debit(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(4.5, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.debit(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)), PaymentStrategy.RATIO);
-        assertEquals(rmb.balance(), FastMoney.of(2.2, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.debit(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)));
+        assertEquals(rmb.valuable(), FastMoney.of(2.2, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(1.8, Monetary.getCurrency(Locale.CHINA)));
         thrown.expect(InsufficientBalanceException.class);
         rmb = rmb.debit(FastMoney.of(4.00001, Monetary.getCurrency(Locale.CHINA)));

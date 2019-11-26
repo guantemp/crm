@@ -16,8 +16,8 @@
 package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.wallet.ChangeWallet;
-import crm.hoprxi.domain.model.card.wallet.Wallet;
+import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.SmallChangeBalance;
 import crm.hoprxi.domain.model.integral.Integral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,8 @@ public class AnonymousCard extends Card {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousCard.class);
     private Integral integral;
 
-    public AnonymousCard(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Wallet wallet, ChangeWallet changeWallet, Integral integral, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, wallet, changeWallet, appearance);
+    public AnonymousCard(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChangeBalance smallChangeBalance, Integral integral, Appearance appearance) {
+        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChangeBalance, appearance);
         this.integral = integral;
     }
 

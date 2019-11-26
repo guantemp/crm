@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.card.wallet;
+package crm.hoprxi.domain.model.card.balance;
 
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
@@ -25,54 +25,54 @@ import org.junit.Test;
  * @since JDK8.0
  * @version 0.0.1 2019-11-18
  */
-public class ChangeWalletTest {
+public class SmallChangeBalanceTest {
 
     @Test
     public void balance() {
-        ChangeWallet changeWallet = new ChangeWallet(Money.of(0.55, "CNY"), QuotaEnum.ONE);
-        Rounded rounded = changeWallet.round(Money.of(5.25, "CNY"));
+        SmallChangeBalance smallChangeBalance = new SmallChangeBalance(Money.of(0.55, "CNY"), ChangDenominationEnum.ONE);
+        Rounded rounded = smallChangeBalance.round(Money.of(5.25, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.25, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.pay(rounded.remainder().negate());
-        rounded = changeWallet.round(Money.of(4.75, "CNY"));
+        smallChangeBalance = smallChangeBalance.pay(rounded.remainder().negate());
+        rounded = smallChangeBalance.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.deposit(rounded.remainder());
-        Assert.assertTrue(Money.of(0.55, "CNY").isEqualTo(changeWallet.balance()));
+        smallChangeBalance = smallChangeBalance.deposit(rounded.remainder());
+        Assert.assertTrue(Money.of(0.55, "CNY").isEqualTo(smallChangeBalance.balance()));
 
-        changeWallet = new ChangeWallet(Money.of(4.55, "CNY"), QuotaEnum.FIVE);
-        rounded = changeWallet.round(Money.of(4.75, "CNY"));
+        smallChangeBalance = new SmallChangeBalance(Money.of(4.55, "CNY"), ChangDenominationEnum.FIVE);
+        rounded = smallChangeBalance.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.deposit(rounded.remainder());
+        smallChangeBalance = smallChangeBalance.deposit(rounded.remainder());
 
-        rounded = changeWallet.round(Money.of(6.73, "CNY"));
+        rounded = smallChangeBalance.round(Money.of(6.73, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-1.73, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.pay(rounded.remainder().negate());
+        smallChangeBalance = smallChangeBalance.pay(rounded.remainder().negate());
 
-        rounded = changeWallet.round(Money.of(3.02, "CNY"));
+        rounded = smallChangeBalance.round(Money.of(3.02, "CNY"));
         Assert.assertTrue(Money.of(0, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-3.02, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.pay(rounded.remainder().negate());
+        smallChangeBalance = smallChangeBalance.pay(rounded.remainder().negate());
 
-        changeWallet = changeWallet.changeQuota(QuotaEnum.ONE);
-        rounded = changeWallet.round(Money.of(6.73, "CNY"));
+        smallChangeBalance = smallChangeBalance.changeChangDenominationEnum(ChangDenominationEnum.ONE);
+        rounded = smallChangeBalance.round(Money.of(6.73, "CNY"));
         Assert.assertTrue(Money.of(7, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.27, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.deposit(rounded.remainder());
+        smallChangeBalance = smallChangeBalance.deposit(rounded.remainder());
 
-        rounded = changeWallet.round(Money.of(11.32, "CNY"));
+        rounded = smallChangeBalance.round(Money.of(11.32, "CNY"));
         Assert.assertTrue(Money.of(11, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.32, "CNY").isEqualTo(rounded.remainder()));
-        changeWallet = changeWallet.pay(rounded.remainder().negate());
-        Assert.assertTrue(Money.of(0, "CNY").isEqualTo(changeWallet.balance()));
+        smallChangeBalance = smallChangeBalance.pay(rounded.remainder().negate());
+        Assert.assertTrue(Money.of(0, "CNY").isEqualTo(smallChangeBalance.balance()));
 
-        changeWallet = new ChangeWallet(Money.of(0, "CNY"), QuotaEnum.ZERO);
-        rounded = changeWallet.round(Money.of(3.28, "CNY"));
+        smallChangeBalance = new SmallChangeBalance(Money.of(0, "CNY"), ChangDenominationEnum.ZERO);
+        rounded = smallChangeBalance.round(Money.of(3.28, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
         Assert.assertTrue(rounded.integer().isZero());
-        rounded = changeWallet.round(Money.of(7.89, "CNY"));
+        rounded = smallChangeBalance.round(Money.of(7.89, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
         Assert.assertTrue(rounded.integer().isZero());
     }

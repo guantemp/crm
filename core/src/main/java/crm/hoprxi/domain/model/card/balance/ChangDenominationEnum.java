@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model.card.wallet;
+package crm.hoprxi.domain.model.card.balance;
 
 
 import org.javamoney.moneta.FastMoney;
@@ -26,7 +26,7 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 2019-11-15
  */
-public enum QuotaEnum {
+public enum ChangDenominationEnum {
     ZERO(0) {
         @Override
         public Rounded round(MonetaryAmount receivables, MonetaryAmount balance) {
@@ -38,7 +38,7 @@ public enum QuotaEnum {
 
     protected int factor;
 
-    QuotaEnum(int factor) {
+    ChangDenominationEnum(int factor) {
         this.factor = factor;
     }
 
