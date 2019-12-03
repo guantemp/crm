@@ -30,23 +30,14 @@ import java.util.StringJoiner;
  */
 public class Balance {
     private static final Balance RMB_ZERO = new Balance(FastMoney.zero(Monetary.getCurrency(Locale.CHINA)), FastMoney.zero(Monetary.getCurrency(Locale.CHINA))) {
+
         @Override
-        public Balance withdrawal(MonetaryAmount amount) {
+        public Balance pay(MonetaryAmount amount, PaymentStrategy strategy) {
             return this;
         }
 
         @Override
-        public Balance withdrawalOfGive(MonetaryAmount amount) {
-            return this;
-        }
-
-        @Override
-        public Balance debit(MonetaryAmount amount, PaymentStrategy strategy) {
-            return this;
-        }
-
-        @Override
-        public Balance debit(MonetaryAmount amount) {
+        public Balance pay(MonetaryAmount amount) {
             return this;
         }
     };
@@ -75,6 +66,8 @@ public class Balance {
     private void setGive(MonetaryAmount give) {
         if (give == null || give.isNegative())
             throw new IllegalArgumentException("give required positive");
+        if (!give.getCurrency().equals(valuable.getCurrency()))
+            throw new IllegalArgumentException("give currency equal valuable currency");
         this.give = give;
     }
 
@@ -91,43 +84,30 @@ public class Balance {
         return give;
     }
 
-    /**
-     * @param valuableAmount must is positive
-     * @param giveAmount     must is positive
-     */
-    Balance credit(MonetaryAmount valuableAmount, MonetaryAmount giveAmount) {
-        if ((valuableAmount == null || valuableAmount.isNegativeOrZero()) && (giveAmount == null || giveAmount.isNegativeOrZero()))
-            return this;
-        if (valuableAmount == null)
-            valuableAmount = FastMoney.zero(valuable.getCurrency());
-        if (giveAmount == null)
-            giveAmount = FastMoney.zero(give.getCurrency());
-        MonetaryAmount balanceTemp = valuable.add(valuableAmount);
-        MonetaryAmount giveTemp = give.add(giveAmount);
-        return new Balance(balanceTemp, giveTemp);
+    public MonetaryAmount total() {
+        return valuable.add(give);
     }
 
-    Balance credit(MonetaryAmount valuableAmount) {
+    /**
+     * @param valuable
+     * @param give     must is positive
+     */
+    public Balance credit(MonetaryAmount valuable, MonetaryAmount give) {
+        if (valuable == null && (give == null || give.isNegativeOrZero()))
+            return this;
+        if (valuable == null)
+            valuable = FastMoney.zero(this.valuable.getCurrency());
+        if (give == null)
+            give = FastMoney.zero(this.give.getCurrency());
+        return new Balance(this.valuable.add(valuable), this.give.add(give));
+    }
+
+    public Balance credit(MonetaryAmount valuableAmount) {
         return credit(valuableAmount, FastMoney.zero(valuable.getCurrency()));
     }
 
-    Balance withdrawal(MonetaryAmount amount) {
-        if (amount == null || amount.isNegativeOrZero())
-            return this;
-        if (amount.isGreaterThan(valuable))
-            throw new InsufficientBalanceException("insufficient balance");
-        return new Balance(valuable.subtract(amount), give);
-    }
 
-    Balance withdrawalOfGive(MonetaryAmount amount) {
-        if (amount == null || amount.isNegativeOrZero())
-            return this;
-        if (amount.isGreaterThan(give))
-            throw new InsufficientBalanceException("give amount insufficient balance");
-        return new Balance(valuable, give.subtract(amount));
-    }
-
-    Balance debit(MonetaryAmount amount, PaymentStrategy strategy) {
+    Balance pay(MonetaryAmount amount, PaymentStrategy strategy) {
         MonetaryAmount available = valuable.add(give);
         if (available.isLessThan(amount))
             throw new InsufficientBalanceException("insufficient balance");
@@ -151,10 +131,10 @@ public class Balance {
             case RATIO:
                 double d1 = valuable.getNumber().doubleValue();
                 double d2 = give.getNumber().doubleValue();
-                double d3 = d1 / (d1 + d2);
+                double d3 = d2 / (d1 + d2);
                 MonetaryAmount temp = amount.multiply(d3);
-                valuable = valuable.subtract(temp);
-                give = give.subtract(amount.subtract(temp));
+                valuable = valuable.subtract(amount.subtract(temp));
+                give = give.subtract(temp);
                 break;
         }
         return new Balance(valuable, give);
@@ -164,12 +144,42 @@ public class Balance {
      * @param amount
      * @return
      */
-    public Balance debit(MonetaryAmount amount) {
+    public Balance pay(MonetaryAmount amount) {
+        MonetaryAmount available = valuable.add(give);
+        if (available.isLessThan(amount))
+            throw new InsufficientBalanceException("insufficient balance");
         double d1 = valuable.getNumber().doubleValue();
         double d2 = give.getNumber().doubleValue();
-        double d3 = d1 / (d1 + d2);
+        double d3 = d2 / (d1 + d2);
         MonetaryAmount temp = amount.multiply(d3);
-        return new Balance(valuable.subtract(temp), give.subtract(amount.subtract(temp)));
+        return new Balance(valuable.subtract(amount.subtract(temp)), give.subtract(temp));
+    }
+
+    /**
+     * @param amount
+     * @return
+     */
+    public Balance overdraw(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "amount required");
+        if (valuable.isNegativeOrZero() && amount.isLessThanOrEqualTo(give))
+            return new Balance(valuable, give.subtract(amount));
+        MonetaryAmount total = valuable.add(give);
+        if (total.isGreaterThanOrEqualTo(amount))
+            return pay(amount);
+        MonetaryAmount surplus = amount.subtract(give);
+        return new Balance(valuable.subtract(surplus), FastMoney.zero(give.getCurrency()));
+    }
+
+
+    /**
+     * @param amount
+     * @return
+     */
+    public Balance withdrawal(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "amount required");
+        if (valuable.isLessThan(amount))
+            throw new InsufficientBalanceException("insufficient balance");
+        return new Balance(valuable.subtract(amount), give);
     }
 
     /**
@@ -177,7 +187,7 @@ public class Balance {
      * @return
      */
     public Balance subtract(Balance balance) {
-        return new Balance(this.valuable.subtract(balance.valuable), give.subtract(balance.give));
+        return new Balance(valuable.subtract(balance.valuable), give.subtract(balance.give));
     }
 
     @Override

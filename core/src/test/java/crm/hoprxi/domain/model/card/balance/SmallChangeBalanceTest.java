@@ -29,7 +29,7 @@ public class SmallChangeBalanceTest {
 
     @Test
     public void balance() {
-        SmallChangeBalance smallChangeBalance = new SmallChangeBalance(Money.of(0.55, "CNY"), ChangDenominationEnum.ONE);
+        SmallChangeBalance smallChangeBalance = new SmallChangeBalance(Money.of(0.55, "CNY"), SmallChangDenominationEnum.ONE);
         Rounded rounded = smallChangeBalance.round(Money.of(5.25, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.25, "CNY").isEqualTo(rounded.remainder()));
@@ -40,7 +40,7 @@ public class SmallChangeBalanceTest {
         smallChangeBalance = smallChangeBalance.deposit(rounded.remainder());
         Assert.assertTrue(Money.of(0.55, "CNY").isEqualTo(smallChangeBalance.balance()));
 
-        smallChangeBalance = new SmallChangeBalance(Money.of(4.55, "CNY"), ChangDenominationEnum.FIVE);
+        smallChangeBalance = new SmallChangeBalance(Money.of(4.55, "CNY"), SmallChangDenominationEnum.FIVE);
         rounded = smallChangeBalance.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
@@ -56,7 +56,7 @@ public class SmallChangeBalanceTest {
         Assert.assertTrue(Money.of(-3.02, "CNY").isEqualTo(rounded.remainder()));
         smallChangeBalance = smallChangeBalance.pay(rounded.remainder().negate());
 
-        smallChangeBalance = smallChangeBalance.changeChangDenominationEnum(ChangDenominationEnum.ONE);
+        smallChangeBalance = smallChangeBalance.changeChangDenominationEnum(SmallChangDenominationEnum.ONE);
         rounded = smallChangeBalance.round(Money.of(6.73, "CNY"));
         Assert.assertTrue(Money.of(7, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.27, "CNY").isEqualTo(rounded.remainder()));
@@ -68,7 +68,7 @@ public class SmallChangeBalanceTest {
         smallChangeBalance = smallChangeBalance.pay(rounded.remainder().negate());
         Assert.assertTrue(Money.of(0, "CNY").isEqualTo(smallChangeBalance.balance()));
 
-        smallChangeBalance = new SmallChangeBalance(Money.of(0, "CNY"), ChangDenominationEnum.ZERO);
+        smallChangeBalance = new SmallChangeBalance(Money.of(0, "CNY"), SmallChangDenominationEnum.ZERO);
         rounded = smallChangeBalance.round(Money.of(3.28, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
         Assert.assertTrue(rounded.integer().isZero());

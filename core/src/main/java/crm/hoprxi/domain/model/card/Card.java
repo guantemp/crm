@@ -139,9 +139,9 @@ public abstract class Card {
         return balance;
     }
 
-    public void debit(MonetaryAmount amount) {
+    private void debit(MonetaryAmount amount) {
         if (isLimitedPeriod()) {
-            balance.debit(amount);
+            balance.pay(amount);
         }
     }
 
@@ -153,7 +153,7 @@ public abstract class Card {
 
     }
 
-    public void withdrawalSmallChange(MonetaryAmount amount) {
+    public void pay(MonetaryAmount amount) {
 
     }
 

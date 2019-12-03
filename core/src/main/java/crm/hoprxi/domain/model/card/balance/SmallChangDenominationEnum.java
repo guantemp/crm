@@ -26,7 +26,7 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 2019-11-15
  */
-public enum ChangDenominationEnum {
+public enum SmallChangDenominationEnum {
     ZERO(0) {
         @Override
         public Rounded round(MonetaryAmount receivables, MonetaryAmount balance) {
@@ -38,7 +38,7 @@ public enum ChangDenominationEnum {
 
     protected int factor;
 
-    ChangDenominationEnum(int factor) {
+    SmallChangDenominationEnum(int factor) {
         this.factor = factor;
     }
 

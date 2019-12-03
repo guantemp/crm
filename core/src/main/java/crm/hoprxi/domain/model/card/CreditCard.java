@@ -50,10 +50,6 @@ public class CreditCard extends Card {
         this.customerId = customerId;
     }
 
-    @Override
-    public void debit(MonetaryAmount amount) {
-        super.debit(amount);
-    }
 
     public void overdraw(MonetaryAmount amount) {
         if (balance().valuable().isPositive()) {

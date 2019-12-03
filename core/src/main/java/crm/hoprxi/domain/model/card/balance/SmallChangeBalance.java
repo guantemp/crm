@@ -29,24 +29,24 @@ import java.util.Objects;
  * @version 0.0.1 2019-11-14
  */
 public class SmallChangeBalance {
-    private static final SmallChangeBalance RMB_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.CHINA)), ChangDenominationEnum.ZERO) {
+    private static final SmallChangeBalance RMB_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.CHINA)), SmallChangDenominationEnum.ZERO) {
         @Override
         public SmallChangeBalance pay(MonetaryAmount amount) {
             return this;
         }
     };
-    private static final SmallChangeBalance USD_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.US)), ChangDenominationEnum.ZERO) {
+    private static final SmallChangeBalance USD_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.US)), SmallChangDenominationEnum.ZERO) {
         @Override
         public SmallChangeBalance pay(MonetaryAmount amount) {
             return this;
         }
     };
     private MonetaryAmount balance;
-    private ChangDenominationEnum changDenominationEnum;
+    private SmallChangDenominationEnum smallChangDenominationEnum;
 
-    public SmallChangeBalance(MonetaryAmount balance, ChangDenominationEnum changDenominationEnum) {
+    public SmallChangeBalance(MonetaryAmount balance, SmallChangDenominationEnum smallChangDenominationEnum) {
         setBalance(balance);
-        setChangDenominationEnum(changDenominationEnum);
+        setSmallChangDenominationEnum(smallChangDenominationEnum);
     }
 
     public static SmallChangeBalance zero(Locale locale) {
@@ -54,13 +54,13 @@ public class SmallChangeBalance {
             return RMB_ZERO;
         if (locale == Locale.US)
             return USD_ZERO;
-        return new SmallChangeBalance(FastMoney.zero(Monetary.getCurrency(locale)), ChangDenominationEnum.ZERO);
+        return new SmallChangeBalance(FastMoney.zero(Monetary.getCurrency(locale)), SmallChangDenominationEnum.ZERO);
     }
 
-    private void setChangDenominationEnum(ChangDenominationEnum changDenominationEnum) {
-        if (changDenominationEnum == null)
-            changDenominationEnum = ChangDenominationEnum.ZERO;
-        this.changDenominationEnum = changDenominationEnum;
+    private void setSmallChangDenominationEnum(SmallChangDenominationEnum smallChangDenominationEnum) {
+        if (smallChangDenominationEnum == null)
+            smallChangDenominationEnum = SmallChangDenominationEnum.ZERO;
+        this.smallChangDenominationEnum = smallChangDenominationEnum;
     }
 
     private void setBalance(MonetaryAmount balance) {
@@ -74,12 +74,12 @@ public class SmallChangeBalance {
         return balance;
     }
 
-    public ChangDenominationEnum changDenomination() {
-        return changDenominationEnum;
+    public SmallChangDenominationEnum changDenomination() {
+        return smallChangDenominationEnum;
     }
 
     public Rounded round(MonetaryAmount receivables) {
-        return changDenominationEnum.round(receivables, balance);
+        return smallChangDenominationEnum.round(receivables, balance);
     }
 
     public SmallChangeBalance pay(MonetaryAmount amount) {
@@ -88,20 +88,20 @@ public class SmallChangeBalance {
             throw new IllegalArgumentException("pay amount must large zero");
         if (amount.isGreaterThan(balance))
             throw new InsufficientBalanceException("Sorry, your credit is running low");
-        return new SmallChangeBalance(balance.subtract(amount), changDenominationEnum);
+        return new SmallChangeBalance(balance.subtract(amount), smallChangDenominationEnum);
     }
 
     public SmallChangeBalance deposit(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("deposit amount must large zero");
-        return new SmallChangeBalance(balance.add(amount), changDenominationEnum);
+        return new SmallChangeBalance(balance.add(amount), smallChangDenominationEnum);
     }
 
-    public SmallChangeBalance changeChangDenominationEnum(ChangDenominationEnum newChangDenominationEnum) {
-        Objects.requireNonNull(newChangDenominationEnum, "newQuota required");
-        if (changDenominationEnum != newChangDenominationEnum)
-            return new SmallChangeBalance(balance, newChangDenominationEnum);
+    public SmallChangeBalance changeChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
+        Objects.requireNonNull(newSmallChangDenominationEnum, "newQuota required");
+        if (smallChangDenominationEnum != newSmallChangDenominationEnum)
+            return new SmallChangeBalance(balance, newSmallChangDenominationEnum);
         return this;
     }
 }

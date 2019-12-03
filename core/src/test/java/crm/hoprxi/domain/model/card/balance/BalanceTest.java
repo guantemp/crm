@@ -41,7 +41,7 @@ public class BalanceTest {
     public void zero() {
         Balance rmb = Balance.zero(Locale.getDefault());
         assertTrue(rmb == Balance.zero(Locale.CHINESE));
-        rmb.debit(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
+        rmb.pay(FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         rmb.withdrawal(FastMoney.of(120, Monetary.getCurrency(Locale.CHINA)));
         assertTrue(rmb == Balance.zero(Locale.PRC));
         assertTrue(rmb == Balance.zero(Locale.CHINA));
@@ -60,15 +60,15 @@ public class BalanceTest {
         assertEquals(rmb.give(), FastMoney.of(20, Monetary.getCurrency(Locale.CHINA)));
         rmb = rmb.withdrawal(FastMoney.of(150, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.valuable(), FastMoney.of(70, Monetary.getCurrency(Locale.CHINA)));
-        rmb.debit(FastMoney.of(64.50, Monetary.getCurrency(Locale.CHINA)));
+        rmb.pay(FastMoney.of(64.50, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.valuable(), FastMoney.of(5.5, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.debit(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.pay(FastMoney.of(15.50, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(4.5, Monetary.getCurrency(Locale.CHINA)));
-        rmb = rmb.debit(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.pay(FastMoney.of(6, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.valuable(), FastMoney.of(2.2, Monetary.getCurrency(Locale.CHINA)));
         assertEquals(rmb.give(), FastMoney.of(1.8, Monetary.getCurrency(Locale.CHINA)));
         thrown.expect(InsufficientBalanceException.class);
-        rmb = rmb.debit(FastMoney.of(4.00001, Monetary.getCurrency(Locale.CHINA)));
+        rmb = rmb.pay(FastMoney.of(4.00001, Monetary.getCurrency(Locale.CHINA)));
         rmb = rmb.withdrawal(FastMoney.of(2.20001, Monetary.getCurrency(Locale.CHINA)));
     }
 
