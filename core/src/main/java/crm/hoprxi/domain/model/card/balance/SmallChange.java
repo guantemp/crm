@@ -16,8 +16,8 @@
 package crm.hoprxi.domain.model.card.balance;
 
 import org.javamoney.moneta.FastMoney;
-import org.javamoney.moneta.Money;
 
+import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.util.Locale;
@@ -28,33 +28,31 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 2019-11-14
  */
-public class SmallChangeBalance {
-    private static final SmallChangeBalance RMB_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.CHINA)), SmallChangDenominationEnum.ZERO) {
-        @Override
-        public SmallChangeBalance pay(MonetaryAmount amount) {
-            return this;
-        }
-    };
-    private static final SmallChangeBalance USD_ZERO = new SmallChangeBalance(Money.zero(Monetary.getCurrency(Locale.US)), SmallChangDenominationEnum.ZERO) {
-        @Override
-        public SmallChangeBalance pay(MonetaryAmount amount) {
-            return this;
-        }
-    };
+public class SmallChange {
+    private static final SmallChange RMB_ZERO = new SmallChange(FastMoney.zero(Monetary.getCurrency(Locale.CHINA)), SmallChangDenominationEnum.ZERO);
+    private static final SmallChange USD_ZERO = new SmallChange(FastMoney.zero(Monetary.getCurrency(Locale.US)), SmallChangDenominationEnum.ZERO);
     private MonetaryAmount balance;
     private SmallChangDenominationEnum smallChangDenominationEnum;
 
-    public SmallChangeBalance(MonetaryAmount balance, SmallChangDenominationEnum smallChangDenominationEnum) {
+    public SmallChange(MonetaryAmount balance, SmallChangDenominationEnum smallChangDenominationEnum) {
         setBalance(balance);
         setSmallChangDenominationEnum(smallChangDenominationEnum);
     }
 
-    public static SmallChangeBalance zero(Locale locale) {
+    public static SmallChange zero(Locale locale) {
         if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
             return RMB_ZERO;
         if (locale == Locale.US)
             return USD_ZERO;
-        return new SmallChangeBalance(FastMoney.zero(Monetary.getCurrency(locale)), SmallChangDenominationEnum.ZERO);
+        return new SmallChange(FastMoney.zero(Monetary.getCurrency(locale)), SmallChangDenominationEnum.ZERO);
+    }
+
+    private SmallChange zero(CurrencyUnit currencyUnit) {
+        if (currencyUnit.getNumericCode() == 156)
+            return RMB_ZERO;
+        if (currencyUnit.getNumericCode() == 840)
+            return USD_ZERO;
+        return new SmallChange(FastMoney.zero(currencyUnit), SmallChangDenominationEnum.ZERO);
     }
 
     private void setSmallChangDenominationEnum(SmallChangDenominationEnum smallChangDenominationEnum) {
@@ -74,7 +72,7 @@ public class SmallChangeBalance {
         return balance;
     }
 
-    public SmallChangDenominationEnum changDenomination() {
+    public SmallChangDenominationEnum changDenominationEnum() {
         return smallChangDenominationEnum;
     }
 
@@ -82,26 +80,36 @@ public class SmallChangeBalance {
         return smallChangDenominationEnum.round(receivables, balance);
     }
 
-    public SmallChangeBalance pay(MonetaryAmount amount) {
-        Objects.requireNonNull(amount, "newBalance required");
+    /**
+     * @param amount
+     * @return
+     */
+    public SmallChange pay(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("pay amount must large zero");
         if (amount.isGreaterThan(balance))
-            throw new InsufficientBalanceException("Sorry, your credit is running low");
-        return new SmallChangeBalance(balance.subtract(amount), smallChangDenominationEnum);
+            throw new InsufficientBalanceException("insufficient balance");
+        if (amount.isEqualTo(balance))
+            return zero(balance.getCurrency());
+        return new SmallChange(balance.subtract(amount), smallChangDenominationEnum);
     }
 
-    public SmallChangeBalance deposit(MonetaryAmount amount) {
+    /**
+     * @param amount
+     * @return
+     */
+    public SmallChange deposit(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("deposit amount must large zero");
-        return new SmallChangeBalance(balance.add(amount), smallChangDenominationEnum);
+        return new SmallChange(balance.add(amount), smallChangDenominationEnum);
     }
 
-    public SmallChangeBalance changeChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
-        Objects.requireNonNull(newSmallChangDenominationEnum, "newQuota required");
+    public SmallChange changeChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
+        Objects.requireNonNull(newSmallChangDenominationEnum, "newSmallChangDenominationEnum required");
         if (smallChangDenominationEnum != newSmallChangDenominationEnum)
-            return new SmallChangeBalance(balance, newSmallChangDenominationEnum);
+            return new SmallChange(balance, newSmallChangDenominationEnum);
         return this;
     }
 }

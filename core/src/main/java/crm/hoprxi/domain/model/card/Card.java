@@ -21,7 +21,7 @@ import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
 import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.SmallChangeBalance;
+import crm.hoprxi.domain.model.card.balance.SmallChange;
 
 import javax.money.MonetaryAmount;
 import java.util.Locale;
@@ -41,7 +41,7 @@ public abstract class Card {
     private Appearance appearance;
     private String cardFaceNumber;
     private Balance balance;
-    private SmallChangeBalance smallChangeBalance;
+    private SmallChange smallChange;
 
     /**
      * @param id
@@ -49,24 +49,24 @@ public abstract class Card {
      * @param cardFaceNumber
      * @param termOfValidity
      * @param balance
-     * @param smallChangeBalance
+     * @param smallChange
      * @param appearance
      * @throws IllegalArgumentException if id is null or empty
      * @throws IllegalArgumentException if issuer does not exist
      * @throws IllegalArgumentException if issuer does not exist
      */
-    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChangeBalance smallChangeBalance, Appearance appearance) {
+    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
         setId(id);
         setIssuerId(issuerId);
         setCardFaceNumber(cardFaceNumber);
         setTermOfValidity(termOfValidity);
         setBalance(balance);
-        setSmallChangeBalance(smallChangeBalance);
+        setSmallChange(smallChange);
         setAppearance(appearance);
     }
 
     public Card(String id, String issuerId) {
-        this(id, issuerId, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChangeBalance.zero(Locale.getDefault()), AppearanceFactory.getDefault());
+        this(id, issuerId, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
@@ -95,10 +95,10 @@ public abstract class Card {
         this.termOfValidity = termOfValidity;
     }
 
-    private void setSmallChangeBalance(SmallChangeBalance smallChangeBalance) {
-        if (smallChangeBalance == null)
-            smallChangeBalance = SmallChangeBalance.zero(Locale.getDefault());
-        this.smallChangeBalance = smallChangeBalance;
+    private void setSmallChange(SmallChange smallChange) {
+        if (smallChange == null)
+            smallChange = SmallChange.zero(Locale.getDefault());
+        this.smallChange = smallChange;
     }
 
     private void setBalance(Balance balance) {
@@ -123,10 +123,6 @@ public abstract class Card {
         return termOfValidity;
     }
 
-    public boolean isLimitedPeriod() {
-        return termOfValidity.isLimitedPeriod();
-    }
-
     public Appearance appearance() {
         return appearance;
     }
@@ -139,22 +135,36 @@ public abstract class Card {
         return balance;
     }
 
-    private void debit(MonetaryAmount amount) {
-        if (isLimitedPeriod()) {
-            balance.pay(amount);
-        }
+    public SmallChange smallChangeBalance() {
+        return smallChange;
     }
 
+    /**
+     * @param amount
+     */
+    public void debit(MonetaryAmount amount) {
+        if (!termOfValidity.isLimitedPeriod())
+            throw new IncorrectExpirationDateException("Card failed");
+        balance.pay(amount);
+    }
+
+    /**
+     * @param amount
+     * @param give
+     */
     public void credit(MonetaryAmount amount, MonetaryAmount give) {
-
+        if (!termOfValidity.isLimitedPeriod())
+            throw new IncorrectExpirationDateException("Card failed");
+        balance.deposit(amount, give);
     }
 
+    /**
+     * @param amount
+     */
     public void withdrawal(MonetaryAmount amount) {
-
-    }
-
-    public void pay(MonetaryAmount amount) {
-
+        if (!termOfValidity.isLimitedPeriod())
+            throw new IncorrectExpirationDateException("Card failed");
+        balance.withdrawal(amount);
     }
 
     @Override
@@ -181,7 +191,7 @@ public abstract class Card {
                 .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("wallet=" + balance)
-                .add("changeWallet=" + smallChangeBalance)
+                .add("changeWallet=" + smallChange)
                 .toString();
     }
 }

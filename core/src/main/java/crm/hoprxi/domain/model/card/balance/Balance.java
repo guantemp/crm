@@ -15,10 +15,12 @@
  */
 package crm.hoprxi.domain.model.card.balance;
 
-import org.javamoney.moneta.FastMoney;
+import org.javamoney.moneta.Money;
 
+import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -29,19 +31,8 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-11-20
  */
 public class Balance {
-    private static final Balance RMB_ZERO = new Balance(FastMoney.zero(Monetary.getCurrency(Locale.CHINA)), FastMoney.zero(Monetary.getCurrency(Locale.CHINA))) {
-
-        @Override
-        public Balance pay(MonetaryAmount amount, PaymentStrategy strategy) {
-            return this;
-        }
-
-        @Override
-        public Balance pay(MonetaryAmount amount) {
-            return this;
-        }
-    };
-    private static final Balance USD_ZERO = new Balance(FastMoney.zero(Monetary.getCurrency(Locale.US)), FastMoney.zero(Monetary.getCurrency(Locale.US)));
+    private static final Balance RMB_ZERO = new Balance(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
+    private static final Balance USD_ZERO = new Balance(Money.zero(Monetary.getCurrency(Locale.US)), Money.zero(Monetary.getCurrency(Locale.US)));
     private MonetaryAmount valuable;
     private MonetaryAmount give;
 
@@ -59,9 +50,19 @@ public class Balance {
             return RMB_ZERO;
         if (locale == Locale.US)
             return USD_ZERO;
-        MonetaryAmount zero = FastMoney.zero(Monetary.getCurrency(locale));
+        MonetaryAmount zero = Money.zero(Monetary.getCurrency(locale));
         return new Balance(zero, zero);
     }
+
+    private Balance zero(CurrencyUnit currencyUnit) {
+        if (currencyUnit.getNumericCode() == 156)
+            return RMB_ZERO;
+        if (currencyUnit.getNumericCode() == 840)
+            return USD_ZERO;
+        MonetaryAmount zero = Money.zero(currencyUnit);
+        return new Balance(zero, zero);
+    }
+
 
     private void setGive(MonetaryAmount give) {
         if (give == null || give.isNegative())
@@ -92,18 +93,18 @@ public class Balance {
      * @param valuable
      * @param give     must is positive
      */
-    public Balance credit(MonetaryAmount valuable, MonetaryAmount give) {
+    public Balance deposit(MonetaryAmount valuable, MonetaryAmount give) {
         if (valuable == null && (give == null || give.isNegativeOrZero()))
             return this;
         if (valuable == null)
-            valuable = FastMoney.zero(this.valuable.getCurrency());
+            valuable = Money.zero(this.valuable.getCurrency());
         if (give == null)
-            give = FastMoney.zero(this.give.getCurrency());
+            give = Money.zero(this.give.getCurrency());
         return new Balance(this.valuable.add(valuable), this.give.add(give));
     }
 
-    public Balance credit(MonetaryAmount valuableAmount) {
-        return credit(valuableAmount, FastMoney.zero(valuable.getCurrency()));
+    public Balance deposit(MonetaryAmount valuableAmount) {
+        return deposit(valuableAmount, Money.zero(valuable.getCurrency()));
     }
 
 
@@ -115,14 +116,14 @@ public class Balance {
             case BALANCE_FIRST:
                 valuable = valuable.subtract(amount);
                 if (valuable.isNegative()) {
-                    valuable = FastMoney.zero(valuable.getCurrency());
+                    valuable = Money.zero(valuable.getCurrency());
                     give = give.add(valuable);
                 }
                 break;
             case RED_ENVELOPES_FIRST:
                 MonetaryAmount g = give.subtract(amount);
                 if (g.isNegative()) {
-                    give = FastMoney.zero(give.getCurrency());
+                    give = Money.zero(give.getCurrency());
                     valuable = valuable.add(g);
                 } else {
                     give = g;
@@ -148,10 +149,19 @@ public class Balance {
         MonetaryAmount available = valuable.add(give);
         if (available.isLessThan(amount))
             throw new InsufficientBalanceException("insufficient balance");
+        if (amount.isEqualTo(available))
+            return zero(valuable.getCurrency());
+/*
+        BigDecimal big1 = valuable.getNumber().numberValue(BigDecimal.class);
+        BigDecimal big2 = give.getNumber().numberValue(BigDecimal.class);
+        BigDecimal big3 = big1.add(big2);
+        System.out.println(big1+" "+big2+" "+big3);
+        System.out.println(big2.divide(big3,20, BigDecimal.ROUND_HALF_EVEN));
+ */
         double d1 = valuable.getNumber().doubleValue();
         double d2 = give.getNumber().doubleValue();
         double d3 = d2 / (d1 + d2);
-        MonetaryAmount temp = amount.multiply(d3);
+        MonetaryAmount temp = amount.multiply(BigDecimal.valueOf(d3).setScale(5, BigDecimal.ROUND_HALF_EVEN));
         return new Balance(valuable.subtract(amount.subtract(temp)), give.subtract(temp));
     }
 
@@ -167,7 +177,7 @@ public class Balance {
         if (total.isGreaterThanOrEqualTo(amount))
             return pay(amount);
         MonetaryAmount surplus = amount.subtract(give);
-        return new Balance(valuable.subtract(surplus), FastMoney.zero(give.getCurrency()));
+        return new Balance(valuable.subtract(surplus), Money.zero(give.getCurrency()));
     }
 
 
@@ -197,7 +207,7 @@ public class Balance {
 
         Balance balance = (Balance) o;
 
-        if (this.valuable != null ? !this.valuable.equals(balance.valuable) : balance.valuable != null) return false;
+        if (valuable != null ? !valuable.equals(balance.valuable) : balance.valuable != null) return false;
         return give != null ? give.equals(balance.give) : balance.give == null;
     }
 
@@ -211,7 +221,7 @@ public class Balance {
     @Override
     public String toString() {
         return new StringJoiner(", ", Balance.class.getSimpleName() + "[", "]")
-                .add("balance=" + valuable)
+                .add("valuable=" + valuable)
                 .add("give=" + give)
                 .toString();
     }

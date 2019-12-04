@@ -1,19 +1,17 @@
 /*
- * Copyright (c) 2018. www.hoprxi.com rights Reserved.
+ * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ *  Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package crm.hoprxi.infrastructure.persistence;
@@ -155,10 +153,7 @@ public class ArangoDBCardRepository implements CardRepository {
         LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_DATE);
         LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_DATE);
         TermOfValidity termOfValidity = null;
-        if (startDate.equals(expiryDate) && startDate.equals(TermOfValidity.DAY_OF_INFAMY) && expiryDate.equals(TermOfValidity.DAY_OF_INFAMY))
-            termOfValidity = TermOfValidity.PERMANENCE;
-        else
-            termOfValidity = new TermOfValidity(startDate, expiryDate);
+        termOfValidity = new TermOfValidity(startDate, expiryDate);
         //Balance
         VPackSlice balanceSlice = slice.get("balance");
         MonetaryAmount recharge = Money.parse("");

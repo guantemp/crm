@@ -53,7 +53,7 @@ public class AppTest {
         System.out.println(Monetary.getCurrency(Locale.US).getNumericCode() + " " + Monetary.getCurrency(Locale.US).getCurrencyCode());
         System.out.println(Monetary.getCurrency(Locale.CHINA).getNumericCode() + " " + Monetary.getCurrency(Locale.CHINA).getCurrencyCode());
 
-        MonetaryAmount amount = Money.of(new BigDecimal("-223.4536575763474262634657686795745643647678083534654"), "CNY");
+        MonetaryAmount amount = Money.of(new BigDecimal("-23423.4536575763474262634657686795745643647678083534654"), "CNY");
         System.out.println("amount.signum() +-:" + amount.signum());
         System.out.println("amount.plus():" + amount.plus());
         System.out.println("amount.abs():" + amount.abs());
@@ -64,13 +64,19 @@ public class AppTest {
         System.out.println("amount.stripTrailingZeros():" + amount.stripTrailingZeros());
         System.out.println("amount.negate():" + amount.negate());
         System.out.println("amount.getNumber():" + amount.getNumber());
-        System.out.println("amount.etNumberStripped():" + ((Money) amount).getNumberStripped());
+        System.out.println("amount.getNumberStripped():" + ((Money) amount).getNumberStripped());
         System.out.println("amount.getNumber().doubleValueExact():" + amount.getNumber().doubleValueExact());
-
+        System.out.println("amount.getNumber().doubleValue():" + amount.getNumber().doubleValue());
 
         System.out.println("\nFastMoney:");
-        MonetaryAmount amount1 = FastMoney.of(1051.45365, Monetary.getCurrency(Locale.getDefault()));
+        MonetaryAmount amount1 = FastMoney.of(1051.45365, "CNY");
+        MonetaryAmount amount2 = Money.of(1051.45365, "CNY");
         System.out.println("amount1.getNumber().doubleValue():" + amount1.getNumber().doubleValue());
+        System.out.println("amount2.getNumber().doubleValue():" + amount2.getNumber().doubleValue());
+        System.out.println("amount1.equals(amount2):" + amount1.equals(amount2));
+        System.out.println("amount1.isEqualTo(amount2):" + amount1.isEqualTo(amount2));
+        System.out.println("amount1.getContext():" + amount1.getContext());
+        System.out.println("amount2.getContext():" + amount2.getContext());
 
 
         CurrencyUnit usd = Monetary.getCurrency("USD");
@@ -80,24 +86,22 @@ public class AppTest {
 
         ExchangeRateProvider exchangeRateProvider = MonetaryConversions.getExchangeRateProvider();
         List<String> defaultProviderChain = MonetaryConversions.getDefaultConversionProviderChain();
+        System.out.println("ExchangeRateProvider:");
         for (String s : defaultProviderChain)
             System.out.println(s);
 
 
         // get a specific ExchangeRateProvider (here ECB)
         ExchangeRateProvider ecbExchangeRateProvider = MonetaryConversions.getExchangeRateProvider("ECB");
-
-        ExchangeRate rate = exchangeRateProvider.getExchangeRate("EUR", "USD");
+        ExchangeRate rate = exchangeRateProvider.getExchangeRate("USD", "CNY");
 
         NumberValue factor = rate.getFactor(); // 1.2537 (at time writing)
         CurrencyUnit baseCurrency = rate.getBaseCurrency(); // EUR
         CurrencyUnit targetCurrency = rate.getCurrency(); // USD
-        System.out.println(factor);
-
-
-        CurrencyConversion dollarConversion = MonetaryConversions.getConversion("USD");
+        System.out.println("factor CNY to USD:" + factor);
 
         // get the CurrencyConversion from a specific provider
+        CurrencyConversion dollarConversion = MonetaryConversions.getConversion("USD");
         CurrencyConversion ecbDollarConversion = ecbExchangeRateProvider.getCurrencyConversion("USD");
 
         MonetaryAmount tenEuro = Money.of(100, "JPY");
@@ -105,5 +109,7 @@ public class AppTest {
         // convert 10 euro to us dollar
         MonetaryAmount inDollar = tenEuro.with(dollarConversion);
         System.out.println(inDollar);
+        inDollar = tenEuro.with(ecbDollarConversion);
+        System.out.println("ecbDollarConversion:" + inDollar);
     }
 }

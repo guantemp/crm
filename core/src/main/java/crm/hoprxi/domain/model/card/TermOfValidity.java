@@ -22,10 +22,10 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-20
+ * @version 0.0.1 builder 2019-07-20
  */
 public class TermOfValidity {
-    public static final LocalDate DAY_OF_INFAMY = LocalDate.of(2015, 3, 26);
+    private static final LocalDate DAY_OF_INFAMY = LocalDate.of(2015, 3, 26);
     public static final TermOfValidity PERMANENCE = new TermOfValidity(DAY_OF_INFAMY,
             DAY_OF_INFAMY) {
         public boolean isLimitedPeriod() {
@@ -45,9 +45,20 @@ public class TermOfValidity {
      * @param expiryDate
      */
     public TermOfValidity(LocalDate startDate, LocalDate expiryDate) {
-        super();
         setStartDate(startDate);
         setExpiryDate(expiryDate);
+    }
+
+    private void setExpiryDate(LocalDate expiryDate) {
+        Objects.requireNonNull(expiryDate, "expiryDate required");
+        if (expiryDate.isBefore(startDate))
+            throw new IllegalArgumentException(
+                    "Start date must be consistent with expiryDate or before the expiryDate.");
+        this.expiryDate = expiryDate;
+    }
+
+    private void setStartDate(LocalDate startDate) {
+        this.startDate = Objects.requireNonNull(startDate, "startDate required");
     }
 
     public LocalDate expiryDate() {
@@ -66,24 +77,15 @@ public class TermOfValidity {
         return new TermOfValidity(startDate, newExpiryDate);
     }
 
+    /**
+     * @return
+     */
     public boolean isLimitedPeriod() {
         LocalDate now = LocalDate.now();
         if (startDate.isEqual(expiryDate) || now.isEqual(startDate) || now.isEqual(expiryDate)
                 || (now.isAfter(startDate) && now.isBefore(expiryDate)))
             return true;
         return false;
-    }
-
-    private void setExpiryDate(LocalDate expiryDate) {
-        Objects.requireNonNull(expiryDate, "expiry date required");
-        if (expiryDate.isBefore(startDate))
-            throw new IllegalArgumentException(
-                    "Start date must be consistent with expiryDate or before the expiryDate.");
-        this.expiryDate = expiryDate;
-    }
-
-    private void setStartDate(LocalDate startDate) {
-        this.startDate = Objects.requireNonNull(startDate, "start date required");
     }
 
     public LocalDate startDate() {

@@ -21,7 +21,7 @@ import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.LineOfCredit;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.SmallChangeBalance;
+import crm.hoprxi.domain.model.card.balance.SmallChange;
 
 import javax.money.MonetaryAmount;
 
@@ -34,8 +34,8 @@ public class CreditCard extends Card {
     private String customerId;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(String id, String issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, LineOfCredit lineOfCredit, Balance balance, SmallChangeBalance smallChangeBalance, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChangeBalance, appearance);
+    public CreditCard(String id, String issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
+        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
         setLineOfCredit(lineOfCredit);
     }
