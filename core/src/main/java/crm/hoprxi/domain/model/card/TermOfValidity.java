@@ -28,8 +28,18 @@ public class TermOfValidity {
     private static final LocalDate DAY_OF_INFAMY = LocalDate.of(2015, 3, 26);
     public static final TermOfValidity PERMANENCE = new TermOfValidity(DAY_OF_INFAMY,
             DAY_OF_INFAMY) {
-        public boolean isLimitedPeriod() {
+        public boolean isValidityPeriod() {
             return true;
+        }
+
+        @Override
+        public TermOfValidity postponeTo(LocalDate newExpiryDate) {
+            return this;
+        }
+
+        @Override
+        public TermOfValidity cutDownTo(LocalDate newExpiryDate) {
+            return this;
         }
 
         @Override
@@ -80,10 +90,9 @@ public class TermOfValidity {
     /**
      * @return
      */
-    public boolean isLimitedPeriod() {
+    public boolean isValidityPeriod() {
         LocalDate now = LocalDate.now();
-        if (startDate.isEqual(expiryDate) || now.isEqual(startDate) || now.isEqual(expiryDate)
-                || (now.isAfter(startDate) && now.isBefore(expiryDate)))
+        if ((now.isAfter(startDate) && now.isBefore(expiryDate)) || now.isEqual(startDate) || now.isEqual(expiryDate))
             return true;
         return false;
     }
@@ -95,8 +104,26 @@ public class TermOfValidity {
     @Override
     public String toString() {
         return new StringJoiner(", ", TermOfValidity.class.getSimpleName() + "[", "]")
-                .add("expiryDate=" + expiryDate)
                 .add("startDate=" + startDate)
+                .add("expiryDate=" + expiryDate)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TermOfValidity that = (TermOfValidity) o;
+
+        if (expiryDate != null ? !expiryDate.equals(that.expiryDate) : that.expiryDate != null) return false;
+        return startDate != null ? startDate.equals(that.startDate) : that.startDate == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = expiryDate != null ? expiryDate.hashCode() : 0;
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        return result;
     }
 }

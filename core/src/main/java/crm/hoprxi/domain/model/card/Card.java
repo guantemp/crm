@@ -139,13 +139,19 @@ public abstract class Card {
         return smallChange;
     }
 
-    /**
-     * @param amount
-     */
-    public void debit(MonetaryAmount amount) {
-        if (!termOfValidity.isLimitedPeriod())
-            throw new IncorrectExpirationDateException("Card failed");
-        balance.pay(amount);
+    protected abstract boolean isCardFaceNumberSpec();
+
+    public void changeCardFaceNumber(String newCardFaceNumber) {
+        Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required");
+        if (!cardFaceNumber.equals(newCardFaceNumber)) {
+            this.cardFaceNumber = newCardFaceNumber;
+        }
+    }
+
+    public void credit(MonetaryAmount amount) {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card failed");
+        balance.deposit(amount);
     }
 
     /**
@@ -153,17 +159,27 @@ public abstract class Card {
      * @param give
      */
     public void credit(MonetaryAmount amount, MonetaryAmount give) {
-        if (!termOfValidity.isLimitedPeriod())
-            throw new IncorrectExpirationDateException("Card failed");
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card failed");
         balance.deposit(amount, give);
     }
 
     /**
      * @param amount
      */
-    public void withdrawal(MonetaryAmount amount) {
-        if (!termOfValidity.isLimitedPeriod())
-            throw new IncorrectExpirationDateException("Card failed");
+    public void debit(MonetaryAmount amount) {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        balance.pay(amount);
+    }
+
+
+    /**
+     * @param amount
+     */
+    public void withdraw(MonetaryAmount amount) {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card failed");
         balance.withdrawal(amount);
     }
 

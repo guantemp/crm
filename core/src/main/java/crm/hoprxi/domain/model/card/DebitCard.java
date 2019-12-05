@@ -43,6 +43,11 @@ public class DebitCard extends Card {
     }
 
     @Override
+    protected boolean isCardFaceNumberSpec() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())

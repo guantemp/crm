@@ -86,14 +86,13 @@ public class AppTest {
 
         ExchangeRateProvider exchangeRateProvider = MonetaryConversions.getExchangeRateProvider();
         List<String> defaultProviderChain = MonetaryConversions.getDefaultConversionProviderChain();
-        System.out.println("ExchangeRateProvider:");
+        System.out.println("defaultProviderChain:");
         for (String s : defaultProviderChain)
             System.out.println(s);
 
-
         // get a specific ExchangeRateProvider (here ECB)
-        ExchangeRateProvider ecbExchangeRateProvider = MonetaryConversions.getExchangeRateProvider("ECB");
-        ExchangeRate rate = exchangeRateProvider.getExchangeRate("USD", "CNY");
+        ExchangeRateProvider ecbExchangeRateProvider = MonetaryConversions.getExchangeRateProvider("IMF");
+        ExchangeRate rate = ecbExchangeRateProvider.getExchangeRate("USD", "CNY");
 
         NumberValue factor = rate.getFactor(); // 1.2537 (at time writing)
         CurrencyUnit baseCurrency = rate.getBaseCurrency(); // EUR

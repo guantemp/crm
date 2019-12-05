@@ -43,6 +43,11 @@ public class AnonymousCard extends Card {
     }
 
     @Override
+    protected boolean isCardFaceNumberSpec() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())

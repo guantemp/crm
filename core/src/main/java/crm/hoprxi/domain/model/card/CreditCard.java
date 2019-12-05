@@ -50,6 +50,10 @@ public class CreditCard extends Card {
         this.customerId = customerId;
     }
 
+    @Override
+    protected boolean isCardFaceNumberSpec() {
+        return false;
+    }
 
     public void overdraw(MonetaryAmount amount) {
         if (balance().valuable().isPositive()) {
