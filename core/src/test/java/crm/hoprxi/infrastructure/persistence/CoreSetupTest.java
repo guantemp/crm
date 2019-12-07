@@ -14,37 +14,19 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.card;
+package crm.hoprxi.infrastructure.persistence;
 
-import event.hoprxi.domain.model.DomainEvent;
-
-import java.time.LocalDateTime;
+import org.junit.Test;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-05
+ * @version 0.0.1 2019-11-25
  */
-public class CardFaceNumberChanged implements DomainEvent {
-    private LocalDateTime occurredOn;
-    private int version;
-    private String id;
-    private String cardFaceNumber;
+public class CoreSetupTest {
 
-    public CardFaceNumberChanged(String id, String cardFaceNumber) {
-        this.id = id;
-        this.cardFaceNumber = cardFaceNumber;
-        occurredOn = LocalDateTime.now();
-        version = 1;
-    }
-
-    @Override
-    public LocalDateTime occurredOn() {
-        return occurredOn;
-    }
-
-    @Override
-    public int version() {
-        return version;
+    @Test
+    public void setup() {
+        CoreSetup.setup("crm");
     }
 }

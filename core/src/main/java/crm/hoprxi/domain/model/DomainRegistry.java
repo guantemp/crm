@@ -29,12 +29,13 @@ public class DomainRegistry {
         return SimpleDomainEventPublisher.instance();
     }
 
-    public static boolean validIssuerId(String issuerId) {
-        if (issuerId == null || issuerId.isEmpty())
-            return false;
-        return true;
-    }
-
+    /*
+        public static boolean validIssuerId(Issuer issuerId) {
+            if (issuerId == null || issuerId.isEmpty())
+                return false;
+            return true;
+        }
+    */
     public static boolean validCustomerId(String customerId) {
         if (customerId == null || customerId.isEmpty())
             return false;

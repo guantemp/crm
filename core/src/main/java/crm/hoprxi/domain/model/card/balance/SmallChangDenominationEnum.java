@@ -52,4 +52,13 @@ public enum SmallChangDenominationEnum {
             return new Rounded(integer.multiply(factor), remainder.negate());
         return new Rounded(integer.add(FastMoney.of(1, balance.getCurrency())).multiply(factor), FastMoney.of(factor, balance.getCurrency()).subtract(remainder));
     }
+/*
+    public static SmallChangDenominationEnum of(String s) {
+        for (SmallChangDenominationEnum smallChang : values()) {
+            if (smallChang.toString().equals(s))
+                return smallChang;
+        }
+        return SmallChangDenominationEnum.ZERO;
+    }
+ */
 }

@@ -40,7 +40,7 @@ public class AppearanceFactory {
      * @param appearance
      */
     public static void put(String point, Appearance appearance) {
-        cache.put(appearance.issuer().identity() + appearance.name(), appearance);
+        cache.put(appearance.issuer().id() + appearance.name(), appearance);
     }
 
     public static Appearance getDefault() {

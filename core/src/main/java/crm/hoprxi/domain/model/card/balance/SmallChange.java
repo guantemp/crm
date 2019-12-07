@@ -22,6 +22,7 @@ import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -31,11 +32,11 @@ import java.util.Objects;
 public class SmallChange {
     private static final SmallChange RMB_ZERO = new SmallChange(FastMoney.zero(Monetary.getCurrency(Locale.CHINA)), SmallChangDenominationEnum.ZERO);
     private static final SmallChange USD_ZERO = new SmallChange(FastMoney.zero(Monetary.getCurrency(Locale.US)), SmallChangDenominationEnum.ZERO);
-    private MonetaryAmount balance;
+    private MonetaryAmount amount;
     private SmallChangDenominationEnum smallChangDenominationEnum;
 
-    public SmallChange(MonetaryAmount balance, SmallChangDenominationEnum smallChangDenominationEnum) {
-        setBalance(balance);
+    public SmallChange(MonetaryAmount amount, SmallChangDenominationEnum smallChangDenominationEnum) {
+        setAmount(amount);
         setSmallChangDenominationEnum(smallChangDenominationEnum);
     }
 
@@ -61,23 +62,23 @@ public class SmallChange {
         this.smallChangDenominationEnum = smallChangDenominationEnum;
     }
 
-    private void setBalance(MonetaryAmount balance) {
-        Objects.requireNonNull(balance, "balance required");
-        if (balance.isNegative())
+    private void setAmount(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "balance required");
+        if (amount.isNegative())
             throw new IllegalArgumentException("balance must large or equal zero");
-        this.balance = balance;
+        this.amount = amount;
     }
 
-    public MonetaryAmount balance() {
-        return balance;
+    public MonetaryAmount amount() {
+        return amount;
     }
 
-    public SmallChangDenominationEnum changDenominationEnum() {
+    public SmallChangDenominationEnum smallChangDenominationEnum() {
         return smallChangDenominationEnum;
     }
 
     public Rounded round(MonetaryAmount receivables) {
-        return smallChangDenominationEnum.round(receivables, balance);
+        return smallChangDenominationEnum.round(receivables, amount);
     }
 
     /**
@@ -88,11 +89,11 @@ public class SmallChange {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("pay amount must large zero");
-        if (amount.isGreaterThan(balance))
+        if (amount.isGreaterThan(this.amount))
             throw new InsufficientBalanceException("insufficient balance");
-        if (amount.isEqualTo(balance))
-            return zero(balance.getCurrency());
-        return new SmallChange(balance.subtract(amount), smallChangDenominationEnum);
+        if (amount.isEqualTo(this.amount))
+            return zero(this.amount.getCurrency());
+        return new SmallChange(this.amount.subtract(amount), smallChangDenominationEnum);
     }
 
     /**
@@ -103,13 +104,39 @@ public class SmallChange {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegativeOrZero())
             throw new IllegalArgumentException("deposit amount must large zero");
-        return new SmallChange(balance.add(amount), smallChangDenominationEnum);
+        return new SmallChange(this.amount.add(amount), smallChangDenominationEnum);
     }
 
-    public SmallChange changeChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
+    public SmallChange changeSmallChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
         Objects.requireNonNull(newSmallChangDenominationEnum, "newSmallChangDenominationEnum required");
         if (smallChangDenominationEnum != newSmallChangDenominationEnum)
-            return new SmallChange(balance, newSmallChangDenominationEnum);
+            return new SmallChange(amount, newSmallChangDenominationEnum);
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SmallChange that = (SmallChange) o;
+
+        if (amount != null ? !amount.equals(that.amount) : that.amount != null) return false;
+        return smallChangDenominationEnum == that.smallChangDenominationEnum;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = amount != null ? amount.hashCode() : 0;
+        result = 31 * result + (smallChangDenominationEnum != null ? smallChangDenominationEnum.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", SmallChange.class.getSimpleName() + "[", "]")
+                .add("amount=" + amount)
+                .add("smallChangDenominationEnum=" + smallChangDenominationEnum)
+                .toString();
     }
 }

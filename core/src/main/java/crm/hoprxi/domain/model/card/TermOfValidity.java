@@ -53,6 +53,17 @@ public class TermOfValidity {
     /**
      * @param startDate
      * @param expiryDate
+     * @return
+     */
+    public static TermOfValidity getInstance(LocalDate startDate, LocalDate expiryDate) {
+        if (startDate.isEqual(DAY_OF_INFAMY) && expiryDate.isEqual(DAY_OF_INFAMY))
+            return PERMANENCE;
+        return new TermOfValidity(startDate, expiryDate);
+    }
+
+    /**
+     * @param startDate
+     * @param expiryDate
      */
     public TermOfValidity(LocalDate startDate, LocalDate expiryDate) {
         setStartDate(startDate);

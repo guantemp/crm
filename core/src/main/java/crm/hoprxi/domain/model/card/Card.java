@@ -22,6 +22,7 @@ import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
 import crm.hoprxi.domain.model.card.balance.Balance;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
+import crm.hoprxi.domain.model.collaborator.Issuer;
 
 import javax.money.MonetaryAmount;
 import java.util.Locale;
@@ -36,7 +37,7 @@ import java.util.StringJoiner;
 public abstract class Card {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
-    private String issuerId;
+    private Issuer issuer;
     private TermOfValidity termOfValidity;
     private Appearance appearance;
     private String cardFaceNumber;
@@ -45,7 +46,7 @@ public abstract class Card {
 
     /**
      * @param id
-     * @param issuerId
+     * @param issuer
      * @param cardFaceNumber
      * @param termOfValidity
      * @param balance
@@ -55,9 +56,9 @@ public abstract class Card {
      * @throws IllegalArgumentException if issuer does not exist
      * @throws IllegalArgumentException if issuer does not exist
      */
-    public Card(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+    public Card(String id, Issuer issuer, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
         setId(id);
-        setIssuerId(issuerId);
+        setIssuer(issuer);
         setCardFaceNumber(cardFaceNumber);
         setTermOfValidity(termOfValidity);
         setBalance(balance);
@@ -65,8 +66,8 @@ public abstract class Card {
         setAppearance(appearance);
     }
 
-    public Card(String id, String issuerId) {
-        this(id, issuerId, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
+    public Card(String id, Issuer issuer) {
+        this(id, issuer, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
@@ -76,11 +77,11 @@ public abstract class Card {
         this.id = id;
     }
 
-    private void setIssuerId(String issuerId) {
-        issuerId = Objects.requireNonNull(issuerId, "issuerId required").trim();
-        if (!DomainRegistry.validIssuerId(issuerId))
-            throw new IllegalArgumentException("issuerId not valid");
-        this.issuerId = issuerId;
+    private void setIssuer(Issuer issuer) {
+        Objects.requireNonNull(issuer, "issuer required");
+        //if (!DomainRegistry.validIssuerId(issuer))
+        //throw new IllegalArgumentException("issuerId not valid");
+        this.issuer = issuer;
     }
 
     private void setCardFaceNumber(String cardFaceNumber) {
@@ -111,8 +112,8 @@ public abstract class Card {
         this.appearance = appearance;
     }
 
-    public String issuerId() {
-        return issuerId;
+    public Issuer issuer() {
+        return issuer;
     }
 
     public String id() {
@@ -145,6 +146,7 @@ public abstract class Card {
         Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required");
         if (!cardFaceNumber.equals(newCardFaceNumber)) {
             this.cardFaceNumber = newCardFaceNumber;
+            DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(id, newCardFaceNumber));
         }
     }
 
@@ -202,12 +204,12 @@ public abstract class Card {
     public String toString() {
         return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
-                .add("issuerId='" + issuerId + "'")
+                .add("issuer=" + issuer)
                 .add("termOfValidity=" + termOfValidity)
                 .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
-                .add("wallet=" + balance)
-                .add("changeWallet=" + smallChange)
+                .add("balance=" + balance)
+                .add("smallChange=" + smallChange)
                 .toString();
     }
 }

@@ -16,52 +16,19 @@
 
 package crm.hoprxi.domain.model.card;
 
-import mi.hoprxi.id.LongId;
+import org.junit.Test;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-22
+ * @version 0.0.1 2019-12-06
  */
-public interface AnonymousCardRepository {
-    /**
-     * @param card
-     */
-    void save(AnonymousCard card);
+public class CardFaceNumberGeneratorServiceTest {
 
-    /**
-     * @param id
-     * @return
-     */
-    AnonymousCard find(String id);
-
-    /**
-     * @return
-     */
-    int size();
-
-    /**
-     * @return
-     */
-    default String nextIdentity() {
-        return String.valueOf(LongId.generate());
+    @Test
+    public void generator() {
+        CardFaceNumberGeneratorService service = new CardFaceNumberGeneratorService.Builder("978750835393").filter(new int[]{4, 2}, true).build();
+        for (String s : service.generator(15))
+            System.out.println(s);
     }
-
-    /**
-     * @param offset
-     * @param limit
-     * @return
-     */
-    AnonymousCard[] findAll(int offset, int limit);
-
-    /**
-     * @param id
-     */
-    void remove(String id);
-
-    /**
-     * @param cardFaceNumber
-     * @return
-     */
-    AnonymousCard findByCardFaceNumber(String cardFaceNumber);
 }

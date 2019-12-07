@@ -18,6 +18,7 @@ package crm.hoprxi.domain.model.card;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.balance.Balance;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
+import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.integral.Integral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,10 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-11-14
  */
 public class AnonymousCard extends Card {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousCard.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
     private Integral integral;
 
-    public AnonymousCard(String id, String issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Integral integral, Appearance appearance) {
+    public AnonymousCard(String id, Issuer issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Integral integral, Appearance appearance) {
         super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         this.integral = integral;
     }
@@ -49,7 +50,7 @@ public class AnonymousCard extends Card {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
                 .add("integral=" + integral)
                 .toString();

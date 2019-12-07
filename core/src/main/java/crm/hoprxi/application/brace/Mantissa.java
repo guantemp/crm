@@ -14,19 +14,19 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.infrastructure.persistence;
-
-import org.junit.Test;
+package crm.hoprxi.application.brace;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
+ * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-25
+ * @version 0.0.1 builder 2018-08-08
  */
-public class CrmCoreSetupTest {
+public final class Mantissa {
+    private short decimalDigits;
+    private Round round;
 
-    @Test
-    public void setup() {
-        CrmCoreSetup.setup("crm");
+    public enum Round {
+        HALF_UP
     }
+
 }

@@ -17,34 +17,34 @@
 package crm.hoprxi.domain.model.collaborator;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-04
+ * @version 0.0.1 builder 2019-12-05
  */
 public class Issuer {
-    private String identity;
+    private String id;
     private String name;
 
-    public Issuer(String identity, String name) {
-        setIdentity(identity);
+    public Issuer(String id, String name) {
+        setId(id);
         setName(name);
     }
 
     private void setName(String name) {
-        Objects.requireNonNull(name, "name require");
+        Objects.requireNonNull(name, "name required");
         this.name = name;
     }
 
-    private void setIdentity(String identity) {
-        Objects.requireNonNull(identity, "identity required");
-        this.identity = identity;
+    private void setId(String id) {
+        Objects.requireNonNull(id, "id required");
+        this.id = id;
     }
 
-
-    public String identity() {
-        return identity;
+    public String id() {
+        return id;
     }
 
     public String name() {
@@ -53,10 +53,10 @@ public class Issuer {
 
     @Override
     public String toString() {
-        return "Supplier{" +
-                "identity='" + identity + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return new StringJoiner(", ", Issuer.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .toString();
     }
 
     @Override
@@ -66,11 +66,14 @@ public class Issuer {
 
         Issuer issuer = (Issuer) o;
 
-        return identity != null ? identity.equals(issuer.identity) : issuer.identity == null;
+        if (id != null ? !id.equals(issuer.id) : issuer.id != null) return false;
+        return name != null ? name.equals(issuer.name) : issuer.name == null;
     }
 
     @Override
     public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 }

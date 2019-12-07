@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-05-29
+ * @version 0.0.1 builder 2019-11-29
  */
-public class CardNumberGeneratorService {
+public class CardFaceNumberGeneratorService {
     private int[] filter;
     private Format format;
     private boolean global = false;
@@ -40,7 +40,7 @@ public class CardNumberGeneratorService {
     /**
      * @param builder
      */
-    private CardNumberGeneratorService(Builder builder) {
+    private CardFaceNumberGeneratorService(Builder builder) {
         global = builder.global;
         filter = builder.filter;
         format = builder.format;
@@ -84,7 +84,7 @@ public class CardNumberGeneratorService {
                     }
                     j += stepping;
                 }
-                return result.toArray(new String[0]);
+                return result.toArray(new String[result.size()]);
             }
 
             @Override
@@ -115,7 +115,7 @@ public class CardNumberGeneratorService {
                     }
                     j += stepping;
                 }
-                return result.toArray(new String[0]);
+                return result.toArray(new String[result.size()]);
             }
 
             @Override
@@ -140,21 +140,11 @@ public class CardNumberGeneratorService {
             return (10 - sum % 10) % 10;
         }
 
-        /**
-         * @param c
-         * @param i
-         * @return
-         */
+   /*
         private static boolean check(char c, int i) {
-            if (i == 0) {
-                return c - '0' != 0;
-            } else if (i == 1) {// filter 1
-                return c - '0' != 1;
-            } else {// filter other such as:2,3,4,5,6,7,8,9
-                int divisor = c - '0';
-                return divisor == 0 || divisor % i != 0;
-            }
+            return (c - '0') == i;
         }
+    */
 
         /**
          * @param s
@@ -165,13 +155,13 @@ public class CardNumberGeneratorService {
             if (global) {// Filtering char each character
                 for (int i : filter) {
                     for (int j = s.length() - 1; j >= 0; j--) {
-                        if (!check(s.charAt(j), i))
+                        if ((s.charAt(j) - '0') == i)
                             return false;
                     }
                 }
             } else {// Filter char in mantissa
                 for (int i : filter) {
-                    if (!check(s.charAt(s.length() - 1), i))
+                    if ((s.charAt(s.length() - 1) - '0') == i)
                         return false;
                 }
             }
@@ -199,7 +189,7 @@ public class CardNumberGeneratorService {
      * Constructor pattern
      */
     public static class Builder implements
-            mi.hoprxi.util.Builder<CardNumberGeneratorService> {
+            mi.hoprxi.util.Builder<CardFaceNumberGeneratorService> {
         private int[] filter = new int[0];
         private Format format = Format.EAN_13;
         private boolean global = false;
@@ -208,13 +198,12 @@ public class CardNumberGeneratorService {
         private int stepping = 1;
         private String suffix = "";
 
-        public Builder(String initialValue, Format format) {
+        public Builder(String initialValue) {
             this.initialValue = initialValue;
-            this.format = format;
         }
 
-        public CardNumberGeneratorService build() {
-            return new CardNumberGeneratorService(this);
+        public CardFaceNumberGeneratorService build() {
+            return new CardFaceNumberGeneratorService(this);
         }
 
         /**

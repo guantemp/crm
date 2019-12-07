@@ -22,6 +22,7 @@ import com.arangodb.entity.KeyType;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
+import com.arangodb.model.UserCreateOptions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,7 @@ import java.util.Collection;
  * @version 0.0.1 2019-11-25
  */
 
-public class CrmCoreSetup {
+public class CoreSetup {
 
     public static void setup(String databaseName) {
         ArangoDB arangoDB = ArangoDBUtil.getResource();
@@ -42,7 +43,7 @@ public class CrmCoreSetup {
         }
         arangoDB.createDatabase(databaseName);
         //vertex
-        for (String s : new String[]{"customer", "frozen_customer", "card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
+        for (String s : new String[]{"customer", "frozen_customer", "debit_card", "anonymous_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);
@@ -57,8 +58,9 @@ public class CrmCoreSetup {
         //name.mnemonic
         index.clear();
         index.add("cardFaceNumber");
-        HashIndexOptions hashIndexOptions = new HashIndexOptions().sparse(true);
-        arangoDB.db(databaseName).collection("card").ensureHashIndex(index, hashIndexOptions);
+        HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(true).sparse(true);
+        arangoDB.db(databaseName).collection("debit_card").ensureHashIndex(index, hashIndexOptions);
+        arangoDB.db(databaseName).collection("anonymous_card").ensureHashIndex(index, hashIndexOptions);
 
         //edge
         for (String s : new String[]{"belong", "next", "has"}) {
@@ -67,11 +69,17 @@ public class CrmCoreSetup {
         }
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
-        edgeList.add(new EdgeDefinition().collection("belong").from("card", "frozen_card").to("customer", "frozen_customer"));
-        edgeList.add(new EdgeDefinition().collection("has").from("card", "frozen_card").to("appearance"));
+        edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("customer", "frozen_customer"));
+        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card").to("appearance"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();
         System.out.println(databaseName + " create success");
         arangoDB = null;
+    }
+
+    public static void builderUserAndGrant(String username, String password) {
+        ArangoDB arangoDB = ArangoDBUtil.getResource();
+        UserCreateOptions userCreateOptions = new UserCreateOptions();
+        arangoDB.createUser(username, username);
     }
 }
