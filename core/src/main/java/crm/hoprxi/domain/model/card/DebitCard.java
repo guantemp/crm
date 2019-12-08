@@ -22,6 +22,7 @@ import crm.hoprxi.domain.model.card.balance.Balance;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
@@ -42,6 +43,14 @@ public class DebitCard extends Card {
         if (!DomainRegistry.validCustomerId(customerId))
             throw new IllegalArgumentException("customerId isn't valid");
         this.customerId = customerId;
+    }
+
+    public void changeCardFaceNumber(String newCardFaceNumber) {
+        Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required");
+        if (!cardFaceNumber.equals(newCardFaceNumber)) {
+            this.cardFaceNumber = newCardFaceNumber;
+            DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(super.id(), newCardFaceNumber));
+        }
     }
 
     @Override

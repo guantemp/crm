@@ -17,10 +17,11 @@ package crm.hoprxi.domain.model.card;
 
 
 import com.arangodb.entity.DocumentField;
-import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
 import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.Rounded;
+import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
@@ -40,7 +41,7 @@ public abstract class Card {
     private Issuer issuer;
     private TermOfValidity termOfValidity;
     private Appearance appearance;
-    private String cardFaceNumber;
+    protected String cardFaceNumber;
     private Balance balance;
     private SmallChange smallChange;
 
@@ -142,18 +143,10 @@ public abstract class Card {
 
     protected abstract boolean isCardFaceNumberSpec();
 
-    public void changeCardFaceNumber(String newCardFaceNumber) {
-        Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required");
-        if (!cardFaceNumber.equals(newCardFaceNumber)) {
-            this.cardFaceNumber = newCardFaceNumber;
-            DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(id, newCardFaceNumber));
-        }
-    }
-
     public void credit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card failed");
-        balance.deposit(amount);
+            throw new BeOverdueException("Card be overdue");
+        balance = balance.deposit(amount);
     }
 
     /**
@@ -162,8 +155,8 @@ public abstract class Card {
      */
     public void credit(MonetaryAmount amount, MonetaryAmount give) {
         if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card failed");
-        balance.deposit(amount, give);
+            throw new BeOverdueException("Card be overdue");
+        balance = balance.deposit(amount, give);
     }
 
     /**
@@ -172,9 +165,23 @@ public abstract class Card {
     public void debit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        balance.pay(amount);
+        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
+            balance = balance.pay(amount);
+            return;
+        }
+        Rounded rounded = smallChange.round(amount);
+        if (rounded.isOverflow())
+            smallChange = smallChange.deposit(rounded.remainder());
+        else
+            smallChange = smallChange.pay(rounded.remainder());
+        balance = balance.pay(rounded.integer());
     }
 
+    public void changeSmallChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
+        SmallChange newSmallChange = smallChange.changeSmallChangDenominationEnum(newSmallChangDenominationEnum);
+        if (smallChange != newSmallChange)
+            this.smallChange = newSmallChange;
+    }
 
     /**
      * @param amount
@@ -182,7 +189,7 @@ public abstract class Card {
     public void withdraw(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card failed");
-        balance.withdrawal(amount);
+        balance = balance.withdrawal(amount);
     }
 
     @Override

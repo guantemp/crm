@@ -20,9 +20,12 @@ import crm.hoprxi.domain.model.card.AnonymousCard;
 import crm.hoprxi.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.domain.model.card.TermOfValidity;
 import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.integral.Integral;
+import org.javamoney.moneta.Money;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,6 +52,12 @@ public class ArangoDBAnonymousCardRepositoryTest {
     @Test
     public void save() {
         AnonymousCard a = repository.find("a2");
+        Assert.assertNotNull(a);
+        a.credit(Money.of(200, "CNY"), Money.of(20, "CNY"));
+        repository.save(a);
+        a = repository.find("a2");
+        a.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
+        repository.save(a);
         System.out.println(a);
     }
 

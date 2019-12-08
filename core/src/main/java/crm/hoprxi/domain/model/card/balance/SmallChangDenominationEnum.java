@@ -49,8 +49,8 @@ public enum SmallChangDenominationEnum {
         MonetaryAmount integer = receivables.divideToIntegralValue(factor);
         MonetaryAmount remainder = receivables.remainder(factor);
         if (balance.isGreaterThanOrEqualTo(remainder))
-            return new Rounded(integer.multiply(factor), remainder.negate());
-        return new Rounded(integer.add(FastMoney.of(1, balance.getCurrency())).multiply(factor), FastMoney.of(factor, balance.getCurrency()).subtract(remainder));
+            return new Rounded(integer.multiply(factor), remainder.negate(), false);
+        return new Rounded(integer.add(FastMoney.of(1, balance.getCurrency())).multiply(factor), FastMoney.of(factor, balance.getCurrency()).subtract(remainder), true);
     }
 /*
     public static SmallChangDenominationEnum of(String s) {

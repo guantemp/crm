@@ -18,6 +18,7 @@ package crm.hoprxi.domain.model.card.balance;
 
 import org.javamoney.moneta.Money;
 
+import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.util.Locale;
@@ -30,13 +31,19 @@ import java.util.StringJoiner;
  */
 public class Rounded {
     private static final MonetaryAmount MONETARY_ZERO = Money.zero(Monetary.getCurrency(Locale.getDefault()));
-    public static Rounded ZERO = new Rounded(MONETARY_ZERO, MONETARY_ZERO);
+    public static Rounded ZERO = new Rounded(MONETARY_ZERO, MONETARY_ZERO, false);
     private MonetaryAmount integer;
     private MonetaryAmount remainder;
+    private boolean overflow;
 
-    public Rounded(MonetaryAmount integer, MonetaryAmount remainder) {
+    public Rounded(MonetaryAmount integer, MonetaryAmount remainder, boolean overflow) {
         setInteger(integer);
         setRemainder(remainder);
+        this.overflow = overflow;
+    }
+
+    public static Rounded zero(CurrencyUnit unit) {
+        return null;
     }
 
     private void setRemainder(MonetaryAmount remainder) {
@@ -58,6 +65,10 @@ public class Rounded {
 
     public MonetaryAmount remainder() {
         return remainder;
+    }
+
+    public boolean isOverflow() {
+        return overflow;
     }
 
     @Override

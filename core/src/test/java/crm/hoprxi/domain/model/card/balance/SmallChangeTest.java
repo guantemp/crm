@@ -34,10 +34,12 @@ public class SmallChangeTest {
         Rounded rounded = smallChange.round(Money.of(5.25, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.25, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertFalse(rounded.isOverflow());
         smallChange = smallChange.pay(rounded.remainder().negate());
         rounded = smallChange.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertTrue(rounded.isOverflow());
         smallChange = smallChange.deposit(rounded.remainder());
         Assert.assertTrue(Money.of(0.55, "CNY").isEqualTo(smallChange.amount()));
         //零钱金额五元
@@ -45,27 +47,32 @@ public class SmallChangeTest {
         rounded = smallChange.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertTrue(rounded.isOverflow());
         smallChange = smallChange.deposit(rounded.remainder());
 
         rounded = smallChange.round(Money.of(6.73, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-1.73, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertFalse(rounded.isOverflow());
         smallChange = smallChange.pay(rounded.remainder().negate());
 
         rounded = smallChange.round(Money.of(3.02, "CNY"));
         Assert.assertTrue(Money.of(0, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-3.02, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertFalse(rounded.isOverflow());
         smallChange = smallChange.pay(rounded.remainder().negate());
         //改回最大金额一元
         smallChange = smallChange.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
         rounded = smallChange.round(Money.of(6.73, "CNY"));
         Assert.assertTrue(Money.of(7, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.27, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertTrue(rounded.isOverflow());
         smallChange = smallChange.deposit(rounded.remainder());
 
         rounded = smallChange.round(Money.of(11.32, "CNY"));
         Assert.assertTrue(Money.of(11, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.32, "CNY").isEqualTo(rounded.remainder()));
+        Assert.assertFalse(rounded.isOverflow());
         smallChange = smallChange.pay(rounded.remainder().negate());
         Assert.assertTrue(Money.of(0, "CNY").isEqualTo(smallChange.amount()));
         //不使用零钱包
@@ -73,8 +80,10 @@ public class SmallChangeTest {
         rounded = smallChange.round(Money.of(3.28, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
         Assert.assertTrue(rounded.integer().isZero());
+        Assert.assertFalse(rounded.isOverflow());
         rounded = smallChange.round(Money.of(7.89, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
         Assert.assertTrue(rounded.integer().isZero());
+        Assert.assertFalse(rounded.isOverflow());
     }
 }
