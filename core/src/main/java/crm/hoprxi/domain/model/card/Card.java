@@ -170,10 +170,11 @@ public abstract class Card {
             return;
         }
         Rounded rounded = smallChange.round(amount);
-        if (rounded.isOverflow())
+        if (rounded.isOverflow()) {
             smallChange = smallChange.deposit(rounded.remainder());
-        else
-            smallChange = smallChange.pay(rounded.remainder());
+        } else {
+            smallChange = smallChange.pay(rounded.remainder().negate());
+        }
         balance = balance.pay(rounded.integer());
     }
 

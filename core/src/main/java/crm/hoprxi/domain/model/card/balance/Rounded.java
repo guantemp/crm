@@ -31,15 +31,13 @@ import java.util.StringJoiner;
  */
 public class Rounded {
     private static final MonetaryAmount MONETARY_ZERO = Money.zero(Monetary.getCurrency(Locale.getDefault()));
-    public static Rounded ZERO = new Rounded(MONETARY_ZERO, MONETARY_ZERO, false);
+    public static Rounded ZERO = new Rounded(MONETARY_ZERO, MONETARY_ZERO);
     private MonetaryAmount integer;
     private MonetaryAmount remainder;
-    private boolean overflow;
 
-    public Rounded(MonetaryAmount integer, MonetaryAmount remainder, boolean overflow) {
+    public Rounded(MonetaryAmount integer, MonetaryAmount remainder) {
         setInteger(integer);
         setRemainder(remainder);
-        this.overflow = overflow;
     }
 
     public static Rounded zero(CurrencyUnit unit) {
@@ -68,7 +66,7 @@ public class Rounded {
     }
 
     public boolean isOverflow() {
-        return overflow;
+        return remainder.isPositive();
     }
 
     @Override

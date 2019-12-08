@@ -63,9 +63,9 @@ public class SmallChange {
     }
 
     private void setAmount(MonetaryAmount amount) {
-        Objects.requireNonNull(amount, "balance required");
+        Objects.requireNonNull(amount, "amount required");
         if (amount.isNegative())
-            throw new IllegalArgumentException("balance must large or equal zero");
+            throw new IllegalArgumentException("amount must large or equal zero");
         this.amount = amount;
     }
 

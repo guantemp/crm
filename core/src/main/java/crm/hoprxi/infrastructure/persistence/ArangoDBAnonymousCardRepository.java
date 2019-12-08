@@ -138,7 +138,6 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
         //termOfValidity
         VPackSlice termOfValiditySlice = slice.get("termOfValidity");
-        System.out.println(termOfValiditySlice.get("startDate").getType());
         LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);

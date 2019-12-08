@@ -57,6 +57,9 @@ public class ArangoDBAnonymousCardRepositoryTest {
         repository.save(a);
         a = repository.find("a2");
         a.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
+        a.debit(Money.of(67.52, "CNY"));
+        a.debit(Money.of(67.45, "CNY"));
+        a.debit(Money.of(67.45, "CNY"));
         repository.save(a);
         System.out.println(a);
     }
