@@ -45,6 +45,21 @@ public class Balance {
         setGive(give);
     }
 
+    /**
+     * @param valuable
+     * @param give
+     * @return
+     */
+    public static Balance getInstance(MonetaryAmount valuable, MonetaryAmount give) {
+        if (valuable.isZero() && give.isZero())
+            return zero(valuable.getCurrency());
+        return new Balance(valuable, give);
+    }
+
+    /**
+     * @param locale
+     * @return
+     */
     public static Balance zero(Locale locale) {
         if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
             return RMB_ZERO;
@@ -54,7 +69,7 @@ public class Balance {
         return new Balance(zero, zero);
     }
 
-    private Balance zero(CurrencyUnit currencyUnit) {
+    private static Balance zero(CurrencyUnit currencyUnit) {
         if (currencyUnit.getNumericCode() == 156)
             return RMB_ZERO;
         if (currencyUnit.getNumericCode() == 840)
@@ -103,6 +118,10 @@ public class Balance {
         return new Balance(this.valuable.add(valuable), this.give.add(give));
     }
 
+    /**
+     * @param valuableAmount
+     * @return
+     */
     public Balance deposit(MonetaryAmount valuableAmount) {
         return deposit(valuableAmount, Money.zero(valuable.getCurrency()));
     }

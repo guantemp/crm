@@ -35,6 +35,7 @@ import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.integral.Integral;
+import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,10 +112,10 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     @Override
     public AnonymousCard find(String id) {
         final String query = "WITH anonymous_card,appearance\n" +
-                "FOR a IN anonymous_card FILTER a._key == @id \n" +
-                "FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "FOR c IN anonymous_card FILTER c._key == @key \n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
                 "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'integral':c.integral}";
-        final Map<String, Object> bindVars = new MapBuilder().put("identity", "sku/" + id).get();
+        final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         if (slices.hasNext())
             return rebuild(slices.next());
@@ -137,8 +138,9 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
         //termOfValidity
         VPackSlice termOfValiditySlice = slice.get("termOfValidity");
-        LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_DATE);
-        LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_DATE);
+        System.out.println(termOfValiditySlice.get("startDate").getType());
+        LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);
         //balance
         VPackSlice balanceSlice = slice.get("balance");
@@ -151,10 +153,10 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
         VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
-        MonetaryAmount amount = Money.of(smallChangeAmountSlice.get("number").getAsBigDecimal(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
         //Integral
-        Integral integral = new Integral(slice.get("integral").getAsBigDecimal());
+        Integral integral = new Integral(slice.get("integral").get("value").getAsBigDecimal());
 
         return new AnonymousCard(id, issuer, cardFaceNumber, termOfValidity, balance, smallChange, integral, null);
     }

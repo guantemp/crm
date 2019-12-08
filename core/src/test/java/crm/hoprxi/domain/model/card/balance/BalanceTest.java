@@ -22,6 +22,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import javax.money.Monetary;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -84,6 +85,19 @@ public class BalanceTest {
         assertTrue(rmb == Balance.zero(Locale.CHINESE));
         assertEquals(rmb.valuable(), Money.of(0, "CNY"));
         assertEquals(rmb.give(), Money.of(0, "CNY"));
+
+        rmb = rmb.overdraw(FastMoney.of(10, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(-10, "CNY"));
+
+        rmb = Balance.zero(Locale.CHINA);
+        rmb = rmb.deposit(FastMoney.of(20, "CNY"), FastMoney.of(2, "CNY"));
+        rmb = rmb.overdraw(FastMoney.of(25, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(-3, "CNY"));
+        rmb = rmb.overdraw(FastMoney.of(100, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(-103, "CNY"));
+
+        rmb = Balance.getInstance(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
+        assertTrue(rmb == Balance.zero(Locale.CHINESE));
 
         thrown.expect(InsufficientBalanceException.class);
         rmb.pay(Money.of(0.00000001, "CNY"));

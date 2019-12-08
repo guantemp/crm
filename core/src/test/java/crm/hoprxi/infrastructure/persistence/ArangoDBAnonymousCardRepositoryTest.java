@@ -40,12 +40,16 @@ public class ArangoDBAnonymousCardRepositoryTest {
     public static void setUpBeforeClass() {
         AnonymousCard a1 = new AnonymousCard("a1", new Issuer("9678512046PX", "自己"), "22156789", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
         repository.save(a1);
-        AnonymousCard a2 = new AnonymousCard("a2", new Issuer("9678512046PX", "自己"), "22156790", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
+        AnonymousCard a2 = new AnonymousCard("a2", new Issuer("9678512046PX", "self"), "22156790", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
         repository.save(a2);
+        AnonymousCard a3 = new AnonymousCard("a3", new Issuer("9678512046PX", "self"), "22156791", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
+        repository.save(a3);
     }
 
     @Test
     public void save() {
+        AnonymousCard a = repository.find("a2");
+        System.out.println(a);
     }
 
     @Test
