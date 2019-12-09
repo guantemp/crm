@@ -30,7 +30,7 @@ public enum SmallChangDenominationEnum {
     ZERO(0) {
         @Override
         public Rounded round(MonetaryAmount receivables, MonetaryAmount balance) {
-            return Rounded.ZERO;
+            return Rounded.zero(balance.getCurrency());
         }
     },
 

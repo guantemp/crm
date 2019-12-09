@@ -48,7 +48,7 @@ public class SmallChange {
         return new SmallChange(FastMoney.zero(Monetary.getCurrency(locale)), SmallChangDenominationEnum.ZERO);
     }
 
-    private SmallChange zero(CurrencyUnit currencyUnit) {
+    public static SmallChange zero(CurrencyUnit currencyUnit) {
         if (currencyUnit.getNumericCode() == 156)
             return RMB_ZERO;
         if (currencyUnit.getNumericCode() == 840)
@@ -79,6 +79,10 @@ public class SmallChange {
 
     public Rounded round(MonetaryAmount receivables) {
         return smallChangDenominationEnum.round(receivables, amount);
+    }
+
+    public boolean isZero() {
+        return amount.isZero();
     }
 
     /**

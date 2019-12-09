@@ -30,8 +30,8 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-11-15
  */
 public class Rounded {
-    private static final MonetaryAmount MONETARY_ZERO = Money.zero(Monetary.getCurrency(Locale.getDefault()));
-    public static Rounded ZERO = new Rounded(MONETARY_ZERO, MONETARY_ZERO);
+    private static final Rounded RMB_ZERO = new Rounded(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
+    private static final Rounded USD_ZERO = new Rounded(Money.zero(Monetary.getCurrency(Locale.US)), Money.zero(Monetary.getCurrency(Locale.US)));
     private MonetaryAmount integer;
     private MonetaryAmount remainder;
 
@@ -40,8 +40,22 @@ public class Rounded {
         setRemainder(remainder);
     }
 
-    public static Rounded zero(CurrencyUnit unit) {
-        return null;
+    public static Rounded zero(CurrencyUnit currencyUnit) {
+        if (currencyUnit.getNumericCode() == 156)
+            return RMB_ZERO;
+        if (currencyUnit.getNumericCode() == 840)
+            return USD_ZERO;
+        MonetaryAmount zero = Money.zero(currencyUnit);
+        return new Rounded(zero, zero);
+    }
+
+    public static Rounded zero(Locale locale) {
+        if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
+            return RMB_ZERO;
+        if (locale == Locale.US)
+            return USD_ZERO;
+        MonetaryAmount zero = Money.zero(Monetary.getCurrency(locale));
+        return new Rounded(zero, zero);
     }
 
     private void setRemainder(MonetaryAmount remainder) {
@@ -53,7 +67,7 @@ public class Rounded {
             throw new IllegalArgumentException("");
         MonetaryAmount remainder = integer.remainder(1);
         if (!remainder.isZero())
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("integer required");
         this.integer = integer;
     }
 

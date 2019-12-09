@@ -69,7 +69,7 @@ public class Balance {
         return new Balance(zero, zero);
     }
 
-    private static Balance zero(CurrencyUnit currencyUnit) {
+    public static Balance zero(CurrencyUnit currencyUnit) {
         if (currencyUnit.getNumericCode() == 156)
             return RMB_ZERO;
         if (currencyUnit.getNumericCode() == 840)
@@ -209,6 +209,10 @@ public class Balance {
         if (valuable.isLessThan(amount))
             throw new InsufficientBalanceException("insufficient balance");
         return new Balance(valuable.subtract(amount), give);
+    }
+
+    public boolean isZero() {
+        return valuable.isZero() && give.isZero();
     }
 
     /**

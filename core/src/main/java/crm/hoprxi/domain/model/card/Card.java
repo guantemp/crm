@@ -19,10 +19,7 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
-import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.Rounded;
-import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
-import crm.hoprxi.domain.model.card.balance.SmallChange;
+import crm.hoprxi.domain.model.card.balance.*;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
 import javax.money.MonetaryAmount;
@@ -190,7 +187,19 @@ public abstract class Card {
     public void withdraw(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card failed");
-        balance = balance.withdrawal(amount);
+        if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
+            throw new InsufficientBalanceException("insufficient balance");
+        if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
+            balance = balance.withdrawal(amount);
+            return;
+        }
+        MonetaryAmount temp = amount.subtract(balance.valuable());
+        balance = Balance.zero(balance.valuable().getCurrency());
+        smallChange = smallChange.pay(temp);
+    }
+
+    public void withdrawAll() {
+
     }
 
     @Override
