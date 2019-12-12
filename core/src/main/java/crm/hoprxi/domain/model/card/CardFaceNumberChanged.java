@@ -38,6 +38,14 @@ public class CardFaceNumberChanged implements DomainEvent {
         version = 1;
     }
 
+    public String id() {
+        return id;
+    }
+
+    public String cardFaceNumber() {
+        return cardFaceNumber;
+    }
+
     @Override
     public LocalDateTime occurredOn() {
         return occurredOn;

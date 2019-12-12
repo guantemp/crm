@@ -136,7 +136,7 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
     }
 
     @Override
-    public void remove(String identity) {
+    public void remove(String id) {
 
     }
 

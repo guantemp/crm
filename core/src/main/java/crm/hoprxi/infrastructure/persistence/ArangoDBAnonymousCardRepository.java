@@ -101,11 +101,28 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
 
     @Override
     public AnonymousCard[] findAll(int offset, int limit) {
-        return new AnonymousCard[0];
+        AnonymousCard[] anonymousCards = ArangoDBUtil.calculationCollectionSize(crm, AnonymousCard.class, offset, limit);
+        final String query = "WITH anonymous_card,appearance\n" +
+                "FOR c IN anonymous_card LIMIT @offset,@limit \n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'integral':c.integral}";
+        final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        for (int i = 0; slices.hasNext(); i++)
+            anonymousCards[i] = rebuild(slices.next());
+        return anonymousCards;
     }
 
     @Override
     public AnonymousCard findByCardFaceNumber(String cardFaceNumber) {
+        final String query = "WITH anonymous_card,appearance\n" +
+                "FOR c IN anonymous_card FILTER c.cardFaceNumber == @cardFaceNumber \n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'integral':c.integral}";
+        final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        if (slices.hasNext())
+            return rebuild(slices.next());
         return null;
     }
 
@@ -162,8 +179,11 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
 
 
     @Override
-    public void remove(String identity) {
-
+    public void remove(String id) {
+        boolean exists = crm.collection("anonymous_card").documentExists(id);
+        if (exists) {
+            crm.graph("core").vertexCollection("an").deleteVertex("anonymous_card/" + id);
+        }
     }
 
     private static class HasEdge {

@@ -23,6 +23,8 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.module.jdk8.VPackJdk8Module;
 
 import java.lang.reflect.Array;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -30,6 +32,21 @@ import java.lang.reflect.Array;
  * @version 0.0.1 2018-07-24
  */
 public class ArangoDBUtil {
+    private static Pattern HUMP_SEGMENTATION_PATTERN = Pattern.compile("[A-Z]");
+
+    private static String segmentation(String className) {
+        Matcher matcher = HUMP_SEGMENTATION_PATTERN.matcher(className);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String g = matcher.group();
+            matcher.appendReplacement(sb, "_" + g.toLowerCase());
+        }
+        matcher.appendTail(sb);
+        if (sb.charAt(0) == '_') {
+            sb.delete(0, 1);
+        }
+        return sb.toString();
+    }
 
     public static ArangoDB getResource() {
         ArangoDB.Builder builder = new ArangoDB.Builder();
@@ -53,7 +70,8 @@ public class ArangoDBUtil {
         if (limit < 0)
             limit = 0;
         long count = 0;
-        final String countQuery = " RETURN LENGTH(" + t.getSimpleName().toLowerCase() + ")";
+        String collection = segmentation(t.getSimpleName());
+        final String countQuery = " RETURN LENGTH(" + collection + ")";
         final ArangoCursor<VPackSlice> countCursor = arangoDatabase.query(countQuery, null, null, VPackSlice.class);
         for (; countCursor.hasNext(); ) {
             count = countCursor.next().getAsLong();

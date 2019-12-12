@@ -66,10 +66,14 @@ public class ArangoDBAnonymousCardRepositoryTest {
 
     @Test
     public void size() {
+        int size = repository.size();
+        Assert.assertEquals(3, size);
     }
 
     @Test
     public void findAll() {
+        AnonymousCard[] anonymousCards = repository.findAll(0, 3);
+        Assert.assertEquals(3, anonymousCards.length);
     }
 
     @Test

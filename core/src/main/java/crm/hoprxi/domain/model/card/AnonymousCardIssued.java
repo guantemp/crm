@@ -16,10 +16,33 @@
 
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.card.appearance.Appearance;
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-12-05
  */
-public class AnonymousCardIssued {
+public class AnonymousCardIssued implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+    private String cardFaceNumber;
+    private String issuerId;
+    private String issuerName;
+    private TermOfValidity termOfValidity;
+    private Appearance appearance;
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return version;
+    }
 }

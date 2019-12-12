@@ -36,6 +36,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Unit test for simple App.
@@ -48,7 +50,20 @@ public class AppTest {
     public void shouldAnswerWithTrue() throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         messageDigest.update("Qwe123465".getBytes(StandardCharsets.UTF_8));
-        System.out.println("Qwe123465 Sha-256" + ByteToHex.toHexStr(messageDigest.digest()));
+        System.out.println("Qwe123465 Sha-256:" + ByteToHex.toHexStr(messageDigest.digest()));
+
+        String source = "AnonymousCardWordSizeOf";
+        Matcher matcher = Pattern.compile("[A-Z]").matcher(source);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String g = matcher.group();
+            matcher.appendReplacement(sb, "_" + g.toLowerCase());
+        }
+        matcher.appendTail(sb);
+        if (sb.charAt(0) == '_') {
+            sb.delete(0, 1);
+        }
+        System.out.println(sb.toString());
 
         System.out.println(Monetary.getCurrency(Locale.US).getNumericCode() + " " + Monetary.getCurrency(Locale.US).getCurrencyCode());
         System.out.println(Monetary.getCurrency(Locale.CHINA).getNumericCode() + " " + Monetary.getCurrency(Locale.CHINA).getCurrencyCode());
