@@ -52,6 +52,11 @@ public class CreditCard extends Card {
     }
 
     @Override
+    public void debit(MonetaryAmount amount) {
+
+    }
+
+    @Override
     protected boolean isCardFaceNumberSpec() {
         return false;
     }

@@ -19,7 +19,10 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
-import crm.hoprxi.domain.model.card.balance.*;
+import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.InsufficientBalanceException;
+import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
 import javax.money.MonetaryAmount;
@@ -36,11 +39,11 @@ public abstract class Card {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private Issuer issuer;
-    private TermOfValidity termOfValidity;
+    protected TermOfValidity termOfValidity;
     private Appearance appearance;
     protected String cardFaceNumber;
-    private Balance balance;
-    private SmallChange smallChange;
+    protected Balance balance;
+    protected SmallChange smallChange;
 
     /**
      * @param id
@@ -159,21 +162,7 @@ public abstract class Card {
     /**
      * @param amount
      */
-    public void debit(MonetaryAmount amount) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
-        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
-            balance = balance.pay(amount);
-            return;
-        }
-        Rounded rounded = smallChange.round(amount);
-        if (rounded.isOverflow()) {
-            smallChange = smallChange.deposit(rounded.remainder());
-        } else {
-            smallChange = smallChange.pay(rounded.remainder().negate());
-        }
-        balance = balance.pay(rounded.integer());
-    }
+    public abstract void debit(MonetaryAmount amount);
 
     public void changeSmallChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
         SmallChange newSmallChange = smallChange.changeSmallChangDenominationEnum(newSmallChangDenominationEnum);

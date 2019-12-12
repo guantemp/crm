@@ -74,15 +74,19 @@ public class ArangoDBAnonymousCardRepositoryTest {
     public void findAll() {
         AnonymousCard[] anonymousCards = repository.findAll(0, 3);
         Assert.assertEquals(3, anonymousCards.length);
+        anonymousCards = repository.findAll(0, 2);
+        Assert.assertEquals(2, anonymousCards.length);
+        anonymousCards = repository.findAll(1, 2);
+        Assert.assertEquals(2, anonymousCards.length);
     }
 
     @Test
     public void findByCardFaceNumber() {
+        AnonymousCard a3 = repository.findByCardFaceNumber("22156791");
+        System.out.println(a3);
+        Assert.assertNotNull(a3);
     }
 
-    @Test
-    public void find() {
-    }
 
     @Test
     public void remove() {

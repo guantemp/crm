@@ -17,12 +17,15 @@ package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.Rounded;
+import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.integral.Integral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.money.MonetaryAmount;
 import java.util.StringJoiner;
 
 /***
@@ -44,14 +47,31 @@ public class AnonymousCard extends Card {
     }
 
     @Override
+    public void debit(MonetaryAmount amount) {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
+            balance = balance.pay(amount);
+            return;
+        }
+        Rounded rounded = smallChange.round(amount);
+        if (rounded.isOverflow()) {
+            smallChange = smallChange.deposit(rounded.remainder());
+        } else {
+            smallChange = smallChange.pay(rounded.remainder().negate());
+        }
+        balance = balance.pay(rounded.integer());
+    }
+
+    @Override
     protected boolean isCardFaceNumberSpec() {
         return true;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]")
-                .add("super=" + super.toString())
+        return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
+                .add(super.toString())
                 .add("integral=" + integral)
                 .toString();
     }

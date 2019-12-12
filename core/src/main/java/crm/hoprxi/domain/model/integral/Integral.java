@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-22
+ * @version 0.0.1 builder 2019-07-22
  */
 public class Integral implements Comparable<Integral> {
     public static final Integral ZERO = new Integral(0);

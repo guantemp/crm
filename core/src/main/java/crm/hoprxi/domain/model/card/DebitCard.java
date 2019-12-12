@@ -19,9 +19,12 @@ package crm.hoprxi.domain.model.card;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.balance.Balance;
+import crm.hoprxi.domain.model.card.balance.Rounded;
+import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
+import javax.money.MonetaryAmount;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -51,6 +54,23 @@ public class DebitCard extends Card {
             this.cardFaceNumber = newCardFaceNumber;
             DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(super.id(), newCardFaceNumber));
         }
+    }
+
+    @Override
+    public void debit(MonetaryAmount amount) {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
+            balance = balance.pay(amount);
+            return;
+        }
+        Rounded rounded = smallChange.round(amount);
+        if (rounded.isOverflow()) {
+            smallChange = smallChange.deposit(rounded.remainder());
+        } else {
+            smallChange = smallChange.pay(rounded.remainder().negate());
+        }
+        balance = balance.pay(rounded.integer());
     }
 
     @Override
