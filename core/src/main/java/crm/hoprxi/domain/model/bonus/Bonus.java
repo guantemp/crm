@@ -35,8 +35,7 @@ public class Bonus implements Comparable<Bonus> {
     }
 
     public static Bonus of(Number value) {
-        BigDecimal bd = NumberToBigDecimal.to(value);
-        if (bd == BigDecimal.ZERO)
+        if (value.doubleValue() == 0.0)
             return ZERO;
         return new Bonus(value);
     }
