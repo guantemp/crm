@@ -1,22 +1,20 @@
 /*
- * Copyright (c) 2018. www.hoprxi.com rights Reserved.
+ * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ *  Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.integral;
+package crm.hoprxi.domain.model.bonus;
 
 import mi.hoprxi.to.ByteToHex;
 
@@ -25,26 +23,26 @@ import java.util.Objects;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-22
+ * @version 0.0.1 builder 2019-08-22
  */
-public final class SkuEntry {
-    private String skuId;
+public class ItemEntry {
+    private String itemId;
     private Ratio ratio;
 
-    public SkuEntry(String skuId, Ratio ratio) {
-        setSkuId(skuId);
+    public ItemEntry(String itemId, Ratio ratio) {
+        setItemId(itemId);
         setRatio(ratio);
     }
 
-    public String skuId() {
-        return skuId;
+    public String itemId() {
+        return itemId;
     }
 
-    private void setSkuId(String skuId) {
-        Objects.requireNonNull(skuId, "skuId required");
-        if (!ByteToHex.isIdentityHexStr(skuId))
+    private void setItemId(String itemId) {
+        Objects.requireNonNull(itemId, "skuId required");
+        if (!ByteToHex.isIdentityHexStr(itemId))
             throw new IllegalArgumentException("illegal skuId characters");
-        this.skuId = skuId;
+        this.itemId = itemId;
     }
 
     public Ratio ratio() {
@@ -60,15 +58,15 @@ public final class SkuEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SkuEntry skuEntry = (SkuEntry) o;
+        ItemEntry itemEntry = (ItemEntry) o;
 
-        if (skuId != null ? !skuId.equals(skuEntry.skuId) : skuEntry.skuId != null) return false;
-        return ratio != null ? ratio.equals(skuEntry.ratio) : skuEntry.ratio == null;
+        if (itemId != null ? !itemId.equals(itemEntry.itemId) : itemEntry.itemId != null) return false;
+        return ratio != null ? ratio.equals(itemEntry.ratio) : itemEntry.ratio == null;
     }
 
     @Override
     public int hashCode() {
-        int result = skuId != null ? skuId.hashCode() : 0;
+        int result = itemId != null ? itemId.hashCode() : 0;
         result = 31 * result + (ratio != null ? ratio.hashCode() : 0);
         return result;
     }
@@ -76,7 +74,7 @@ public final class SkuEntry {
     @Override
     public String toString() {
         return "SkuEntry{" +
-                "skuId='" + skuId + '\'' +
+                "skuId='" + itemId + '\'' +
                 ", ratio=" + ratio +
                 '}';
     }

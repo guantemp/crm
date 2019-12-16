@@ -14,13 +14,42 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.power;
+package crm.hoprxi.domain.model.bonus;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-10-20
+ * @version 0.0.1 builder 2019-08-22
  */
-public interface Command {
-    void execute();
+public class CategoryEntry {
+    private Ratio ratio;
+    private String categoryId;
+
+    public CategoryEntry(String categoryId, Ratio ratio) {
+        setCategoryId(categoryId);
+        setRatio(ratio);
+    }
+
+    ;
+
+    public Ratio ratio() {
+        return ratio;
+    }
+
+    private void setRatio(Ratio ratio) {
+        this.ratio = ratio;
+    }
+
+    public String categoryId() {
+        return categoryId;
+    }
+
+    private void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public boolean isInclude(String skuId) {
+        return true;
+    }
+
 }

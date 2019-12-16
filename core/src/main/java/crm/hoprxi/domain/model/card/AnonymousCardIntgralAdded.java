@@ -14,19 +14,32 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.card.balance;
+package crm.hoprxi.domain.model.card;
+
+import crm.hoprxi.domain.model.bonus.Bonus;
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-20
+ * @version 0.0.1 2019-12-16
  */
-public class ExceedQuotaException extends RuntimeException {
-    public ExceedQuotaException(String message) {
-        super(message, null, false, false);
+public class AnonymousCardIntgralAdded implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+    private Bonus bonus;
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
     }
 
-    public ExceedQuotaException(String message, Throwable cause) {
-        super(message, cause, false, true);
+    @Override
+    public int version() {
+        return version;
     }
+
 }

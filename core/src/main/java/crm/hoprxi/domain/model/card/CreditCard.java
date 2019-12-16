@@ -19,9 +19,9 @@ package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.LineOfCredit;
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
 import javax.money.MonetaryAmount;

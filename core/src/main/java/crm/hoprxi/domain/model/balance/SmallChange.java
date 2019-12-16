@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model.card.balance;
+package crm.hoprxi.domain.model.balance;
 
 import org.javamoney.moneta.FastMoney;
 

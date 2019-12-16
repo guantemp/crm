@@ -26,15 +26,15 @@ import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.balance.SmallChange;
+import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.AnonymousCard;
 import crm.hoprxi.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.domain.model.card.TermOfValidity;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
-import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.integral.Integral;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
@@ -172,9 +172,9 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
         //Integral
-        Integral integral = new Integral(slice.get("integral").get("value").getAsBigDecimal());
+        Bonus bonus = new Bonus(slice.get("integral").get("value").getAsLong());
 
-        return new AnonymousCard(id, issuer, cardFaceNumber, termOfValidity, balance, smallChange, integral, null);
+        return new AnonymousCard(id, issuer, cardFaceNumber, termOfValidity, balance, smallChange, bonus, null);
     }
 
 

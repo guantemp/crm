@@ -16,9 +16,9 @@
 
 package crm.hoprxi.domain.model.customer.footprint;
 
+import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.collaborator.Operator;
-import crm.hoprxi.domain.model.integral.Integral;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -36,26 +36,26 @@ public final class IntegralHistory {
     private Issuer issuer;
     private Operator operator;
     private String cardId;
-    private Integral integral;
+    private Bonus bonus;
     private List<IntegralHistoryDetail> datails = new ArrayList<>(0);
     private URL cover;
     private URL herf;
     private String synopsis;
 
-    public IntegralHistory(LocalDateTime occurOn, Issuer issuer, Operator operator, String cardId, Integral integral) {
+    public IntegralHistory(LocalDateTime occurOn, Issuer issuer, Operator operator, String cardId, Bonus bonus) {
         this.occurOn = occurOn;
         this.issuer = issuer;
         this.operator = operator;
         this.cardId = cardId;
-        this.integral = integral;
+        this.bonus = bonus;
     }
 
-    public IntegralHistory(LocalDateTime occurOn, Issuer issuer, Operator operator, String cardId, Integral integral, List<IntegralHistoryDetail> datails, URL cover, URL herf, String synopsis) {
+    public IntegralHistory(LocalDateTime occurOn, Issuer issuer, Operator operator, String cardId, Bonus bonus, List<IntegralHistoryDetail> datails, URL cover, URL herf, String synopsis) {
         setOccurOn(occurOn);
         setIssuer(issuer);
         setOperator(operator);
         setCardId(cardId);
-        this.integral = integral;
+        this.bonus = bonus;
         this.datails = datails;
         this.cover = cover;
         this.herf = herf;
@@ -98,8 +98,8 @@ public final class IntegralHistory {
         return cardId;
     }
 
-    public Integral integral() {
-        return integral;
+    public Bonus integral() {
+        return bonus;
     }
 
     public List<IntegralHistoryDetail> datails() {
@@ -129,7 +129,7 @@ public final class IntegralHistory {
         if (issuer != null ? !issuer.equals(that.issuer) : that.issuer != null) return false;
         if (operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
         if (cardId != null ? !cardId.equals(that.cardId) : that.cardId != null) return false;
-        if (integral != null ? !integral.equals(that.integral) : that.integral != null) return false;
+        if (bonus != null ? !bonus.equals(that.bonus) : that.bonus != null) return false;
         if (datails != null ? !datails.equals(that.datails) : that.datails != null) return false;
         if (cover != null ? !cover.equals(that.cover) : that.cover != null) return false;
         if (herf != null ? !herf.equals(that.herf) : that.herf != null) return false;
@@ -142,7 +142,7 @@ public final class IntegralHistory {
         result = 31 * result + (issuer != null ? issuer.hashCode() : 0);
         result = 31 * result + (operator != null ? operator.hashCode() : 0);
         result = 31 * result + (cardId != null ? cardId.hashCode() : 0);
-        result = 31 * result + (integral != null ? integral.hashCode() : 0);
+        result = 31 * result + (bonus != null ? bonus.hashCode() : 0);
         result = 31 * result + (datails != null ? datails.hashCode() : 0);
         result = 31 * result + (cover != null ? cover.hashCode() : 0);
         result = 31 * result + (herf != null ? herf.hashCode() : 0);
@@ -157,7 +157,7 @@ public final class IntegralHistory {
                 ", issuer=" + issuer +
                 ", operator=" + operator +
                 ", cardId='" + cardId + '\'' +
-                ", rule=" + integral +
+                ", rule=" + bonus +
                 ", datails=" + datails +
                 ", cover=" + cover +
                 ", herf=" + herf +

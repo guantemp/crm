@@ -16,14 +16,14 @@
 
 package crm.hoprxi.infrastructure.persistence;
 
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.balance.SmallChange;
+import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.AnonymousCard;
 import crm.hoprxi.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.domain.model.card.TermOfValidity;
-import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
-import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.integral.Integral;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -41,11 +41,11 @@ public class ArangoDBAnonymousCardRepositoryTest {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        AnonymousCard a1 = new AnonymousCard("a1", new Issuer("9678512046PX", "自己"), "22156789", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
+        AnonymousCard a1 = new AnonymousCard("a1", new Issuer("9678512046PX", "自己"), "22156789", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a1);
-        AnonymousCard a2 = new AnonymousCard("a2", new Issuer("9678512046PX", "self"), "22156790", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
+        AnonymousCard a2 = new AnonymousCard("a2", new Issuer("9678512046PX", "self"), "22156790", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a2);
-        AnonymousCard a3 = new AnonymousCard("a3", new Issuer("9678512046PX", "self"), "22156791", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Integral.ZERO, null);
+        AnonymousCard a3 = new AnonymousCard("a3", new Issuer("9678512046PX", "self"), "22156791", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a3);
     }
 

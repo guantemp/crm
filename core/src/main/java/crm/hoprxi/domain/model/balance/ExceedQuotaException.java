@@ -14,13 +14,19 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.power;
+package crm.hoprxi.domain.model.balance;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-10-20
+ * @version 0.0.1 2019-11-20
  */
-public interface Command {
-    void execute();
+public class ExceedQuotaException extends RuntimeException {
+    public ExceedQuotaException(String message) {
+        super(message, null, false, false);
+    }
+
+    public ExceedQuotaException(String message, Throwable cause) {
+        super(message, cause, false, true);
+    }
 }

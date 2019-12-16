@@ -41,4 +41,10 @@ public class DomainRegistry {
             return false;
         return true;
     }
+
+    public static boolean validCategoryId(String categoryId) {
+        if (categoryId == null || categoryId.isEmpty())
+            return false;
+        return true;
+    }
 }

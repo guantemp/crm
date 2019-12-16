@@ -15,13 +15,13 @@
  */
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.Rounded;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.balance.SmallChange;
+import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
-import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.Rounded;
-import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
-import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.integral.Integral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +35,23 @@ import java.util.StringJoiner;
  */
 public class AnonymousCard extends Card {
     private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
-    private Integral integral;
+    private Bonus bonus;
 
-    public AnonymousCard(String id, Issuer issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Integral integral, Appearance appearance) {
+    public AnonymousCard(String id, Issuer issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
         super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
-        this.integral = integral;
+        this.bonus = bonus;
     }
 
-    public Integral integral() {
-        return integral;
+    public Bonus integral() {
+        return bonus;
+    }
+
+    public void addIntegral(Bonus bonus) {
+        this.bonus = this.bonus.add(bonus);
+    }
+
+    public void subtractIntegral(Bonus bonus) {
+        this.bonus = this.bonus.subtract(bonus);
     }
 
     @Override
@@ -72,7 +80,7 @@ public class AnonymousCard extends Card {
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
                 .add(super.toString())
-                .add("integral=" + integral)
+                .add("integral=" + bonus)
                 .toString();
     }
 }

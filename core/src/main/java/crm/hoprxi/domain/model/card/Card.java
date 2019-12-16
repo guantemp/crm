@@ -17,12 +17,12 @@ package crm.hoprxi.domain.model.card;
 
 
 import com.arangodb.entity.DocumentField;
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.InsufficientBalanceException;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
-import crm.hoprxi.domain.model.card.balance.Balance;
-import crm.hoprxi.domain.model.card.balance.InsufficientBalanceException;
-import crm.hoprxi.domain.model.card.balance.SmallChangDenominationEnum;
-import crm.hoprxi.domain.model.card.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
 import javax.money.MonetaryAmount;
