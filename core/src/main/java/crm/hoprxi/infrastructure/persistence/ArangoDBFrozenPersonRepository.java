@@ -28,9 +28,10 @@ import crm.hoprxi.domain.model.collaborator.Contact;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.FrozenPerson;
 import crm.hoprxi.domain.model.customer.person.FrozenPersonRepository;
+import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.domain.model.rmf.Credit;
+import crm.hoprxi.domain.model.spss.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
 
     static {
         try {
-            constructor = FrozenPerson.class.getDeclaredConstructor(String.class, String.class, Credit.class, SmallChange.class, URI.class, IdentityCard.class, MonthDay.class, PostalAddressBook.class);
+            constructor = FrozenPerson.class.getDeclaredConstructor(String.class, String.class, Data.class, SmallChange.class, URI.class, IdentityCard.class, MonthDay.class, PostalAddressBook.class);
             constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled())
@@ -131,7 +132,7 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
         MonthDay birthday = null;
         if (!slice.get("birthday").isNull())
             birthday = MonthDay.from(LocalDate.parse(slice.get("birthday").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
-        return constructor.newInstance(id, name, Credit.NO_CREDIT, SmallChange.ZERO, headPortrait, identityCard, birthday, book);
+        return constructor.newInstance(id, name, Data.EMPTY_DATA, SmallChange.ZERO, headPortrait, identityCard, birthday, book);
     }
 
     @Override
@@ -140,8 +141,8 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
     }
 
     @Override
-    public FrozenPerson[] findAll(int offset, int limit) {
-        FrozenPerson[] frozenPeople = ArangoDBUtil.calculationCollectionSize(database, FrozenPerson.class, offset, limit);
+    public Person findAll(int offset, int limit) {
+        Person frozenPeople = ArangoDBUtil.calculationCollectionSize(database, FrozenPerson.class, offset, limit);
         if (frozenPeople.length == 0)
             return frozenPeople;
         final String query = "FOR f IN frozen_customer LIMIT @offset,@limit RETURN c";

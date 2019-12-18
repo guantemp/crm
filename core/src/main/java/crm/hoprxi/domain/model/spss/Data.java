@@ -14,18 +14,18 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.rmf;
+package crm.hoprxi.domain.model.spss;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-07-15
  */
-public class Credit implements Comparable<Credit> {
-    public static final Credit NO_CREDIT = new Credit(0);
+public class Data implements Comparable<Data> {
+    public static final Data EMPTY_DATA = new Data(0);
     private int value;
 
-    public Credit(int value) {
+    public Data(int value) {
         setValue(value);
     }
 
@@ -36,7 +36,7 @@ public class Credit implements Comparable<Credit> {
     }
 
     @Override
-    public int compareTo(Credit o) {
+    public int compareTo(Data o) {
         return value == o.value ? 0 : value > o.value ? 1 : -1;
     }
 }

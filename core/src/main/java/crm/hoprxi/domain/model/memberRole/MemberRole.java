@@ -20,7 +20,7 @@ import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.power.PowerBook;
-import crm.hoprxi.domain.model.rmf.Credit;
+import crm.hoprxi.domain.model.spss.Data;
 
 import java.util.Objects;
 
@@ -33,11 +33,11 @@ public class MemberRole implements Comparable<MemberRole> {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
-    private Credit lowerLimit;
+    private Data lowerLimit;
     private PowerBook powerBook;
     private Appearance cardAppearance;
 
-    public MemberRole(String id, String name, Credit lowerLimit, Appearance cardAppearance, PowerBook powerBook) {
+    public MemberRole(String id, String name, Data lowerLimit, Appearance cardAppearance, PowerBook powerBook) {
         setId(id);
         setName(name);
         setLowerLimit(lowerLimit);
@@ -45,7 +45,7 @@ public class MemberRole implements Comparable<MemberRole> {
         this.cardAppearance = cardAppearance;
     }
 
-    public MemberRole(String id, String name, Credit credite) {
+    public MemberRole(String id, String name, Data credite) {
         this(id, name, credite, null, null);
     }
 
@@ -61,12 +61,12 @@ public class MemberRole implements Comparable<MemberRole> {
     }
 
     public boolean isCurrentMemberRole(Customer customer) {
-        return lowerLimit.compareTo(customer.credit()) >= 0 ? true : false;
+        return lowerLimit.compareTo(customer.data()) >= 0 ? true : false;
     }
 
-    private void setLowerLimit(Credit lowerLimit) {
+    private void setLowerLimit(Data lowerLimit) {
         if (lowerLimit == null)
-            lowerLimit = Credit.NO_CREDIT;
+            lowerLimit = Data.EMPTY_DATA;
         this.lowerLimit = lowerLimit;
     }
 

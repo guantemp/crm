@@ -17,8 +17,8 @@ package crm.hoprxi.domain.model.customer;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
-import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.rmf.Credit;
+import crm.hoprxi.domain.model.collaborator.Reference;
+import crm.hoprxi.domain.model.spss.Data;
 import mi.hoprxi.crypto.EncryptionService;
 
 import java.net.URI;
@@ -37,48 +37,90 @@ public abstract class Customer {
         public void rename(String newName) {
         }
     };
-    private static final int MAX_LENGTH = 255;
-    private static final Pattern TRANSACTION_PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
+    private static final int NAME_MAX_LENGTH = 255;
+    private static final int ID_MAX_LENGTH = 32;
+    private static final Pattern CHINA_MOBILE_PHONE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
+    private static final Pattern CHINA_TELEPHONE_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-z]{2,}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
     private URI headPortrait;
-    private Credit credit;
-    private String transactionPassword;
-    private Issuer issuer;
+    private Data data;
+    //transaction password
+    private String password;
+    private Reference reference;
 
 
     public Customer(String id, String name) {
-        this(id, name, Credit.NO_CREDIT, null);
+        this(id, name, Data.EMPTY_DATA, null);
     }
 
-    public Customer(String id, String name, Credit credit, URI headPortrait) {
+    public Customer(String id, String name, Data data, URI headPortrait) {
         setId(id);
         setName(name);
-        setCredit(credit);
+        setData(data);
         this.headPortrait = headPortrait;
     }
 
+    public Customer(String id, String name, String password, Data data, Reference reference, URI headPortrait) {
+        setId(id);
+        setName(name);
+        setPassword(password);
+        setData(data);
+        setReference(reference);
+        this.headPortrait = headPortrait;
 
-    protected void setId(String id) {
-        this.id = Objects.requireNonNull(id, "id required");
     }
 
-    private void setPassword(String transactionPassword) {
-        transactionPassword = Objects.requireNonNull(transactionPassword, "password is required").trim();
-        if (!transactionPassword.isEmpty()) {
-            Matcher matcher = TRANSACTION_PASSWORD_PATTERN.matcher(transactionPassword);
+    private void setId(String id) {
+        id = Objects.requireNonNull(id, "id required").trim();
+        if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesRule(id)) //验证手机或者邮箱
+            throw new IllegalArgumentException("Not a valid cell phone number!");
+        this.id = id;
+    }
+
+    private boolean isCompliesRule(String id) {
+        Matcher mobile = CHINA_MOBILE_PHONE_PATTERN.matcher(id);
+        Matcher tel = CHINA_TELEPHONE_PATTERN.matcher(id);
+        Matcher email = EMAIL_PATTERN.matcher(id);
+        if (mobile.matches() || tel.matches() || email.matches())
+            return true;
+        return false;
+    }
+
+    private void setName(String name) {
+        name = Objects.requireNonNull(name, "name required").trim();
+        if (name.isEmpty() || name.length() > NAME_MAX_LENGTH)
+            throw new IllegalArgumentException("name length range is [1-128]");
+        this.name = name;
+    }
+
+    private void setPassword(String password) {
+        password = Objects.requireNonNull(password, "password is required").trim();
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
             if (!matcher.matches())
                 throw new IllegalArgumentException("password must 6 digit number");
         }
         EncryptionService encryption = DomainRegistry.getEncryptionService();
-        this.transactionPassword = encryption.encrypt(transactionPassword);
+        this.password = encryption.encrypt(password);
     }
+
+    private void setData(Data data) {
+        this.data = Objects.requireNonNull(data, "credit required");
+    }
+
+    private void setReference(Reference reference) {
+        this.reference = reference;
+    }
+
 
     public void rename(String newName) {
         newName = Objects.requireNonNull(newName, "newName required").trim();
-        if (newName.isEmpty() || newName.length() > MAX_LENGTH)
-            throw new IllegalArgumentException("newName length range is 1-" + MAX_LENGTH);
+        if (newName.isEmpty() || newName.length() > NAME_MAX_LENGTH)
+            throw new IllegalArgumentException("newName length range is 1-" + NAME_MAX_LENGTH);
         if (!name.equals(newName)) {
             name = newName;
             DomainRegistry.domainEventPublisher().publish(new CustomerRenamed(id, newName));
@@ -117,22 +159,13 @@ public abstract class Customer {
          return new CustomerSnapshot(id, name, postalAddressBook.acquiescencePostalAddress());
      }
  */
-    public Credit credit() {
-        return credit;
-    }
-
-    private void setCredit(Credit credit) {
-        this.credit = Objects.requireNonNull(credit, "credit required");
+    public Data data() {
+        return data;
     }
 
     public String name() {
         return name;
     }
 
-    private void setName(String name) {
-        name = Objects.requireNonNull(name, "name required").trim();
-        if (name.isEmpty() || name.length() > MAX_LENGTH)
-            throw new IllegalArgumentException("name length range is [1-128]");
-        this.name = name;
-    }
+
 }

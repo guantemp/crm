@@ -28,5 +28,5 @@ public interface FrozenPersonRepository {
 
     void remove(String identity);
 
-    FrozenPerson[] findAll(int offset, int limit);
+    Person findAll(int offset, int limit);
 }

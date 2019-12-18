@@ -18,7 +18,7 @@ package crm.hoprxi.domain.model.memberRole;
 
 
 import crm.hoprxi.domain.model.power.PowerBook;
-import crm.hoprxi.domain.model.rmf.Credit;
+import crm.hoprxi.domain.model.spss.Data;
 import event.hoprxi.domain.model.DomainEvent;
 
 import javax.swing.*;
@@ -32,13 +32,13 @@ import java.time.LocalDateTime;
 public final class MemberCreated implements DomainEvent {
     private String identity;
     private String name;
-    private Credit standard;
+    private Data standard;
     private PowerBook powerBook;
     private Icon icon;
     private int version;
     private LocalDateTime occurredOn;
 
-    public MemberCreated(String identity, String name, Credit standard, PowerBook powerBook, Icon icon) {
+    public MemberCreated(String identity, String name, Data standard, PowerBook powerBook, Icon icon) {
         this.identity = identity;
         this.name = name;
         this.standard = standard;

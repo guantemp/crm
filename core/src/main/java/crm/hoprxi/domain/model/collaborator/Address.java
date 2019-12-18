@@ -21,7 +21,7 @@ import java.util.Objects;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-19
+ * @version 0.0.1 builder 2019-07-19
  */
 public final class Address {
     // such as Chinese

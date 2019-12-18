@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.rmf;
+package crm.hoprxi.domain.model.spss;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,30 +29,30 @@ import java.util.Objects;
  * @version 0.0.1 builder 2018-09-10
  */
 public final class Recency {
-    private EnumMap<Cycle, Credit> corresponding;
+    private EnumMap<Cycle, Data> corresponding;
 
-    public Recency(EnumMap<Cycle, Credit> corresponding) {
+    public Recency(EnumMap<Cycle, Data> corresponding) {
         setCorresponding(corresponding);
     }
 
     public static void main(String[] args) {
-        EnumMap<Cycle, Credit> corresponding = new EnumMap<Cycle, Credit>(Cycle.class);
-        corresponding.put(Cycle.ONE_WEEK, new Credit(200));
-        corresponding.put(Cycle.ONE_MONTH, new Credit(100));
-        corresponding.put(Cycle.THERE_MONTHS, new Credit(0));
-        corresponding.put(Cycle.SIX_MONTHS, new Credit(-50));
-        corresponding.put(Cycle.ONE_YEAR, new Credit(-200));
+        EnumMap<Cycle, Data> corresponding = new EnumMap<Cycle, Data>(Cycle.class);
+        corresponding.put(Cycle.ONE_WEEK, new Data(200));
+        corresponding.put(Cycle.ONE_MONTH, new Data(100));
+        corresponding.put(Cycle.THERE_MONTHS, new Data(0));
+        corresponding.put(Cycle.SIX_MONTHS, new Data(-50));
+        corresponding.put(Cycle.ONE_YEAR, new Data(-200));
         Recency recency = new Recency(corresponding);
         System.out.println(recency.calculate(LocalDate.of(2017, 1, 28)));
         System.out.println(recency.calculate(LocalDate.now().minusDays(1)));
     }
 
-    private void setCorresponding(EnumMap<Cycle, Credit> corresponding) {
+    private void setCorresponding(EnumMap<Cycle, Data> corresponding) {
         Objects.requireNonNull(corresponding, "corresponding required");
         this.corresponding = corresponding;
     }
 
-    public Credit calculate(LocalDate lastDate) {
+    public Data calculate(LocalDate lastDate) {
         Cycle temp = null;
         long days = ChronoUnit.DAYS.between(lastDate, LocalDate.now());
         for (Cycle cycle : Cycle.values()) {
@@ -66,7 +66,7 @@ public final class Recency {
         return corresponding.get(temp);
     }
 
-    public Credit calculate(LocalDateTime lastDateTime) {
+    public Data calculate(LocalDateTime lastDateTime) {
         return calculate(lastDateTime.toLocalDate());
     }
 
@@ -74,9 +74,9 @@ public final class Recency {
      * @param sample this sample must sort by occerOn
      * @return
      */
-    public Credit calculate(List<ConsumptionRecord> sample) {
+    public Data calculate(List<ConsumptionRecord> sample) {
         if (sample.isEmpty())
-            return Credit.NO_CREDIT;
+            return Data.EMPTY_DATA;
         return calculate(sample.get(1).occurOn());
     }
 }

@@ -25,8 +25,8 @@ import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
-import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
+import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
@@ -54,24 +54,24 @@ public class ArangoDBPersonRepository implements PersonRepository {
     }
 
     @Override
-    public void save(Customer customer) {
-        boolean exists = database.collection("customer").documentExists(customer.id());
+    public void save(Person person) {
+        boolean exists = database.collection("customer").documentExists(person.id());
         ArangoGraph graph = database.graph("core");
         if (exists) {
-            graph.vertexCollection("customer").updateVertex(customer.id(), customer, UPDATE_OPTIONS);
+            graph.vertexCollection("customer").updateVertex(person.id(), person, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("customer").insertVertex(customer);
+            graph.vertexCollection("customer").insertVertex(person);
         }
     }
 
     @Override
-    public Customer find(String id) {
+    public Person find(String id) {
         ArangoGraph graph = database.graph("core");
         VPackSlice slice = graph.vertexCollection("customer").getVertex(id, VPackSlice.class);
         return rebuild(slice);
     }
 
-    private Customer rebuild(VPackSlice slice) {
+    private Person rebuild(VPackSlice slice) {
         if (slice == null)
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
@@ -114,22 +114,32 @@ public class ArangoDBPersonRepository implements PersonRepository {
     }
 
     @Override
-    public Customer[] findAll(long offset, int limit) {
-        Customer[] customers = ArangoDBUtil.calculationCollectionSize(database, Customer.class, offset, limit);
-        if (customers.length == 0)
-            return customers;
+    public Person findByTelephone(String telephone) {
+        return null;
+    }
+
+    @Override
+    public Person authenticCredentials(String id, String password) {
+        return null;
+    }
+
+    @Override
+    public Person[] findAll(long offset, int limit) {
+        Person[] people = ArangoDBUtil.calculationCollectionSize(database, Person.class, offset, limit);
+        if (people.length == 0)
+            return people;
         final String query = "FOR c IN customer LIMIT @offset,@limit RETURN c";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         final ArangoCursor<VPackSlice> slices = database.query(query, bindVars, null, VPackSlice.class);
         for (int i = 0; slices.hasNext(); i++)
-            customers[i] = rebuild(slices.next());
-        return customers;
+            people[i] = rebuild(slices.next());
+        return people;
     }
 
     @Override
-    public void remove(String identity) {
+    public void remove(String id) {
         final String remove = "FOR c IN customer FILTER c._id == @identity REMOVE c IN customer";
-        final Map<String, Object> bindVars = new MapBuilder().put("identity", "customer/" + identity).get();
+        final Map<String, Object> bindVars = new MapBuilder().put("identity", "customer/" + id).get();
         database.query(remove, bindVars, null, VPackSlice.class);
     }
 }

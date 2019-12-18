@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.rmf;
+package crm.hoprxi.domain.model.spss;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,21 +26,21 @@ import java.util.*;
  * @version 0.0.1 builder 2018-09-10
  */
 public final class Frequency {
-    private Map<Rate, Credit> corresponding;
+    private Map<Rate, Data> corresponding;
 
-    public Frequency(Map<Rate, Credit> corresponding) {
+    public Frequency(Map<Rate, Data> corresponding) {
         setCorresponding(corresponding);
     }
 
     public static void main(String[] args) {
-        Map<Rate, Credit> map = new HashMap<>();
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 15), new Credit(400));
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 3), new Credit(100));
-        map.put(new Rate(Cycle.ONE_WEEK, (short) 7), new Credit(700));
-        map.put(new Rate(Cycle.ONE_WEEK, (short) 3), new Credit(300));
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 7), new Credit(200));
-        map.put(new Rate(Cycle.ONE_WEEK, (short) 1), new Credit(100));
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 10), new Credit(300));
+        Map<Rate, Data> map = new HashMap<>();
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 15), new Data(400));
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 3), new Data(100));
+        map.put(new Rate(Cycle.ONE_WEEK, (short) 7), new Data(700));
+        map.put(new Rate(Cycle.ONE_WEEK, (short) 3), new Data(300));
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 7), new Data(200));
+        map.put(new Rate(Cycle.ONE_WEEK, (short) 1), new Data(100));
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 10), new Data(300));
         Frequency frequency = new Frequency(map);
 
         LocalDateTime[] sample = new LocalDateTime[]{
@@ -71,7 +71,7 @@ public final class Frequency {
         System.out.println(frequency.calculate(Arrays.asList(sample)));
     }
 
-    private void setCorresponding(Map<Rate, Credit> corresponding) {
+    private void setCorresponding(Map<Rate, Data> corresponding) {
         Objects.requireNonNull(corresponding, "corresponding required");
         this.corresponding = corresponding;
     }
@@ -80,7 +80,7 @@ public final class Frequency {
      * @param sample
      * @return
      */
-    public Credit calculate(LocalDateTime[] sample) {
+    public Data calculate(LocalDateTime[] sample) {
         Arrays.parallelSort(sample, (o1, o2) -> o2.compareTo(o1));
         Rate[] rates = corresponding.keySet().toArray(new Rate[0]);
         Arrays.sort(rates, (Rate o1, Rate o2) -> {
@@ -100,14 +100,14 @@ public final class Frequency {
                     return corresponding.get(rate);
             }
         }
-        return Credit.NO_CREDIT;
+        return Data.EMPTY_DATA;
     }
 
     /**
      * @param sample Sort according to the time of occurrence.
      * @return
      */
-    public Credit calculate(List<LocalDateTime> sample) {
+    public Data calculate(List<LocalDateTime> sample) {
         Collections.sort(sample);
         Rate[] rates = corresponding.keySet().toArray(new Rate[0]);
         Arrays.sort(rates, (Rate o1, Rate o2) -> {
@@ -127,7 +127,7 @@ public final class Frequency {
                     return corresponding.get(rate);
             }
         }
-        return Credit.NO_CREDIT;
+        return Data.EMPTY_DATA;
     }
 
     public static class Rate {

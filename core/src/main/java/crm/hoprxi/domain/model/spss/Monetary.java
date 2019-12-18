@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.rmf;
+package crm.hoprxi.domain.model.spss;
 
 import org.javamoney.moneta.Money;
 
@@ -28,18 +28,18 @@ import java.util.*;
  * @version 0.0.1 builder 2018-09-10
  */
 public final class Monetary {
-    private Map<Consumption, Credit> corresponding;
+    private Map<Consumption, Data> corresponding;
 
-    public Monetary(Map<Consumption, Credit> corresponding) {
+    public Monetary(Map<Consumption, Data> corresponding) {
         setCorresponding(corresponding);
     }
 
-    private void setCorresponding(Map<Consumption, Credit> corresponding) {
+    private void setCorresponding(Map<Consumption, Data> corresponding) {
         Objects.requireNonNull(corresponding, "corresponding required");
         this.corresponding = corresponding;
     }
 
-    public Credit calculate(List<ConsumptionRecord> sample) {
+    public Data calculate(List<ConsumptionRecord> sample) {
         Collections.sort(sample);
         Consumption[] consumptions = corresponding.keySet().toArray(new Consumption[0]);
         Arrays.sort(consumptions, (Consumption o1, Consumption o2) -> {
@@ -59,7 +59,7 @@ public final class Monetary {
                     return corresponding.get(consumption);
             }
         }
-        return Credit.NO_CREDIT;
+        return Data.EMPTY_DATA;
     }
 
     public static class Consumption {

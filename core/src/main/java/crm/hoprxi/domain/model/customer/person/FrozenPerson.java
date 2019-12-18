@@ -17,7 +17,7 @@ package crm.hoprxi.domain.model.customer.person;
 
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.domain.model.rmf.Credit;
+import crm.hoprxi.domain.model.spss.Data;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -33,8 +33,8 @@ public class FrozenPerson extends Customer {
     private IdentityCard identityCard;
     private MonthDay birthday;
 
-    protected FrozenPerson(String id, String name, Credit credit, URI headPortrait, MonthDay birthday, PostalAddressBook postalAddressBook, IdentityCard identityCard) {
-        super(id, name, credit, headPortrait);
+    protected FrozenPerson(String id, String name, Data data, URI headPortrait, MonthDay birthday, PostalAddressBook postalAddressBook, IdentityCard identityCard) {
+        super(id, name, data, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
@@ -61,6 +61,6 @@ public class FrozenPerson extends Customer {
     }
 
     public Person unfreeze() {
-        return new Person(id(), name(), credit(), headPortrait(), birthday, postalAddressBook, identityCard);
+        return new Person(id(), name(), data(), headPortrait(), birthday, postalAddressBook, identityCard);
     }
 }

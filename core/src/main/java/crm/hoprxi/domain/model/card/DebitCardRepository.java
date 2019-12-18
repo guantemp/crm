@@ -40,7 +40,5 @@ public interface DebitCardRepository {
 
     DebitCard findByCustomer(String customerId);
 
-    DebitCard findByTelephone(String telephone);
-
     DebitCard findByCardFaceNumber(String cardFaceNumber);
 }

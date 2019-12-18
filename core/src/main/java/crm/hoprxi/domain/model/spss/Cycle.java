@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.rmf;
+package crm.hoprxi.domain.model.spss;
 
 import java.time.temporal.ChronoUnit;
 

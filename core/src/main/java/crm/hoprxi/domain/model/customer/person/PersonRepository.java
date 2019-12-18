@@ -15,7 +15,6 @@
  */
 package crm.hoprxi.domain.model.customer.person;
 
-import crm.hoprxi.domain.model.customer.Customer;
 import mi.hoprxi.id.ObjectId;
 
 /***
@@ -25,22 +24,35 @@ import mi.hoprxi.id.ObjectId;
  */
 public interface PersonRepository {
     /**
-     * @param customer
+     * @param person
      */
-    void save(Customer customer);
+    void save(Person person);
 
     /**
      * @param id
      * @return
      */
-    Customer find(String id);
+    Person find(String id);
+
+    /**
+     * @param telephone
+     * @return
+     */
+    Person findByTelephone(String telephone);
+
+    /**
+     * @param id
+     * @param password
+     * @return
+     */
+    Person authenticCredentials(String id, String password);
 
     /**
      * @param offset
      * @param limit
      * @return
      */
-    Customer[] findAll(long offset, int limit);
+    Person[] findAll(long offset, int limit);
 
     /**
      * @return
@@ -50,7 +62,7 @@ public interface PersonRepository {
     }
 
     /**
-     * @param identity
+     * @param id
      */
-    void remove(String identity);
+    void remove(String id);
 }
