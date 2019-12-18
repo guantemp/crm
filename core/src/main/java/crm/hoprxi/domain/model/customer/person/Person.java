@@ -35,15 +35,27 @@ public class Person extends Customer {
     private MonthDay birthday;
 
     public Person(String id, String name) {
-        this(id, name, Data.EMPTY_DATA, null, null, null, null);
+        this(id, name, "", Data.EMPTY_DATA, null, null, null, null);
     }
 
-    public Person(String id, String name, Data data, URI headPortrait, MonthDay birthday, PostalAddressBook postalAddressBook, IdentityCard identityCard) {
-        super(id, name, data, headPortrait);
+    /**
+     * @param id
+     * @param name
+     * @param password
+     * @param data
+     * @param headPortrait
+     * @param postalAddressBook
+     * @param identityCard
+     * @param birthday
+     */
+    public Person(String id, String name, String password, Data data, URI headPortrait,
+                  PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
+        super(id, name, password, data, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
     }
+
 
     public PostalAddressBook postalAddressBook() {
         return postalAddressBook;

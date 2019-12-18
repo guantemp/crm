@@ -17,7 +17,6 @@ package crm.hoprxi.domain.model.customer;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
-import crm.hoprxi.domain.model.collaborator.Reference;
 import crm.hoprxi.domain.model.spss.Data;
 import mi.hoprxi.crypto.EncryptionService;
 
@@ -50,7 +49,6 @@ public abstract class Customer {
     private Data data;
     //transaction password
     private String password;
-    private Reference reference;
 
 
     public Customer(String id, String name) {
@@ -64,12 +62,11 @@ public abstract class Customer {
         this.headPortrait = headPortrait;
     }
 
-    public Customer(String id, String name, String password, Data data, Reference reference, URI headPortrait) {
+    public Customer(String id, String name, String password, Data data, URI headPortrait) {
         setId(id);
         setName(name);
         setPassword(password);
         setData(data);
-        setReference(reference);
         this.headPortrait = headPortrait;
 
     }
@@ -111,11 +108,6 @@ public abstract class Customer {
     private void setData(Data data) {
         this.data = Objects.requireNonNull(data, "credit required");
     }
-
-    private void setReference(Reference reference) {
-        this.reference = reference;
-    }
-
 
     public void rename(String newName) {
         newName = Objects.requireNonNull(newName, "newName required").trim();

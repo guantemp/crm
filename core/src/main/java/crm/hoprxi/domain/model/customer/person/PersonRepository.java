@@ -38,7 +38,7 @@ public interface PersonRepository {
      * @param telephone
      * @return
      */
-    Person findByTelephone(String telephone);
+    Person telephoneNumberAuthenticCredentials(String phone, String password);
 
     /**
      * @param id
