@@ -23,22 +23,22 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2018-08-23
  */
-public final class Brand {
-    private String identity;
+public class Brand {
+    private String id;
     private String name;
 
-    public Brand(String identity, String name) {
-        setIdentity(identity);
+    public Brand(String id, String name) {
+        setId(id);
         setName(name);
     }
 
-    public String identity() {
-        return identity;
+    public String id() {
+        return id;
     }
 
-    private void setIdentity(String identity) {
-        Objects.requireNonNull(identity, "identity required");
-        this.identity = identity;
+    private void setId(String id) {
+        Objects.requireNonNull(id, "id required");
+        this.id = id;
     }
 
     public String name() {
@@ -56,18 +56,18 @@ public final class Brand {
 
         Brand brand = (Brand) o;
 
-        return identity != null ? identity.equals(brand.identity) : brand.identity == null;
+        return id != null ? id.equals(brand.id) : brand.id == null;
     }
 
     @Override
     public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Brand{" +
-                "identity='" + identity + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }

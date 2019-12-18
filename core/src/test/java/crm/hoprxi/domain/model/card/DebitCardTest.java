@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.card;
+package crm.hoprxi.domain.model.card;
 
 import org.javamoney.moneta.Money;
 import org.junit.Rule;

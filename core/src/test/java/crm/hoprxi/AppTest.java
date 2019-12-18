@@ -17,7 +17,6 @@
 
 package crm.hoprxi;
 
-import crm.hoprxi.domain.model.bonus.Bonus;
 import mi.hoprxi.to.ByteToHex;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -52,11 +51,6 @@ public class AppTest {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
         messageDigest.update("Qwe123465".getBytes(StandardCharsets.UTF_8));
         System.out.println("Qwe123465 Sha-256:" + ByteToHex.toHexStr(messageDigest.digest()));
-
-        System.out.println(new Bonus(7863.45).value());
-        System.out.println(new Bonus(7863).value().longValue());
-        System.out.println(Bonus.of(0) == Bonus.ZERO);
-        System.out.println(Bonus.of(0.0000) == Bonus.ZERO);
 
         String source = "AnonymousCardWordSizeOf";
         Matcher matcher = Pattern.compile("[A-Z]").matcher(source);

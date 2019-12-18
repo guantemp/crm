@@ -22,8 +22,7 @@ import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import crm.hoprxi.domain.model.collaborator.Reference;
 
 import javax.money.MonetaryAmount;
 import java.util.StringJoiner;
@@ -34,24 +33,28 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-11-14
  */
 public class AnonymousCard extends Card {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
     private Bonus bonus;
+    private Reference reference;
 
     public AnonymousCard(String id, Issuer issuerId, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
         super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         this.bonus = bonus;
     }
 
-    public Bonus integral() {
+    public Bonus bonus() {
         return bonus;
     }
 
-    public void addIntegral(Bonus bonus) {
+    public void addBonus(Bonus bonus) {
         this.bonus = this.bonus.add(bonus);
     }
 
-    public void subtractIntegral(Bonus bonus) {
+    public void subtractBonus(Bonus bonus) {
         this.bonus = this.bonus.subtract(bonus);
+    }
+
+    public Reference reference() {
+        return reference;
     }
 
     @Override

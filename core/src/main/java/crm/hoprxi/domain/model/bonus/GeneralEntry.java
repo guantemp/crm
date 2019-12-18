@@ -16,14 +16,18 @@
 
 package crm.hoprxi.domain.model.bonus;
 
+import mi.hoprxi.to.NumberToBigDecimal;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-08-22
+ * @version 0.0.1 builder 2019-12-17
  */
-public class GeneralEntry {
+public class GeneralEntry implements Entry {
     public static final GeneralEntry ONE_TO_ONE = new GeneralEntry(Ratio.ONE_TO_ONE);
     private Ratio ratio;
 
@@ -31,7 +35,7 @@ public class GeneralEntry {
         setRatio(ratio);
     }
 
-    public GeneralEntry valueOf(Ratio ratio) {
+    public GeneralEntry of(Ratio ratio) {
         if (ratio == Ratio.ONE_TO_ONE)
             return ONE_TO_ONE;
         return new GeneralEntry(ratio);
@@ -44,6 +48,21 @@ public class GeneralEntry {
 
     public Ratio ratio() {
         return ratio;
+    }
+
+    public GeneralEntry changeRatio(Ratio newRatio) {
+        Objects.requireNonNull(newRatio, "newRatio required");
+        if (ratio.equals(newRatio))
+            return this;
+        return new GeneralEntry(newRatio);
+    }
+
+    @Override
+    public Bonus calculation(double consumption, int scale, RoundingMode roundingMode) {
+        Number number = ratio.calculation(consumption);
+        BigDecimal bd = NumberToBigDecimal.to(number);
+        bd = bd.setScale(Bonus.scale(), roundingMode);
+        return new Bonus(bd);
     }
 
     @Override

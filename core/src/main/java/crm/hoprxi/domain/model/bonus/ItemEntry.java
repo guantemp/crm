@@ -16,7 +16,7 @@
 
 package crm.hoprxi.domain.model.bonus;
 
-import mi.hoprxi.to.ByteToHex;
+import crm.hoprxi.domain.model.collaborator.Item;
 
 import java.util.Objects;
 
@@ -26,23 +26,23 @@ import java.util.Objects;
  * @version 0.0.1 builder 2019-08-22
  */
 public class ItemEntry {
-    private String itemId;
+    private Item item;
     private Ratio ratio;
 
-    public ItemEntry(String itemId, Ratio ratio) {
-        setItemId(itemId);
+    public ItemEntry(Item item, Ratio ratio) {
+        setItem(item);
         setRatio(ratio);
     }
 
-    public String itemId() {
-        return itemId;
+    public Item item() {
+        return item;
     }
 
-    private void setItemId(String itemId) {
-        Objects.requireNonNull(itemId, "skuId required");
-        if (!ByteToHex.isIdentityHexStr(itemId))
-            throw new IllegalArgumentException("illegal skuId characters");
-        this.itemId = itemId;
+    private void setItem(Item item) {
+        Objects.requireNonNull(item, "skuId required");
+        //if (!ByteToHex.isIdentityHexStr(item))
+        //    throw new IllegalArgumentException("illegal skuId characters");
+        this.item = item;
     }
 
     public Ratio ratio() {
@@ -53,29 +53,4 @@ public class ItemEntry {
         this.ratio = ratio;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ItemEntry itemEntry = (ItemEntry) o;
-
-        if (itemId != null ? !itemId.equals(itemEntry.itemId) : itemEntry.itemId != null) return false;
-        return ratio != null ? ratio.equals(itemEntry.ratio) : itemEntry.ratio == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = itemId != null ? itemId.hashCode() : 0;
-        result = 31 * result + (ratio != null ? ratio.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "SkuEntry{" +
-                "skuId='" + itemId + '\'' +
-                ", ratio=" + ratio +
-                '}';
-    }
 }

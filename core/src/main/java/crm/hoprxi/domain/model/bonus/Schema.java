@@ -21,29 +21,14 @@ import java.util.Set;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-09-05
+ * @version 0.0.1 builder 2019-09-05
  */
 public class Schema {
     private String identity;
     private String name;
     //Highest priority
-    private Set<ItemEntry> skuEntries;
+    private Set<ItemEntry> itemEntries;
     private SecondPriorityEntrySchema secondPriorityEntrySchema;
     private GeneralEntry generalEntry = GeneralEntry.ONE_TO_ONE;
     private SummaryEntrySchema summaryEntrySchema;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Schema schema = (Schema) o;
-
-        return identity != null ? identity.equals(schema.identity) : schema.identity == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
-    }
 }

@@ -20,12 +20,12 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2019-07-25
+ * @version 0.0.2 builder 2019-12-17
  */
 public class Ratio {
     public static final Ratio ONE_TO_ONE = new Ratio(1, 1);
     public static final Ratio ZERO = new Ratio(1, 0);
-    private int costAmount;
+    private int costAmount = 1;
     private int increase = 1;
 
     public Ratio(int costAmount, int increase) {
@@ -33,10 +33,10 @@ public class Ratio {
         setIncrease(increase);
     }
 
-    public static Ratio valueOf(int costAmount, int increase) {
+    public static Ratio of(int costAmount, int increase) {
         if (increase == 0)
             return ZERO;
-        if (costAmount == 100 && increase == 1)
+        if (costAmount == 1 && increase == 1)
             return ONE_TO_ONE;
         return new Ratio(costAmount, increase);
     }
@@ -53,9 +53,8 @@ public class Ratio {
         this.costAmount = costAmount;
     }
 
-    public Bonus calculation(double amount, int scale) {
-        amount = Math.pow(10, scale) * amount * increase / costAmount;
-        return new Bonus(Math.round(amount));
+    public Number calculation(double consumptionAmount) {
+        return consumptionAmount * increase / costAmount;
     }
 
     @Override
@@ -72,15 +71,15 @@ public class Ratio {
     @Override
     public int hashCode() {
         int result = costAmount;
-        result = 31 * result + (int) increase;
+        result = 31 * result + increase;
         return result;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Ratio.class.getSimpleName() + "[", "]")
-                .add("denominator=" + costAmount)
-                .add("numerator=" + increase)
+                .add("costAmount=" + costAmount)
+                .add("increase=" + increase)
                 .toString();
     }
 }

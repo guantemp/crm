@@ -21,23 +21,23 @@ package crm.hoprxi.domain.model.collaborator;
  * @since JDK8.0
  * @version 0.0.1 builder 2018-08-07
  */
-public final class Category {
-    private String identity;
+public class Category {
+    private String id;
     private String name;
-    private String parentIdentity;
+    private String parentId;
 
-    public Category(String parentIdentity, String identity, String name) {
-        setParentIdentity(parentIdentity);
-        setIdentity(identity);
+    public Category(String parentId, String id, String name) {
+        setParentId(parentId);
+        setId(id);
         setName(name);
     }
 
     public String identity() {
-        return identity;
+        return id;
     }
 
-    private void setIdentity(String identity) {
-        this.identity = identity;
+    private void setId(String id) {
+        this.id = id;
     }
 
     public String name() {
@@ -49,11 +49,11 @@ public final class Category {
     }
 
     public String parentIdentity() {
-        return parentIdentity;
+        return parentId;
     }
 
-    private void setParentIdentity(String parentIdentity) {
-        this.parentIdentity = parentIdentity;
+    private void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     @Override
@@ -63,20 +63,20 @@ public final class Category {
 
         Category category = (Category) o;
 
-        return identity != null ? identity.equals(category.identity) : category.identity == null;
+        return id != null ? id.equals(category.id) : category.id == null;
     }
 
     @Override
     public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Category{" +
-                "identity='" + identity + '\'' +
+                "identity='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", parentIdentity='" + parentIdentity + '\'' +
+                ", parentIdentity='" + parentId + '\'' +
                 '}';
     }
 }

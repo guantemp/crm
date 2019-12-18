@@ -105,7 +105,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card LIMIT @offset,@limit \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'integral':c.integral}";
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         for (int i = 0; slices.hasNext(); i++)
@@ -118,7 +118,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card FILTER c.cardFaceNumber == @cardFaceNumber \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'integral':c.integral}";
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         if (slices.hasNext())
@@ -131,7 +131,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card FILTER c._key == @key \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'integral':c.integral}";
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         if (slices.hasNext())
@@ -171,8 +171,8 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
         MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
-        //Integral
-        Bonus bonus = new Bonus(slice.get("integral").get("value").getAsLong());
+        //bonus
+        Bonus bonus = new Bonus(slice.get("bonus").get("value").getAsLong());
 
         return new AnonymousCard(id, issuer, cardFaceNumber, termOfValidity, balance, smallChange, bonus, null);
     }

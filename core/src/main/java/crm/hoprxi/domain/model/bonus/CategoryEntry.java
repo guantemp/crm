@@ -16,6 +16,10 @@
 
 package crm.hoprxi.domain.model.bonus;
 
+import crm.hoprxi.domain.model.collaborator.Category;
+
+import java.util.Objects;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
@@ -23,14 +27,12 @@ package crm.hoprxi.domain.model.bonus;
  */
 public class CategoryEntry {
     private Ratio ratio;
-    private String categoryId;
+    private Category category;
 
-    public CategoryEntry(String categoryId, Ratio ratio) {
-        setCategoryId(categoryId);
+    public CategoryEntry(Category category, Ratio ratio) {
+        setCategory(category);
         setRatio(ratio);
     }
-
-    ;
 
     public Ratio ratio() {
         return ratio;
@@ -40,16 +42,11 @@ public class CategoryEntry {
         this.ratio = ratio;
     }
 
-    public String categoryId() {
-        return categoryId;
+    public Category categoryId() {
+        return category;
     }
 
-    private void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    private void setCategory(Category category) {
+        this.category = Objects.requireNonNull(category, "categoryId required");
     }
-
-    public boolean isInclude(String skuId) {
-        return true;
-    }
-
 }

@@ -23,12 +23,16 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-07-22
+ * @version 0.0.1 builder 2019-12-17
  */
 public class Bonus implements Comparable<Bonus> {
+    private static final int SCALE = 2;
     public static final Bonus ZERO = new Bonus(0);
-    private static int SCALE = 2;
     private long value;
+
+    private Bonus(long value) {
+        this.value = value;
+    }
 
     public Bonus(Number value) {
         setValue(value);
@@ -49,7 +53,7 @@ public class Bonus implements Comparable<Bonus> {
         this.value = bd.movePointRight(SCALE).longValue();
     }
 
-    public int scale() {
+    public static int scale() {
         return SCALE;
     }
 
@@ -57,12 +61,12 @@ public class Bonus implements Comparable<Bonus> {
         long temp = value + bonus.value;
         if (temp == 0)
             return ZERO;
-        return new Bonus(value + bonus.value);
+        return new Bonus(temp);
     }
 
     public Bonus subtract(Bonus bonus) {
         if (bonus.value > value)
-            throw new BonusDeficiencyException("integral deficiency");
+            throw new BonusDeficiencyException("bonus deficiency");
         if (bonus.value == value)
             return ZERO;
         return new Bonus(value - bonus.value);

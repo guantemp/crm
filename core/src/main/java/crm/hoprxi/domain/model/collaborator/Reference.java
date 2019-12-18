@@ -19,26 +19,27 @@ package crm.hoprxi.domain.model.collaborator;
 import mi.hoprxi.to.ByteToHex;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-25
+ * @version 0.0.1 builder 2019-12-18
  */
-public final class Reference {
-    private String identity;
+public class Reference {
+    private String id;
     private String name;
 
-    public Reference(String identity, String name) {
-        setIdentity(identity);
+    public Reference(String id, String name) {
+        setId(id);
         setName(name);
     }
 
-    private void setIdentity(String identity) {
-        Objects.requireNonNull(identity, "identity required");
-        if (!ByteToHex.isIdentityHexStr(identity))
+    private void setId(String id) {
+        Objects.requireNonNull(id, "identity required");
+        if (!ByteToHex.isIdentityHexStr(id))
             throw new IllegalArgumentException("Illegal identity");
-        this.identity = identity;
+        this.id = id;
     }
 
     private void setName(String name) {
@@ -53,11 +54,22 @@ public final class Reference {
 
         Reference reference = (Reference) o;
 
-        return identity != null ? identity.equals(reference.identity) : reference.identity == null;
+        if (id != null ? !id.equals(reference.id) : reference.id != null) return false;
+        return name != null ? name.equals(reference.name) : reference.name == null;
     }
 
     @Override
     public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Reference.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .toString();
     }
 }

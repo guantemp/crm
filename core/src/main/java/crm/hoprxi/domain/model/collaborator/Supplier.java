@@ -23,12 +23,12 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2018-08-04
  */
-public final class Supplier {
-    private String identity;
+public class Supplier {
+    private String id;
     private String name;
 
-    public Supplier(String identity, String name) {
-        setIdentity(identity);
+    public Supplier(String id, String name) {
+        setId(id);
         setName(name);
     }
 
@@ -37,14 +37,14 @@ public final class Supplier {
         this.name = name;
     }
 
-    private void setIdentity(String identity) {
-        Objects.requireNonNull(identity, "identity required");
-        this.identity = identity;
+    private void setId(String id) {
+        Objects.requireNonNull(id, "identity required");
+        this.id = id;
     }
 
 
-    public String identity() {
-        return identity;
+    public String id() {
+        return id;
     }
 
     public String name() {
@@ -54,7 +54,7 @@ public final class Supplier {
     @Override
     public String toString() {
         return "Supplier{" +
-                "identity='" + identity + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }
@@ -66,11 +66,11 @@ public final class Supplier {
 
         Supplier supplier = (Supplier) o;
 
-        return identity != null ? identity.equals(supplier.identity) : supplier.identity == null;
+        return id != null ? id.equals(supplier.id) : supplier.id == null;
     }
 
     @Override
     public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

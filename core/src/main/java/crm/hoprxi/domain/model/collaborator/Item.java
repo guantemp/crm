@@ -21,19 +21,19 @@ package crm.hoprxi.domain.model.collaborator;
  * @since JDK8.0
  * @version 0.0.1 builder 2018-08-06
  */
-public final class Sku {
-    private String identity;
+public class Item {
+    private String id;
     private String name;
-    private String supplierId;
+    private String categoryId;
 
-    public Sku(String identity, String name, String supplierId) {
-        this.identity = identity;
+    public Item(String id, String name, String categoryId) {
+        this.id = id;
         this.name = name;
-        this.supplierId = supplierId;
+        this.categoryId = categoryId;
     }
 
-    public String identity() {
-        return identity;
+    public String id() {
+        return id;
     }
 
     public String name() {
@@ -41,7 +41,7 @@ public final class Sku {
     }
 
     public String supplierId() {
-        return supplierId;
+        return categoryId;
     }
 
     @Override
@@ -49,22 +49,22 @@ public final class Sku {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Sku sku = (Sku) o;
+        Item item = (Item) o;
 
-        return identity != null ? identity.equals(sku.identity) : sku.identity == null;
+        return id != null ? id.equals(item.id) : item.id == null;
     }
 
     @Override
     public int hashCode() {
-        return identity != null ? identity.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Sku{" +
-                "identity='" + identity + '\'' +
+                "identity='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", supplierId='" + supplierId + '\'' +
+                ", supplierId='" + categoryId + '\'' +
                 '}';
     }
 }

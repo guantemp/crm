@@ -16,7 +16,7 @@
 
 package crm.hoprxi.domain.model.customer.footprint;
 
-import crm.hoprxi.domain.model.collaborator.Sku;
+import crm.hoprxi.domain.model.collaborator.Item;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -27,11 +27,11 @@ import java.util.Objects;
  * @version 0.0.1 builder 2018-08-05
  */
 public class IntegralHistoryDetail {
-    private Sku sku;
+    private Item item;
     private BigDecimal value;
 
-    public IntegralHistoryDetail(Sku sku, BigDecimal value) {
-        setSku(sku);
+    public IntegralHistoryDetail(Item item, BigDecimal value) {
+        setItem(item);
         setValue(value);
     }
 
@@ -40,13 +40,13 @@ public class IntegralHistoryDetail {
         this.value = value;
     }
 
-    private void setSku(Sku sku) {
-        Objects.requireNonNull(sku, "sku snapshot required");
-        this.sku = sku;
+    private void setItem(Item item) {
+        Objects.requireNonNull(item, "sku snapshot required");
+        this.item = item;
     }
 
-    public Sku sku() {
-        return sku;
+    public Item sku() {
+        return item;
     }
 
     public BigDecimal value() {
@@ -60,13 +60,13 @@ public class IntegralHistoryDetail {
 
         IntegralHistoryDetail that = (IntegralHistoryDetail) o;
 
-        if (sku != null ? !sku.equals(that.sku) : that.sku != null) return false;
+        if (item != null ? !item.equals(that.item) : that.item != null) return false;
         return value != null ? value.equals(that.value) : that.value == null;
     }
 
     @Override
     public int hashCode() {
-        int result = sku != null ? sku.hashCode() : 0;
+        int result = item != null ? item.hashCode() : 0;
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
@@ -74,7 +74,7 @@ public class IntegralHistoryDetail {
     @Override
     public String toString() {
         return "IntegralHistoryDetail{" +
-                "sku=" + sku +
+                "sku=" + item +
                 ", value=" + value +
                 '}';
     }

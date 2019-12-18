@@ -21,10 +21,9 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.Protocol;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.module.jdk8.VPackJdk8Module;
+import mi.hoprxi.to.HumpToUnderline;
 
 import java.lang.reflect.Array;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -32,25 +31,9 @@ import java.util.regex.Pattern;
  * @version 0.0.1 2018-07-24
  */
 public class ArangoDBUtil {
-    private static Pattern HUMP_SEGMENTATION_PATTERN = Pattern.compile("[A-Z]");
-
-    private static String segmentation(String className) {
-        Matcher matcher = HUMP_SEGMENTATION_PATTERN.matcher(className);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            String g = matcher.group();
-            matcher.appendReplacement(sb, "_" + g.toLowerCase());
-        }
-        matcher.appendTail(sb);
-        if (sb.charAt(0) == '_') {
-            sb.delete(0, 1);
-        }
-        return sb.toString();
-    }
-
     public static ArangoDB getResource() {
         ArangoDB.Builder builder = new ArangoDB.Builder();
-        builder.useProtocol(Protocol.VST).host("127.0.0.1", 8529);
+        builder.useProtocol(Protocol.VST).host("125.68.186.195", 8529);
         builder.registerModule(new VPackJdk8Module()).user("root").password("Qwe123465");
         ArangoDB arangoDB = builder.build();
         return arangoDB;
@@ -70,7 +53,7 @@ public class ArangoDBUtil {
         if (limit < 0)
             limit = 0;
         long count = 0;
-        String collection = segmentation(t.getSimpleName());
+        String collection = HumpToUnderline.format(t.getSimpleName());
         final String countQuery = " RETURN LENGTH(" + collection + ")";
         final ArangoCursor<VPackSlice> countCursor = arangoDatabase.query(countQuery, null, null, VPackSlice.class);
         for (; countCursor.hasNext(); ) {
