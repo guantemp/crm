@@ -42,21 +42,21 @@ import java.util.*;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-25
+ * @version 0.0.1 builder 2019-07-25
  */
 public class ArangoDBPersonRepository implements PersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPersonRepository.class);
-    private final ArangoDatabase database;
+    private final ArangoDatabase crm;
 
     public ArangoDBPersonRepository(String databaseName) {
-        database = ArangoDBUtil.getResource().db(databaseName);
+        crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
     @Override
     public void save(Person person) {
-        boolean exists = database.collection("customer").documentExists(person.id());
-        ArangoGraph graph = database.graph("core");
+        boolean exists = crm.collection("customer").documentExists(person.id());
+        ArangoGraph graph = crm.graph("core");
         if (exists) {
             graph.vertexCollection("customer").updateVertex(person.id(), person, UPDATE_OPTIONS);
         } else {
@@ -66,7 +66,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
 
     @Override
     public Person find(String id) {
-        ArangoGraph graph = database.graph("core");
+        ArangoGraph graph = crm.graph("core");
         VPackSlice slice = graph.vertexCollection("customer").getVertex(id, VPackSlice.class);
         return rebuild(slice);
     }
@@ -114,23 +114,18 @@ public class ArangoDBPersonRepository implements PersonRepository {
     }
 
     @Override
-    public Person findByTelephone(String telephone) {
-        return null;
-    }
-
-    @Override
-    public Person authenticCredentials(String id, String password) {
+    public Person findByTelephoneNumber(String telephoneNumber) {
         return null;
     }
 
     @Override
     public Person[] findAll(long offset, int limit) {
-        Person[] people = ArangoDBUtil.calculationCollectionSize(database, Person.class, offset, limit);
+        Person[] people = ArangoDBUtil.calculationCollectionSize(crm, Person.class, offset, limit);
         if (people.length == 0)
             return people;
         final String query = "FOR c IN customer LIMIT @offset,@limit RETURN c";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
-        final ArangoCursor<VPackSlice> slices = database.query(query, bindVars, null, VPackSlice.class);
+        final ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         for (int i = 0; slices.hasNext(); i++)
             people[i] = rebuild(slices.next());
         return people;
@@ -140,6 +135,6 @@ public class ArangoDBPersonRepository implements PersonRepository {
     public void remove(String id) {
         final String remove = "FOR c IN customer FILTER c._id == @identity REMOVE c IN customer";
         final Map<String, Object> bindVars = new MapBuilder().put("identity", "customer/" + id).get();
-        database.query(remove, bindVars, null, VPackSlice.class);
+        crm.query(remove, bindVars, null, VPackSlice.class);
     }
 }

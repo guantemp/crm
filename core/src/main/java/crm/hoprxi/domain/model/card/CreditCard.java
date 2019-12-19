@@ -35,8 +35,8 @@ public class CreditCard extends Card {
     private String customerId;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(String id, Issuer issuerId, String customerId, String cardFaceNumber, TermOfValidity termOfValidity, LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
-        super(id, issuerId, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+    public CreditCard(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance, String customerId, LineOfCredit lineOfCredit) {
+        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
         setLineOfCredit(lineOfCredit);
     }

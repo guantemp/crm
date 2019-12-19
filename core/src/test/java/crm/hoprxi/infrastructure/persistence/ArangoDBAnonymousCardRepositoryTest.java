@@ -24,7 +24,6 @@ import crm.hoprxi.domain.model.card.AnonymousCard;
 import crm.hoprxi.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.domain.model.card.TermOfValidity;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.customer.person.Person;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -74,7 +73,7 @@ public class ArangoDBAnonymousCardRepositoryTest {
 
     @Test
     public void findAll() {
-        Person anonymousCards = repository.findAll(0, 3);
+        AnonymousCard[] anonymousCards = repository.findAll(0, 3);
         Assert.assertEquals(3, anonymousCards.length);
         anonymousCards = repository.findAll(0, 2);
         Assert.assertEquals(2, anonymousCards.length);

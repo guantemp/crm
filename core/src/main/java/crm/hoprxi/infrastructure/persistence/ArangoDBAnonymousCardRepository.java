@@ -35,7 +35,6 @@ import crm.hoprxi.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.domain.model.card.TermOfValidity;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import crm.hoprxi.domain.model.customer.person.Person;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
@@ -101,8 +100,8 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     }
 
     @Override
-    public Person findAll(int offset, int limit) {
-        Person anonymousCards = ArangoDBUtil.calculationCollectionSize(crm, AnonymousCard.class, offset, limit);
+    public AnonymousCard[] findAll(int offset, int limit) {
+        AnonymousCard[] anonymousCards = ArangoDBUtil.calculationCollectionSize(crm, AnonymousCard.class, offset, limit);
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card LIMIT @offset,@limit \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +

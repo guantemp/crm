@@ -16,6 +16,7 @@
 
 package crm.hoprxi.domain.model.customer.footprint;
 
+import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import crm.hoprxi.domain.model.collaborator.Operator;
 

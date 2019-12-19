@@ -107,7 +107,7 @@ public abstract class Customer {
     }
 
     private void setData(Data data) {
-        this.data = Objects.requireNonNull(data, "credit required");
+        this.data = Objects.requireNonNull(data, "data required");
     }
 
     public void rename(String newName) {
@@ -129,8 +129,8 @@ public abstract class Customer {
     }
 
     public boolean authenticatePassword(String password) {
-        HashService encryption = DomainRegistry.getHashService();
-        return encryption.check(password, this.password);
+        HashService hash = DomainRegistry.getHashService();
+        return hash.check(password, this.password);
     }
 
     @Override
@@ -164,6 +164,4 @@ public abstract class Customer {
     public String name() {
         return name;
     }
-
-
 }

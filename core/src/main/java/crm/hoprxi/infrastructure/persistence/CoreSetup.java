@@ -43,7 +43,7 @@ public class CoreSetup {
         }
         arangoDB.createDatabase(databaseName);
         //vertex
-        for (String s : new String[]{"customer", "frozen_customer", "debit_card", "anonymous_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
+        for (String s : new String[]{"person", "frozen_person", "debit_card", "anonymous_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);
@@ -53,8 +53,8 @@ public class CoreSetup {
         //customer.nickName
         index.add("nickName");
         SkiplistIndexOptions skiplistIndexOptions = new SkiplistIndexOptions().unique(false).sparse(true);
-        arangoDB.db(databaseName).collection("customer").ensureSkiplistIndex(index, skiplistIndexOptions);
-        arangoDB.db(databaseName).collection("frozen_customer").ensureSkiplistIndex(index, skiplistIndexOptions);
+        arangoDB.db(databaseName).collection("person").ensureSkiplistIndex(index, skiplistIndexOptions);
+        arangoDB.db(databaseName).collection("frozen_person").ensureSkiplistIndex(index, skiplistIndexOptions);
         //name.mnemonic
         index.clear();
         index.add("cardFaceNumber");
@@ -69,7 +69,7 @@ public class CoreSetup {
         }
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
-        edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("customer", "frozen_customer"));
+        edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
         edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card").to("appearance"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();

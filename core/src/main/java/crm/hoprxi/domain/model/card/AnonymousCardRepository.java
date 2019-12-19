@@ -16,7 +16,6 @@
 
 package crm.hoprxi.domain.model.card;
 
-import crm.hoprxi.domain.model.customer.person.Person;
 import mi.hoprxi.id.LongId;
 
 /***
@@ -53,7 +52,7 @@ public interface AnonymousCardRepository {
      * @param limit
      * @return
      */
-    Person findAll(int offset, int limit);
+    AnonymousCard[] findAll(int offset, int limit);
 
     /**
      * @param id

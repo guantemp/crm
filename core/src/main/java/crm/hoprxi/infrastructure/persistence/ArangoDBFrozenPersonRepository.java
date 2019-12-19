@@ -23,12 +23,12 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.FrozenPerson;
 import crm.hoprxi.domain.model.customer.person.FrozenPersonRepository;
-import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Data;
@@ -132,7 +132,8 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
         MonthDay birthday = null;
         if (!slice.get("birthday").isNull())
             birthday = MonthDay.from(LocalDate.parse(slice.get("birthday").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
-        return constructor.newInstance(id, name, Data.EMPTY_DATA, SmallChange.ZERO, headPortrait, identityCard, birthday, book);
+        return null;
+        //return constructor.newInstance(id, name, Data.EMPTY_DATA, SmallChange.ZERO, headPortrait, identityCard, birthday, book);
     }
 
     @Override
@@ -141,8 +142,8 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
     }
 
     @Override
-    public Person findAll(int offset, int limit) {
-        Person frozenPeople = ArangoDBUtil.calculationCollectionSize(database, FrozenPerson.class, offset, limit);
+    public FrozenPerson[] findAll(int offset, int limit) {
+        FrozenPerson[] frozenPeople = ArangoDBUtil.calculationCollectionSize(database, FrozenPerson.class, offset, limit);
         if (frozenPeople.length == 0)
             return frozenPeople;
         final String query = "FOR f IN frozen_customer LIMIT @offset,@limit RETURN c";

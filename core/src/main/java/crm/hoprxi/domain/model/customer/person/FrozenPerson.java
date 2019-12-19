@@ -61,6 +61,7 @@ public class FrozenPerson extends Customer {
     }
 
     public Person unfreeze() {
-        return new Person(id(), name(), data(), headPortrait(), birthday, postalAddressBook, identityCard);
+        return null;
+        //return new Person(id(), name(), data(), headPortrait(), birthday, postalAddressBook, identityCard);
     }
 }
