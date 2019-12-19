@@ -23,7 +23,7 @@ import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
-import mi.hoprxi.crypto.EncryptionService;
+import mi.hoprxi.crypto.HashService;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;
@@ -54,8 +54,8 @@ public class DebitCard extends Card {
             if (!matcher.matches())
                 throw new IllegalArgumentException("password is 6 digit number");
         }
-        EncryptionService encryption = DomainRegistry.getEncryptionService();
-        this.password = encryption.encrypt(password);
+        HashService hashService = DomainRegistry.getHashService();
+        this.password = hashService.hash(password);
     }
 
     private void setCustomerId(String customerId) {

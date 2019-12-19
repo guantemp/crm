@@ -18,7 +18,7 @@ package crm.hoprxi.domain.model.customer;
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.spss.Data;
-import mi.hoprxi.crypto.EncryptionService;
+import mi.hoprxi.crypto.HashService;
 
 import java.net.URI;
 import java.util.Objects;
@@ -31,13 +31,14 @@ import java.util.regex.Pattern;
  * @version 0.0.2 builder 2019-08-26
  */
 public abstract class Customer {
-    public static final Customer ANONYMOUS = new Customer("anonymous", "anonymous") {
+    private static final String RESERVED_WORD = "anonymous";
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD) {
         @Override
         public void rename(String newName) {
         }
     };
     private static final int NAME_MAX_LENGTH = 255;
-    private static final int ID_MAX_LENGTH = 32;
+    private static final int ID_MAX_LENGTH = 36;
     private static final Pattern CHINA_MOBILE_PHONE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
     private static final Pattern CHINA_TELEPHONE_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-z]{2,}$");
@@ -68,13 +69,13 @@ public abstract class Customer {
         setPassword(password);
         setData(data);
         this.headPortrait = headPortrait;
-
     }
 
     private void setId(String id) {
         id = Objects.requireNonNull(id, "id required").trim();
-        if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesRule(id)) //验证手机或者邮箱
-            throw new IllegalArgumentException("Not a valid cell phone number!");
+        if (!id.equals(RESERVED_WORD))//排除保留字anonymous
+            if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesRule(id)) //验证手机或者邮箱
+                throw new IllegalArgumentException("Not a valid cell phone number!");
         this.id = id;
     }
 
@@ -101,8 +102,8 @@ public abstract class Customer {
             if (!matcher.matches())
                 throw new IllegalArgumentException("password must 6 digit number");
         }
-        EncryptionService encryption = DomainRegistry.getEncryptionService();
-        this.password = encryption.encrypt(password);
+        HashService hashService = DomainRegistry.getHashService();
+        this.password = hashService.hash(password);
     }
 
     private void setData(Data data) {
@@ -125,6 +126,11 @@ public abstract class Customer {
 
     public URI headPortrait() {
         return headPortrait;
+    }
+
+    public boolean authenticatePassword(String password) {
+        HashService encryption = DomainRegistry.getHashService();
+        return encryption.check(password, this.password);
     }
 
     @Override

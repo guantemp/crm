@@ -15,7 +15,7 @@
  */
 package crm.hoprxi.domain.model.customer.person;
 
-import mi.hoprxi.id.ObjectId;
+import mi.hoprxi.id.LongId;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -34,18 +34,12 @@ public interface PersonRepository {
      */
     Person find(String id);
 
-    /**
-     * @param telephone
-     * @return
-     */
-    Person telephoneNumberAuthenticCredentials(String phone, String password);
 
     /**
-     * @param id
-     * @param password
+     * @param telephoneNumber
      * @return
      */
-    Person authenticCredentials(String id, String password);
+    Person findByTelephoneNumber(String telephoneNumber);
 
     /**
      * @param offset
@@ -58,7 +52,7 @@ public interface PersonRepository {
      * @return
      */
     default String nextIdentity() {
-        return new ObjectId().id();
+        return String.valueOf(LongId.generate());
     }
 
     /**

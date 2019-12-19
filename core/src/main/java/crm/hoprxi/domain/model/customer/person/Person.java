@@ -61,7 +61,7 @@ public class Person extends Customer {
         return postalAddressBook;
     }
 
-    public IdentityCard idCard() {
+    public IdentityCard identityCard() {
         return identityCard;
     }
 
