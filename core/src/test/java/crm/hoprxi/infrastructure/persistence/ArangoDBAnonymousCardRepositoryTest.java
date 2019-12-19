@@ -87,9 +87,4 @@ public class ArangoDBAnonymousCardRepositoryTest {
         System.out.println(a3);
         Assert.assertNotNull(a3);
     }
-
-
-    @Test
-    public void remove() {
-    }
 }

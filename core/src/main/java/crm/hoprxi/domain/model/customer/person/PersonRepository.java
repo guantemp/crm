@@ -34,13 +34,6 @@ public interface PersonRepository {
      */
     Person find(String id);
 
-
-    /**
-     * @param telephoneNumber
-     * @return
-     */
-    Person findByTelephoneNumber(String telephoneNumber);
-
     /**
      * @param offset
      * @param limit

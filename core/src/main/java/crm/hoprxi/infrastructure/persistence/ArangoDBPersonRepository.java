@@ -42,7 +42,7 @@ import java.util.*;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-07-25
+ * @version 0.0.1 builder 2019-12-19
  */
 public class ArangoDBPersonRepository implements PersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
@@ -53,21 +53,26 @@ public class ArangoDBPersonRepository implements PersonRepository {
         crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
+    private boolean isExists(String id) {
+        return crm.collection("person").documentExists(id);
+    }
+
     @Override
     public void save(Person person) {
-        boolean exists = crm.collection("customer").documentExists(person.id());
+        boolean exists = isExists(person.id());
         ArangoGraph graph = crm.graph("core");
         if (exists) {
-            graph.vertexCollection("customer").updateVertex(person.id(), person, UPDATE_OPTIONS);
+            graph.vertexCollection("person").updateVertex(person.id(), person, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("customer").insertVertex(person);
+            graph.vertexCollection("person").insertVertex(person);
         }
     }
 
     @Override
     public Person find(String id) {
-        ArangoGraph graph = crm.graph("core");
-        VPackSlice slice = graph.vertexCollection("customer").getVertex(id, VPackSlice.class);
+        VPackSlice slice = crm.collection("person").getDocument(id, VPackSlice.class);
+        //ArangoGraph graph = crm.graph("core");
+        //VPackSlice slice = graph.vertexCollection("person").getVertex(id, VPackSlice.class);
         return rebuild(slice);
     }
 
@@ -113,10 +118,6 @@ public class ArangoDBPersonRepository implements PersonRepository {
         return null;//new Person(id, name, Credit.NO_CREDIT, headPortrait, birthday, SmallChange.ZERO, book, identityCard);
     }
 
-    @Override
-    public Person findByTelephoneNumber(String telephoneNumber) {
-        return null;
-    }
 
     @Override
     public Person[] findAll(long offset, int limit) {
@@ -133,8 +134,11 @@ public class ArangoDBPersonRepository implements PersonRepository {
 
     @Override
     public void remove(String id) {
-        final String remove = "FOR c IN customer FILTER c._id == @identity REMOVE c IN customer";
-        final Map<String, Object> bindVars = new MapBuilder().put("identity", "customer/" + id).get();
-        crm.query(remove, bindVars, null, VPackSlice.class);
+        boolean exists = isExists(id);
+        if (exists) {
+            final String remove = "FOR p IN person FILTER p._key == @identity REMOVE p IN person";
+            final Map<String, Object> bindVars = new MapBuilder().put("identity", id).get();
+            crm.query(remove, bindVars, null, VPackSlice.class);
+        }
     }
 }

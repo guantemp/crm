@@ -18,8 +18,8 @@ package crm.hoprxi.domain.model;
 
 import event.hoprxi.domain.model.DomainEventPublisher;
 import event.hoprxi.infrastruture.simple.SimpleDomainEventPublisher;
+import mi.hoprxi.crypto.BcryptHash;
 import mi.hoprxi.crypto.HashService;
-import mi.hoprxi.crypto.SM3Hash;
 
 /***
  * @author <a href="mailto:myis1000@gmail.com">guan xiangHuan</a>
@@ -51,6 +51,6 @@ public class DomainRegistry {
     }
 
     public static HashService getHashService() {
-        return new SM3Hash();
+        return new BcryptHash();
     }
 }

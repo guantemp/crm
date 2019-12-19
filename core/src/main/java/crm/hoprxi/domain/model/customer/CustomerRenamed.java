@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-25
+ * @version 0.0.1 builder 2019-07-25
  */
 public class CustomerRenamed implements DomainEvent {
     private LocalDateTime occurredOn;
