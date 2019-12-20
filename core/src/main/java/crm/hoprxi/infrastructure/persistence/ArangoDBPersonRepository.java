@@ -34,7 +34,9 @@ import crm.hoprxi.domain.model.spss.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.time.MonthDay;
 import java.util.*;
@@ -48,15 +50,16 @@ public class ArangoDBPersonRepository implements PersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPersonRepository.class);
     private static Field transactionPasswordField;
+    private static Constructor<Person> personConstructor;
 
     static {
         try {
             transactionPasswordField = Person.class.getDeclaredField("transactionPassword");
             transactionPasswordField.setAccessible(true);
-            //userConstructor = User.class.getDeclaredConstructor(String.class, String.class, String.class, Enablement.class);
-            //userConstructor.setAccessible(true);
-            //| NoSuchMethodException
-        } catch (NoSuchFieldException e) {
+            personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, Data.class, URI.class,
+                    PostalAddressBook.class, IdentityCard.class, MonthDay.class);
+            personConstructor.setAccessible(true);
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Not find such field or constructor", e);
             }
@@ -89,14 +92,22 @@ public class ArangoDBPersonRepository implements PersonRepository {
         VPackSlice slice = crm.collection("person").getDocument(id, VPackSlice.class);
         //ArangoGraph graph = crm.graph("core");
         //VPackSlice slice = graph.vertexCollection("person").getVertex(id, VPackSlice.class);
-        return rebuild(slice);
+        try {
+            return rebuild(slice);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Can't rebuild person", e);
+            }
+        }
+        return null;
     }
 
-    private Person rebuild(VPackSlice slice) {
+    private Person rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (slice == null)
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         String name = slice.get("name").getAsString();
+        String transactionPassword = slice.get("transactionPassword").getAsString();
         Data data = Data.EMPTY_DATA;
         if (!slice.get("data").isNone()) {
 
@@ -145,7 +156,10 @@ public class ArangoDBPersonRepository implements PersonRepository {
             VPackSlice birthdaySlice = slice.get("birthday");
             birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
         }
-        return null;//new Person(id, name, Credit.NO_CREDIT, headPortrait, birthday, SmallChange.ZERO, book, identityCard);
+        Person person = new Person(id, name, "975420", data, headPortrait, book, identityCard, birthday);
+        //Person person = personConstructor.newInstance(id, name, data, headPortrait, book, identityCard, birthday);
+        transactionPasswordField.set(person, transactionPassword);
+        return person;
     }
 
 
@@ -157,8 +171,13 @@ public class ArangoDBPersonRepository implements PersonRepository {
         final String query = "FOR c IN customer LIMIT @offset,@limit RETURN c";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         final ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
-        for (int i = 0; slices.hasNext(); i++)
-            people[i] = rebuild(slices.next());
+        try {
+            for (int i = 0; slices.hasNext(); i++)
+                people[i] = rebuild(slices.next());
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Can't rebuild person", e);
+        }
         return people;
     }
 

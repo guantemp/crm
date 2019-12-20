@@ -64,12 +64,11 @@ public class ArangoDBPersonRepositoryTest {
         repository.save(du);
     }
 
-    @Test
-    public void save() {
-    }
 
     @Test
     public void find() {
+        Person guan = repository.find("18982455056");
+        System.out.println(guan);
     }
 
     @Test

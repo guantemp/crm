@@ -17,6 +17,7 @@
 
 package crm.hoprxi;
 
+import crm.hoprxi.domain.model.customer.person.Person;
 import mi.hoprxi.to.ByteToHex;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -30,6 +31,7 @@ import javax.money.convert.CurrencyConversion;
 import javax.money.convert.ExchangeRate;
 import javax.money.convert.ExchangeRateProvider;
 import javax.money.convert.MonetaryConversions;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -47,10 +49,12 @@ public class AppTest {
      * Rigorous Test :-)
      */
     @Test
-    public void shouldAnswerWithTrue() throws NoSuchAlgorithmException {
+    public void shouldAnswerWithTrue() throws NoSuchAlgorithmException, NoSuchFieldException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
         messageDigest.update("Qwe123465".getBytes(StandardCharsets.UTF_8));
         System.out.println("Qwe123465 Sha-256:" + ByteToHex.toHexStr(messageDigest.digest()));
+
+        Field transactionPasswordField = Person.class.getDeclaredField("transactionPassword");
 
         String source = "AnonymousCardWordSizeOf";
         Matcher matcher = Pattern.compile("[A-Z]").matcher(source);

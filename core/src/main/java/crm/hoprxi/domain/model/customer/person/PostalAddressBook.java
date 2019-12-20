@@ -41,8 +41,8 @@ public class PostalAddressBook implements Serializable {
         setAcquiescence(acquiescence);
     }
 
-    public PostalAddressBook(PostalAddress[] postalAddresses) {
-        this(postalAddresses, 0);
+    public PostalAddressBook(PostalAddress postalAddress) {
+        this(new PostalAddress[]{postalAddress}, 0);
     }
 
     private void setPostalAddresses(PostalAddress[] postalAddresses) {

@@ -16,6 +16,8 @@
 
 package crm.hoprxi.domain.model.spss;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
@@ -38,5 +40,12 @@ public class Data implements Comparable<Data> {
     @Override
     public int compareTo(Data o) {
         return value == o.value ? 0 : value > o.value ? 1 : -1;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Data.class.getSimpleName() + "[", "]")
+                .add("value=" + value)
+                .toString();
     }
 }

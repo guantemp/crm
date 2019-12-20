@@ -23,6 +23,7 @@ import crm.hoprxi.domain.model.spss.Data;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.MonthDay;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -38,19 +39,27 @@ public class Person extends Customer {
         this(id, name, "", Data.EMPTY_DATA, null, null, null, null);
     }
 
+    private Person(String id, String name, Data data, URI headPortrait,
+                   PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
+        super(id, name, data, headPortrait);
+        this.postalAddressBook = postalAddressBook;
+        this.identityCard = identityCard;
+        this.birthday = birthday;
+    }
+
     /**
      * @param id
      * @param name
-     * @param password
+     * @param transactionPassword
      * @param data
      * @param headPortrait
      * @param postalAddressBook
      * @param identityCard
      * @param birthday
      */
-    public Person(String id, String name, String password, Data data, URI headPortrait,
+    public Person(String id, String name, String transactionPassword, Data data, URI headPortrait,
                   PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
-        super(id, name, password, data, headPortrait);
+        super(id, name, transactionPassword, data, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
@@ -78,5 +87,15 @@ public class Person extends Customer {
 
     public FrozenPerson frozen() {
         return new FrozenPerson(id(), name(), data(), headPortrait(), birthday, postalAddressBook, identityCard);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Person.class.getSimpleName() + "[", "]")
+                .add("super=" + super.toString())
+                .add("postalAddressBook=" + postalAddressBook)
+                .add("identityCard=" + identityCard)
+                .add("birthday=" + birthday)
+                .toString();
     }
 }

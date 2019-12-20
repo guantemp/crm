@@ -49,7 +49,7 @@ public abstract class Customer {
     private URI headPortrait;
     private Data data;
     //transaction password
-    private String transactionPassword;
+    protected String transactionPassword;
 
 
     protected Customer(String id, String name, Data data, URI headPortrait) {
@@ -92,11 +92,11 @@ public abstract class Customer {
     }
 
     private void setTransactionPassword(String transactionPassword) {
-        transactionPassword = Objects.requireNonNull(transactionPassword, "password is required").trim();
+        transactionPassword = Objects.requireNonNull(transactionPassword, "transactionPassword is required").trim();
         if (!transactionPassword.isEmpty()) {
             Matcher matcher = PASSWORD_PATTERN.matcher(transactionPassword);
             if (!matcher.matches())
-                throw new IllegalArgumentException("password must 6 digit number");
+                throw new IllegalArgumentException("transactionPassword must 6 digit number");
         }
         HashService hashService = DomainRegistry.getHashService();
         this.transactionPassword = hashService.hash(transactionPassword);
@@ -113,6 +113,20 @@ public abstract class Customer {
         if (!name.equals(newName)) {
             name = newName;
             DomainRegistry.domainEventPublisher().publish(new CustomerRenamed(id, newName));
+        }
+    }
+
+    /**
+     * @param currentTransactionPassword
+     * @param changedTransactionPassword
+     */
+    public void changeTransactionPassword(String currentTransactionPassword, String changedTransactionPassword) {
+        changedTransactionPassword = Objects.requireNonNull(changedTransactionPassword, "changedTransactionPassword required").trim();
+        if (currentTransactionPassword.equals(changedTransactionPassword))
+            throw new IllegalArgumentException("transactionPassword will not change");
+        HashService hashService = DomainRegistry.getHashService();
+        if (hashService.check(currentTransactionPassword, transactionPassword)) {
+            this.transactionPassword = hashService.hash(changedTransactionPassword);
         }
     }
 
