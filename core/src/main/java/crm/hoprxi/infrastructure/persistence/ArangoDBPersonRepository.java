@@ -30,13 +30,13 @@ import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
+import crm.hoprxi.domain.model.spss.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.MonthDay;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /***
@@ -47,6 +47,22 @@ import java.util.*;
 public class ArangoDBPersonRepository implements PersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPersonRepository.class);
+    private static Field transactionPasswordField;
+
+    static {
+        try {
+            transactionPasswordField = Person.class.getDeclaredField("transactionPassword");
+            transactionPasswordField.setAccessible(true);
+            //userConstructor = User.class.getDeclaredConstructor(String.class, String.class, String.class, Enablement.class);
+            //userConstructor.setAccessible(true);
+            //| NoSuchMethodException
+        } catch (NoSuchFieldException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Not find such field or constructor", e);
+            }
+        }
+    }
+
     private final ArangoDatabase crm;
 
     public ArangoDBPersonRepository(String databaseName) {
@@ -81,9 +97,14 @@ public class ArangoDBPersonRepository implements PersonRepository {
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         String name = slice.get("name").getAsString();
+        Data data = Data.EMPTY_DATA;
+        if (!slice.get("data").isNone()) {
+
+        }
         URI headPortrait = null;
         if (!slice.get("headPortrait").isNone())
             headPortrait = URI.create(slice.get("headPortrait").get("string").getAsString());
+
         PostalAddressBook book = null;
         if (!slice.get("postalAddressBook").isNone()) {
             VPackSlice bookSlice = slice.get("postalAddressBook");
@@ -109,12 +130,21 @@ public class ArangoDBPersonRepository implements PersonRepository {
         }
 
         IdentityCard identityCard = null;
-        if (!slice.get("idCard").isNull()) {
-
+        if (!slice.get("identityCard").isNone()) {
+            VPackSlice identityCardSlice = slice.get("identityCard");
+            String number = identityCardSlice.get("number").getAsString();
+            String identityName = identityCardSlice.get("name").getAsString();
+            VPackSlice addressSlice = identityCardSlice.get("address");
+            crm.hoprxi.domain.model.customer.person.certificates.Address address = new crm.hoprxi.domain.model.customer.person.certificates.Address(addressSlice.get("province").getAsString(),
+                    addressSlice.get("city").getAsString(), addressSlice.get("county").getAsString(), addressSlice.get("details").getAsString());
+            identityCard = new IdentityCard(number, identityName, address);
         }
+
         MonthDay birthday = null;
-        if (!slice.get("birthday").isNull())
-            birthday = MonthDay.from(LocalDate.parse(slice.get("birthday").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
+        if (!slice.get("birthday").isNull()) {
+            VPackSlice birthdaySlice = slice.get("birthday");
+            birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
+        }
         return null;//new Person(id, name, Credit.NO_CREDIT, headPortrait, birthday, SmallChange.ZERO, book, identityCard);
     }
 

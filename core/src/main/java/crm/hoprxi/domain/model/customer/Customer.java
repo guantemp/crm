@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, "", Data.EMPTY_DATA, null) {
         @Override
         public void rename(String newName) {
         }
@@ -49,24 +49,20 @@ public abstract class Customer {
     private URI headPortrait;
     private Data data;
     //transaction password
-    private String password;
+    private String transactionPassword;
 
 
-    public Customer(String id, String name) {
-        this(id, name, Data.EMPTY_DATA, null);
-    }
-
-    public Customer(String id, String name, Data data, URI headPortrait) {
+    protected Customer(String id, String name, Data data, URI headPortrait) {
         setId(id);
         setName(name);
         setData(data);
         this.headPortrait = headPortrait;
     }
 
-    public Customer(String id, String name, String password, Data data, URI headPortrait) {
+    public Customer(String id, String name, String transactionPassword, Data data, URI headPortrait) {
         setId(id);
         setName(name);
-        setPassword(password);
+        setTransactionPassword(transactionPassword);
         setData(data);
         this.headPortrait = headPortrait;
     }
@@ -95,15 +91,15 @@ public abstract class Customer {
         this.name = name;
     }
 
-    private void setPassword(String password) {
-        password = Objects.requireNonNull(password, "password is required").trim();
-        if (!password.isEmpty()) {
-            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+    private void setTransactionPassword(String transactionPassword) {
+        transactionPassword = Objects.requireNonNull(transactionPassword, "password is required").trim();
+        if (!transactionPassword.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(transactionPassword);
             if (!matcher.matches())
                 throw new IllegalArgumentException("password must 6 digit number");
         }
         HashService hashService = DomainRegistry.getHashService();
-        this.password = hashService.hash(password);
+        this.transactionPassword = hashService.hash(transactionPassword);
     }
 
     private void setData(Data data) {
@@ -130,7 +126,7 @@ public abstract class Customer {
 
     public boolean authenticatePassword(String password) {
         HashService hash = DomainRegistry.getHashService();
-        return hash.check(password, this.password);
+        return hash.check(password, this.transactionPassword);
     }
 
     @Override

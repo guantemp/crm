@@ -52,6 +52,10 @@ public final class Address {
         this(Locale.CHINA, province, city, county, street, details, zipCode);
     }
 
+    public static Address chinaAddress(String province, String city, String county, String street, String details, String zipCode) {
+        return new Address(Locale.CHINA, province, city, county, street, details, zipCode);
+    }
+
     private void setLocale(Locale locale) {
         if (locale == null)
             locale = Locale.CHINA;

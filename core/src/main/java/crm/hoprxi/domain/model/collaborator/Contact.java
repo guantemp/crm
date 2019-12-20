@@ -36,6 +36,14 @@ public class Contact {
         setPhone(mobilePhone, telephone);
     }
 
+    public static Contact withMobilePhone(String fullName, String mobilePhone) {
+        return new Contact(fullName, mobilePhone, null);
+    }
+
+    public static Contact withTelephone(String fullName, String telephone) {
+        return new Contact(fullName, null, telephone);
+    }
+
     private void setFullName(String fullName) {
         this.fullName = Objects.requireNonNull(fullName, "fullName required");
     }

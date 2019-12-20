@@ -16,11 +16,11 @@
 package crm.hoprxi.domain.model.customer.person.certificates;
 
 
-import crm.hoprxi.domain.model.collaborator.Address;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 /***
@@ -33,7 +33,12 @@ public class IdentityCard {
     private String number;
     private String name;
     private Address address;
-    private Nation nation;
+
+    public IdentityCard(String number, String name, Address address) {
+        this.number = number;
+        this.name = name;
+        this.address = address;
+    }
 
     public Sex sex() {
         String sCardNum = number.substring(16, 17);
@@ -63,5 +68,14 @@ public class IdentityCard {
     @Override
     public int hashCode() {
         return number != null ? number.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", IdentityCard.class.getSimpleName() + "[", "]")
+                .add("number='" + number + "'")
+                .add("name='" + name + "'")
+                .add("address=" + address)
+                .toString();
     }
 }
