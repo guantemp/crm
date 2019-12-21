@@ -22,6 +22,7 @@ import mi.hoprxi.crypto.HashService;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, "", Data.EMPTY_DATA, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Data.EMPTY_DATA, null) {
         @Override
         public void rename(String newName) {
         }
@@ -42,7 +43,7 @@ public abstract class Customer {
     private static final Pattern CHINA_MOBILE_PHONE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
     private static final Pattern CHINA_TELEPHONE_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-z]{2,}$");
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
+    private static final Pattern TRANSACTION_PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
@@ -94,7 +95,7 @@ public abstract class Customer {
     private void setTransactionPassword(String transactionPassword) {
         transactionPassword = Objects.requireNonNull(transactionPassword, "transactionPassword is required").trim();
         if (!transactionPassword.isEmpty()) {
-            Matcher matcher = PASSWORD_PATTERN.matcher(transactionPassword);
+            Matcher matcher = TRANSACTION_PASSWORD_PATTERN.matcher(transactionPassword);
             if (!matcher.matches())
                 throw new IllegalArgumentException("transactionPassword must 6 digit number");
         }
@@ -138,9 +139,9 @@ public abstract class Customer {
         return headPortrait;
     }
 
-    public boolean authenticatePassword(String password) {
+    public boolean authenticateTransactionPassword(String transactionPassword) {
         HashService hash = DomainRegistry.getHashService();
-        return hash.check(password, this.transactionPassword);
+        return hash.check(transactionPassword, this.transactionPassword);
     }
 
     @Override
@@ -173,5 +174,16 @@ public abstract class Customer {
 
     public String name() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Customer.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .add("headPortrait=" + headPortrait)
+                .add("data=" + data)
+                .add("transactionPassword='" + transactionPassword + "'")
+                .toString();
     }
 }

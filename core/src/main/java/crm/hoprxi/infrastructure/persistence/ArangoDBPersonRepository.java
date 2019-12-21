@@ -25,6 +25,7 @@ import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
+import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
@@ -54,11 +55,11 @@ public class ArangoDBPersonRepository implements PersonRepository {
 
     static {
         try {
-            transactionPasswordField = Person.class.getDeclaredField("transactionPassword");
-            transactionPasswordField.setAccessible(true);
             personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, Data.class, URI.class,
                     PostalAddressBook.class, IdentityCard.class, MonthDay.class);
             personConstructor.setAccessible(true);
+            transactionPasswordField = Customer.class.getDeclaredField("transactionPassword");
+            transactionPasswordField.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Not find such field or constructor", e);
@@ -156,8 +157,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             VPackSlice birthdaySlice = slice.get("birthday");
             birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
         }
-        Person person = new Person(id, name, "975420", data, headPortrait, book, identityCard, birthday);
-        //Person person = personConstructor.newInstance(id, name, data, headPortrait, book, identityCard, birthday);
+        Person person = personConstructor.newInstance(id, name, data, headPortrait, book, identityCard, birthday);
         transactionPasswordField.set(person, transactionPassword);
         return person;
     }
@@ -168,7 +168,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
         Person[] people = ArangoDBUtil.calculationCollectionSize(crm, Person.class, offset, limit);
         if (people.length == 0)
             return people;
-        final String query = "FOR c IN customer LIMIT @offset,@limit RETURN c";
+        final String query = "FOR p IN person LIMIT @offset,@limit RETURN p";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         final ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         try {

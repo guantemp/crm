@@ -23,6 +23,7 @@ import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Data;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -50,28 +51,56 @@ public class ArangoDBPersonRepositoryTest {
                 new Contact("库电话", "13679692401", "0830-3217589"));
         book = book.addAndSetAcquiescence(four);
 
-        IdentityCard identityCard = new IdentityCard("510107197606240057", "官相焕",
+        IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",
                 new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "市中区", "沙湖路22"));
         Person guan = new Person("18982455056", "官相焕", "111220", Data.EMPTY_DATA, null,
                 book, identityCard, MonthDay.of(4, 20));
         repository.save(guan);
 
         Person wang = new Person("18982455062", "王浩", "207896", Data.EMPTY_DATA, null,
-                null, null, MonthDay.of(6, 5));
+                new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "四川省", "泸州市", "江阳区", "喝咖啡", "酒谷大道3段3号", "614000"),
+                        new Contact("王浩", "18982455062", null))), null, MonthDay.of(6, 5));
         repository.save(wang);
-        Person du = new Person("18982435017", "杜红桃", "", Data.EMPTY_DATA, null,
+        Person du = new Person("18982435017", "杜红桃", "657895", Data.EMPTY_DATA, null,
                 null, null, MonthDay.of(11, 12));
         repository.save(du);
+
+        Person yang = new Person("13618514021", "杨安顺", "975421", Data.EMPTY_DATA, null,
+                new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "贵州", "贵阳市", "南明区", "喝咖啡", "宝山南路208号", "325897"),
+                        new Contact("杨安顺", "13618514021", null))), null, MonthDay.of(1, 12));
+        repository.save(yang);
     }
 
-
+    /*
+    @AfterClass
+    public static void teardown() {
+        repository.remove("13618514021");
+        repository.remove("18982435017");
+        repository.remove("18982455062");
+        repository.remove("18982455056");
+        repository.remove("18982455056");
+    }
+*/
     @Test
     public void find() {
         Person guan = repository.find("18982455056");
-        System.out.println(guan);
+        Assert.assertNotNull(guan);
+        Assert.assertTrue(guan.authenticateTransactionPassword("111220"));
+        Person wang = repository.find("18982455062");
+        Assert.assertNotNull(wang);
+        Person person = repository.find("18982435016");
+        Assert.assertNull(person);
     }
 
     @Test
     public void findAll() {
+        Person[] people = repository.findAll(0, 1);
+        Assert.assertTrue(people.length == 1);
+        people = repository.findAll(2, 1);
+        Assert.assertTrue(people.length == 1);
+        people = repository.findAll(0, 5);
+        Assert.assertTrue(people.length == 4);
+        people = repository.findAll(4, 5);
+        Assert.assertTrue(people.length == 0);
     }
 }
