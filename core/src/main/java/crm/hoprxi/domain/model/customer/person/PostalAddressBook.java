@@ -24,7 +24,7 @@ import java.util.Objects;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-13
+ * @version 0.0.1 builder 2019-11-13
  */
 public class PostalAddressBook implements Serializable {
     transient private static final int MAX_SHIP_ADDRESS = 24;

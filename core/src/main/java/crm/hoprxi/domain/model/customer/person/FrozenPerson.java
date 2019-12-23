@@ -20,21 +20,22 @@ import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Data;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.MonthDay;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-20
+ * @version 0.0.1 builder 2019-12-23
  */
 public class FrozenPerson extends Customer {
     private PostalAddressBook postalAddressBook;
     private IdentityCard identityCard;
     private MonthDay birthday;
 
-    protected FrozenPerson(String id, String name, Data data, URI headPortrait, MonthDay birthday, PostalAddressBook postalAddressBook, IdentityCard identityCard) {
+    protected FrozenPerson(String id, String name, String transactionPassword, Data data, URI headPortrait,
+                           PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
         super(id, name, data, headPortrait);
+        super.transactionPassword = transactionPassword;
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
@@ -53,15 +54,7 @@ public class FrozenPerson extends Customer {
         return birthday;
     }
 
-    public boolean isTodayBirthday() {
-        LocalDate now = LocalDate.now();
-        if (!birthday.isValidYear(now.getYear()))
-            return false;
-        return MonthDay.of(now.getMonth(), now.getDayOfMonth()).compareTo(birthday) == 0 ? true : false;
-    }
-
     public Person unfreeze() {
-        return null;
-        //return new Person(id(), name(), data(), headPortrait(), birthday, postalAddressBook, identityCard);
+        return new Person(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
     }
 }

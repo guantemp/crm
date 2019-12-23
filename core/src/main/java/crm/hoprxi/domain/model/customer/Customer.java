@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2019-08-26
+ * @version 0.0.2 builder 2019-11-26
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
@@ -71,12 +71,12 @@ public abstract class Customer {
     private void setId(String id) {
         id = Objects.requireNonNull(id, "id required").trim();
         if (!id.equals(RESERVED_WORD))//排除保留字anonymous
-            if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesRule(id)) //验证手机或者邮箱
+            if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesIdRule(id)) //验证手机或者邮箱
                 throw new IllegalArgumentException("Not a valid cell phone number!");
         this.id = id;
     }
 
-    private boolean isCompliesRule(String id) {
+    private boolean isCompliesIdRule(String id) {
         Matcher mobile = CHINA_MOBILE_PHONE_PATTERN.matcher(id);
         Matcher tel = CHINA_TELEPHONE_PATTERN.matcher(id);
         Matcher email = EMAIL_PATTERN.matcher(id);

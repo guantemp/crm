@@ -29,7 +29,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-26
+ * @version 0.0.1 2019-11-26
  */
 public class Person extends Customer {
     private PostalAddressBook postalAddressBook;
@@ -122,7 +122,7 @@ public class Person extends Customer {
     }
 
     public FrozenPerson frozen() {
-        return new FrozenPerson(id(), name(), data(), headPortrait(), birthday, postalAddressBook, identityCard);
+        return new FrozenPerson(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
     }
 
     @Override
