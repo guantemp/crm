@@ -39,7 +39,7 @@ public abstract class Customer {
         }
     };
     private static final int NAME_MAX_LENGTH = 255;
-    private static final int ID_MAX_LENGTH = 36;
+    private static final int ID_MAX_LENGTH = 64;
     private static final Pattern CHINA_MOBILE_PHONE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
     private static final Pattern CHINA_TELEPHONE_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-z]{2,}$");
@@ -159,15 +159,6 @@ public abstract class Customer {
         return id != null ? id.hashCode() : 0;
     }
 
-    /*
-     public FrozenCustomer frozen() {
-         return new FrozenCustomer(id, name, credit, smallChange, headPortrait, certificates, birthday, postalAddressBook);
-     }
-
-     public CustomerSnapshot toCustomerSnapshot() {
-         return new CustomerSnapshot(id, name, postalAddressBook.acquiescencePostalAddress());
-     }
- */
     public Data data() {
         return data;
     }

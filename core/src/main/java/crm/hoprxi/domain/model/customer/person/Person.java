@@ -125,6 +125,10 @@ public class Person extends Customer {
         return new FrozenPerson(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
     }
 
+    public PersonSnapshot toSnapshot() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Person.class.getSimpleName() + "[", "]")

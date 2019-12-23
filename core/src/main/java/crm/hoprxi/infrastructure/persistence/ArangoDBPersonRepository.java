@@ -62,7 +62,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             transactionPasswordField.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Not find such field or constructor", e);
+                LOGGER.debug("The Person class cannot find such a field or constructor", e);
             }
         }
     }

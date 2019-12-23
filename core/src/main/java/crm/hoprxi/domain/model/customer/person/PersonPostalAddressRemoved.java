@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package crm.hoprxi.domain.model.customer.person;
 
 import crm.hoprxi.domain.model.customer.PostalAddress;
@@ -24,9 +23,9 @@ import java.time.LocalDateTime;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-23
+ * @version 0.0.1 2019-08-23
  */
-public class AcquiescencePostalAddressChanged implements DomainEvent {
+public class PersonPostalAddressRemoved implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String personId;

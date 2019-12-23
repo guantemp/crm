@@ -32,6 +32,14 @@ public class FrozenPerson extends Customer {
     private IdentityCard identityCard;
     private MonthDay birthday;
 
+    private FrozenPerson(String id, String name, Data data, URI headPortrait,
+                         PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
+        super(id, name, data, headPortrait);
+        this.postalAddressBook = postalAddressBook;
+        this.identityCard = identityCard;
+        this.birthday = birthday;
+    }
+
     protected FrozenPerson(String id, String name, String transactionPassword, Data data, URI headPortrait,
                            PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
         super(id, name, data, headPortrait);

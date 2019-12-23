@@ -16,32 +16,29 @@
 
 package crm.hoprxi.domain.model.customer.person;
 
+import crm.hoprxi.domain.model.customer.PostalAddress;
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
+
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-12-17
+ * @version 0.0.1 2019-12-23
  */
-public interface FrozenPersonRepository {
-    /**
-     * @param frozenPerson
-     */
-    void save(FrozenPerson frozenPerson);
+public class PersonAcquiescencePostalAddressChanged implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String personId;
+    private PostalAddress postalAddress;
 
-    /**
-     * @param id
-     * @return
-     */
-    FrozenPerson findBy(String id);
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
 
-    /**
-     * @param id
-     */
-    void remove(String id);
-
-    /**
-     * @param offset
-     * @param limit
-     * @return
-     */
-    FrozenPerson[] findAll(int offset, int limit);
+    @Override
+    public int version() {
+        return version;
+    }
 }

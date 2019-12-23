@@ -14,31 +14,12 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model.customer.person;
-
-import crm.hoprxi.domain.model.customer.PostalAddress;
-import event.hoprxi.domain.model.DomainEvent;
-
-import java.time.LocalDateTime;
+package crm.hoprxi.domain.model.customer;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-12-23
  */
-public class PostalAddressAdded implements DomainEvent {
-    private LocalDateTime occurredOn;
-    private int version;
-    private String personId;
-    private PostalAddress postalAddress;
-
-    @Override
-    public LocalDateTime occurredOn() {
-        return occurredOn;
-    }
-
-    @Override
-    public int version() {
-        return version;
-    }
+public class CustomerTransactionPasswordChanged {
 }

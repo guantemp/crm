@@ -13,34 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.domain.model.customer;
 
+package crm.hoprxi.domain.model.customer.person;
+
+import crm.hoprxi.domain.model.customer.PostalAddress;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-19
+ * @version 0.0.1 2019-12-23
  */
-public class CustomerSnapshot {
+public class PersonSnapshot {
     private String id;
     private String name;
     private PostalAddress postalAddress;
 
-    public CustomerSnapshot(String id, String name, PostalAddress postalAddress) {
-        this.id = id;
-        this.name = name;
-        this.postalAddress = postalAddress;
-    }
-
-    public String id() {
-        return id;
-    }
-
-    public String nickName() {
-        return name;
-    }
-
-    public PostalAddress postalAddress() {
-        return postalAddress;
-    }
 }

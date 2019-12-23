@@ -23,9 +23,9 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
+import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.FrozenPerson;
 import crm.hoprxi.domain.model.customer.person.FrozenPersonRepository;
@@ -36,59 +36,67 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.MonthDay;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-07
+ * @version 0.0.1 builder 2019-12-17
  */
 public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBFrozenPersonRepository.class);
-    private static Constructor<FrozenPerson> constructor;
+    private static Field transactionPasswordField;
+    private static Constructor<FrozenPerson> frozenPersonConstructor;
 
     static {
         try {
-            constructor = FrozenPerson.class.getDeclaredConstructor(String.class, String.class, Data.class, SmallChange.class, URI.class, IdentityCard.class, MonthDay.class, PostalAddressBook.class);
-            constructor.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Not find FrozenCustomer class has such constructor", e);
+            frozenPersonConstructor = FrozenPerson.class.getDeclaredConstructor(String.class, String.class, Data.class, URI.class,
+                    PostalAddressBook.class, IdentityCard.class, MonthDay.class);
+            frozenPersonConstructor.setAccessible(true);
+            transactionPasswordField = Customer.class.getDeclaredField("transactionPassword");
+            transactionPasswordField.setAccessible(true);
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The FrozenPerson class cannot find such a field or constructor", e);
+            }
         }
     }
 
-    private final ArangoDatabase database;
+    private final ArangoDatabase crm;
 
     public ArangoDBFrozenPersonRepository(String databaseName) {
-        database = ArangoDBUtil.getResource().db(databaseName);
+        crm = ArangoDBUtil.getResource().db(databaseName);
+    }
+
+    private boolean isExists(String id) {
+        return crm.collection("frozen_person").documentExists(id);
     }
 
     @Override
     public void save(FrozenPerson frozenPerson) {
-        boolean exists = database.collection("frozen_customer").documentExists(frozenPerson.id());
-        ArangoGraph graph = database.graph("core");
+        boolean exists = isExists(frozenPerson.id());
+        ArangoGraph graph = crm.graph("core");
         if (exists) {
-            graph.vertexCollection("frozen_customer").updateVertex(frozenPerson.id(), frozenPerson, UPDATE_OPTIONS);
+            graph.vertexCollection("frozen_person").updateVertex(frozenPerson.id(), frozenPerson, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("frozen_customer").insertVertex(frozenPerson);
+            graph.vertexCollection("frozen_person").insertVertex(frozenPerson);
         }
     }
 
     @Override
-    public FrozenPerson findBy(String identity) {
-        ArangoGraph graph = database.graph("core");
-        VPackSlice slice = graph.vertexCollection("frozen_customer").getVertex(identity, VPackSlice.class);
+    public FrozenPerson findBy(String id) {
+        ArangoGraph graph = crm.graph("core");
+        VPackSlice slice = graph.vertexCollection("frozen_person").getVertex(id, VPackSlice.class);
         try {
             return rebuild(slice);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Can't rebuild InstantiationException", e);
+                LOGGER.debug("Can't rebuild FrozenPerson", e);
         }
         return null;
     }
@@ -98,9 +106,15 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         String name = slice.get("name").getAsString();
+        String transactionPassword = slice.get("transactionPassword").getAsString();
+        Data data = Data.EMPTY_DATA;
+        if (!slice.get("data").isNone()) {
+
+        }
         URI headPortrait = null;
         if (!slice.get("headPortrait").isNone())
             headPortrait = URI.create(slice.get("headPortrait").get("string").getAsString());
+
         PostalAddressBook book = null;
         if (!slice.get("postalAddressBook").isNone()) {
             VPackSlice bookSlice = slice.get("postalAddressBook");
@@ -122,39 +136,54 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
                 Contact contact = new Contact(contactSlice.get("fullName").getAsString(), mobilePhone, telephone);
                 list.add(new PostalAddress(address, contact));
             }
-            book = new PostalAddressBook(list.toArray(new PostalAddress[0]), acquiescence);
+            book = new PostalAddressBook(list.toArray(new PostalAddress[list.size()]), acquiescence);
         }
 
         IdentityCard identityCard = null;
-        if (!slice.get("idCard").isNull()) {
-
+        if (!slice.get("identityCard").isNone()) {
+            VPackSlice identityCardSlice = slice.get("identityCard");
+            String number = identityCardSlice.get("number").getAsString();
+            String identityName = identityCardSlice.get("name").getAsString();
+            VPackSlice addressSlice = identityCardSlice.get("address");
+            crm.hoprxi.domain.model.customer.person.certificates.Address address = new crm.hoprxi.domain.model.customer.person.certificates.Address(addressSlice.get("province").getAsString(),
+                    addressSlice.get("city").getAsString(), addressSlice.get("county").getAsString(), addressSlice.get("details").getAsString());
+            identityCard = new IdentityCard(number, identityName, address);
         }
+
         MonthDay birthday = null;
-        if (!slice.get("birthday").isNull())
-            birthday = MonthDay.from(LocalDate.parse(slice.get("birthday").getAsString(), DateTimeFormatter.ISO_DATE_TIME));
-        return null;
-        //return constructor.newInstance(id, name, Data.EMPTY_DATA, SmallChange.ZERO, headPortrait, identityCard, birthday, book);
+        if (!slice.get("birthday").isNull()) {
+            VPackSlice birthdaySlice = slice.get("birthday");
+            birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
+        }
+        FrozenPerson frozenPerson = frozenPersonConstructor.newInstance(id, name, data, headPortrait, book, identityCard, birthday);
+        transactionPasswordField.set(frozenPerson, transactionPassword);
+        return frozenPerson;
     }
 
     @Override
     public void remove(String id) {
-
+        boolean exists = isExists(id);
+        if (exists) {
+            final String remove = "FOR f IN frozen_person FILTER f._key == @identity REMOVE f IN frozen_person";
+            final Map<String, Object> bindVars = new MapBuilder().put("identity", id).get();
+            crm.query(remove, bindVars, null, VPackSlice.class);
+        }
     }
 
     @Override
     public FrozenPerson[] findAll(int offset, int limit) {
-        FrozenPerson[] frozenPeople = ArangoDBUtil.calculationCollectionSize(database, FrozenPerson.class, offset, limit);
+        FrozenPerson[] frozenPeople = ArangoDBUtil.calculationCollectionSize(crm, FrozenPerson.class, offset, limit);
         if (frozenPeople.length == 0)
             return frozenPeople;
-        final String query = "FOR f IN frozen_customer LIMIT @offset,@limit RETURN c";
+        final String query = "FOR f IN frozen_person LIMIT @offset,@limit RETURN f\"";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
-        final ArangoCursor<VPackSlice> slices = database.query(query, bindVars, null, VPackSlice.class);
+        final ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         try {
             for (int i = 0; slices.hasNext(); i++)
                 frozenPeople[i] = rebuild(slices.next());
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Can't rebuild InstantiationException", e);
+                LOGGER.debug("Can't rebuild FrozenPerson", e);
         }
         return frozenPeople;
     }
