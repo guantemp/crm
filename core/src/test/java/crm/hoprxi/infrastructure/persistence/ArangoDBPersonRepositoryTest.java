@@ -88,6 +88,13 @@ public class ArangoDBPersonRepositoryTest {
         Assert.assertTrue(guan.authenticateTransactionPassword("111220"));
         Person wang = repository.find("18982455062");
         Assert.assertNotNull(wang);
+        Assert.assertTrue(wang.authenticateTransactionPassword("207896"));
+        Person yang = repository.find("13618514021");
+        Assert.assertNotNull(yang);
+        yang.changeTransactionPassword("975421", "204316");
+        repository.save(yang);
+        yang = repository.find("13618514021");
+        Assert.assertTrue(yang.authenticateTransactionPassword("204316"));
         Person person = repository.find("18982435016");
         Assert.assertNull(person);
     }

@@ -17,12 +17,13 @@
 package crm.hoprxi.domain.model.customer.person;
 
 import crm.hoprxi.domain.model.customer.Customer;
+import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Data;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.MonthDay;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
@@ -70,19 +71,54 @@ public class Person extends Customer {
         return postalAddressBook;
     }
 
+    public void addPostalAddress(PostalAddress address) {
+        Objects.requireNonNull(address, "address required");
+        PostalAddressBook temp = postalAddressBook.add(address);
+        if (temp != postalAddressBook) {
+            postalAddressBook = temp;
+        }
+    }
+
+    public void removePostalAddress(PostalAddress address) {
+        Objects.requireNonNull(address, "address required");
+        PostalAddressBook temp = postalAddressBook.remove(address);
+        if (temp != postalAddressBook) {
+            postalAddressBook = temp;
+        }
+    }
+
+    public void changeAcquiescencePostalAddress(PostalAddress address) {
+        Objects.requireNonNull(address, "address required");
+        PostalAddressBook temp = postalAddressBook.changeAcquiescencePostalAddress(address);
+        if (temp != postalAddressBook) {
+            postalAddressBook = temp;
+        }
+    }
+
     public IdentityCard identityCard() {
         return identityCard;
+    }
+
+    public void changeIdentityCard(IdentityCard newIdentityCard) {
+        Objects.requireNonNull(newIdentityCard, "newIdentityCard required");
+        if (!identityCard.equals(newIdentityCard)) {
+            identityCard = newIdentityCard;
+        }
     }
 
     public MonthDay birthday() {
         return birthday;
     }
 
+    public void changeBirthday(MonthDay newBirthday) {
+        Objects.requireNonNull(newBirthday, "newBirthday required");
+        if (!birthday.equals(newBirthday)) {
+            this.birthday = newBirthday;
+        }
+    }
+
     public boolean isTodayBirthday() {
-        LocalDate now = LocalDate.now();
-        if (!birthday.isValidYear(now.getYear()))
-            return false;
-        return MonthDay.of(now.getMonth(), now.getDayOfMonth()).compareTo(birthday) == 0 ? true : false;
+        return MonthDay.now().compareTo(birthday) == 0 ? true : false;
     }
 
     public FrozenPerson frozen() {

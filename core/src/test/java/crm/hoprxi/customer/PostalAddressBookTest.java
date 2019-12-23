@@ -79,9 +79,9 @@ public class PostalAddressBookTest {
         PostalAddressBook book = new PostalAddressBook();
         book = book.add(two).add(one).add(three);
         Assert.assertEquals(book.acquiescencePostalAddress(), two);
-        book = book.setAcquiescencePostalAddress(one);
+        book = book.changeAcquiescencePostalAddress(one);
         Assert.assertEquals(book.acquiescencePostalAddress(), one);
-        book = book.add(four).setAcquiescencePostalAddress(four);
+        book = book.add(four).changeAcquiescencePostalAddress(four);
         Assert.assertEquals(book.acquiescencePostalAddress(), four);
     }
 

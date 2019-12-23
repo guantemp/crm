@@ -13,22 +13,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package crm.hoprxi.domain.model.customer.person;
 
+import crm.hoprxi.domain.model.customer.PostalAddress;
+import event.hoprxi.domain.model.DomainEvent;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-24
+ * @version 0.0.1 2019-12-23
  */
-public class PersonPlus {
-    private String id;
-    private LocalDate expired;
+public class AcquiescencePostalAddressChanged implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String personId;
+    private PostalAddress postalAddress;
 
-    PersonPlus(String id, LocalDate expired) {
-        this.id = id;
-        this.expired = expired;
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return version;
     }
 }

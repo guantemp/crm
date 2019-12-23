@@ -84,8 +84,8 @@ public class PostalAddressBook implements Serializable {
         return new PostalAddressBook(temp, acquiescence);
     }
 
-    public PostalAddressBook setAcquiescencePostalAddress(PostalAddress address) {
-        for (int i = 0; i < postalAddresses.length; i++) {
+    public PostalAddressBook changeAcquiescencePostalAddress(PostalAddress address) {
+        for (int i = 0, j = postalAddresses.length; i < j; i++) {
             if (postalAddresses[i].equals(address)) {
                 if (i != acquiescence)
                     return new PostalAddressBook(postalAddresses, i);
