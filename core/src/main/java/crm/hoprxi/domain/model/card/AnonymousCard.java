@@ -48,7 +48,7 @@ public class AnonymousCard extends Card {
         Bonus temp = this.bonus.add(bonus);
         if (temp != this.bonus) {
             this.bonus = temp;
-            DomainRegistry.domainEventPublisher().publish(new AnonymousCardBonusAdded(id, bonus.value()));
+            DomainRegistry.domainEventPublisher().publish(new AnonymousCardBonusAdded(id(), bonus.value()));
         }
     }
 
@@ -56,7 +56,7 @@ public class AnonymousCard extends Card {
         Bonus temp = this.bonus.subtract(bonus);
         if (temp != this.bonus) {
             this.bonus = temp;
-            DomainRegistry.domainEventPublisher().publish(new AnonymousCardBonusSubtracted(id, bonus.value()));
+            DomainRegistry.domainEventPublisher().publish(new AnonymousCardBonusSubtracted(id(), bonus.value()));
         }
     }
 

@@ -65,7 +65,7 @@ public class DebitCard extends Card {
     }
 
     public void changeCardFaceNumber(String newCardFaceNumber) {
-        Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required");
+        newCardFaceNumber = Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required").trim();
         if (!cardFaceNumber.equals(newCardFaceNumber)) {
             this.cardFaceNumber = newCardFaceNumber;
             DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(super.id(), newCardFaceNumber));

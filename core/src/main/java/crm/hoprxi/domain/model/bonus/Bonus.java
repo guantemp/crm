@@ -58,13 +58,13 @@ public class Bonus implements Comparable<Bonus> {
     }
 
     public Bonus add(Bonus bonus) {
-        if (bonus == Bonus.ZERO || bonus.value == 0l)
+        if (bonus == null || bonus == Bonus.ZERO || bonus.value == 0l)
             return this;
         return new Bonus(value + bonus.value);
     }
 
     public Bonus subtract(Bonus bonus) {
-        if (bonus == Bonus.ZERO || bonus.value == 0l)
+        if (bonus == null || bonus == Bonus.ZERO || bonus.value == 0l)
             return this;
         if (bonus.value == value)
             return ZERO;

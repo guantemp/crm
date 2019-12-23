@@ -24,7 +24,9 @@ import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.card.appearance.AppearanceFactory;
 import crm.hoprxi.domain.model.collaborator.Issuer;
+import org.javamoney.moneta.Money;
 
+import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.util.Locale;
 import java.util.Objects;
@@ -36,8 +38,9 @@ import java.util.StringJoiner;
  * @version 0.0.1 builder 2019-08-12
  */
 public abstract class Card {
+    private static final int ID_MAX_LENGTH = 64;
     @DocumentField(DocumentField.Type.KEY)
-    protected String id;
+    private String id;
     private Issuer issuer;
     protected TermOfValidity termOfValidity;
     private Appearance appearance;
@@ -73,8 +76,8 @@ public abstract class Card {
 
     private void setId(String id) {
         id = Objects.requireNonNull(id, "id required").trim();
-        if (id.isEmpty())
-            throw new IllegalArgumentException("Must provide a card id.");
+        if (id.isEmpty() || id.length() > ID_MAX_LENGTH)
+            throw new IllegalArgumentException("Card id rang is [1-." + ID_MAX_LENGTH + "]");
         this.id = id;
     }
 
@@ -88,7 +91,7 @@ public abstract class Card {
     private void setCardFaceNumber(String cardFaceNumber) {
         if (cardFaceNumber == null)
             cardFaceNumber = id;
-        this.cardFaceNumber = cardFaceNumber;
+        this.cardFaceNumber = cardFaceNumber.trim();
     }
 
     private void setTermOfValidity(TermOfValidity termOfValidity) {
@@ -175,7 +178,7 @@ public abstract class Card {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card failed");
         if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
-            throw new InsufficientBalanceException("insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
             balance = balance.withdrawal(amount);
             return;
@@ -186,7 +189,11 @@ public abstract class Card {
     }
 
     public void withdrawAll() {
-
+        CurrencyUnit unit = balance.valuable().getCurrency();
+        if (balance.valuable().add(smallChange.amount()).isLessThan(Money.zero(unit)))
+            throw new InsufficientBalanceException("Insufficient balance");
+        balance = Balance.zero(unit);
+        smallChange = SmallChange.zero(unit);
     }
 
     @Override
