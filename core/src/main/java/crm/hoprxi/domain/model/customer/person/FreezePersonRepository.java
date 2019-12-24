@@ -21,17 +21,17 @@ package crm.hoprxi.domain.model.customer.person;
  * @since JDK8.0
  * @version 0.0.1 builder 2019-12-17
  */
-public interface FrozenPersonRepository {
+public interface FreezePersonRepository {
     /**
-     * @param frozenPerson
+     * @param freezePerson
      */
-    void save(FrozenPerson frozenPerson);
+    void save(FreezePerson freezePerson);
 
     /**
      * @param id
      * @return
      */
-    FrozenPerson findBy(String id);
+    FreezePerson findBy(String id);
 
     /**
      * @param id
@@ -43,5 +43,5 @@ public interface FrozenPersonRepository {
      * @param limit
      * @return
      */
-    FrozenPerson[] findAll(int offset, int limit);
+    FreezePerson[] findAll(int offset, int limit);
 }

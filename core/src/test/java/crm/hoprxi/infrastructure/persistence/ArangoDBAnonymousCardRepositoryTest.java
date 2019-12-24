@@ -25,6 +25,7 @@ import crm.hoprxi.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.domain.model.card.TermOfValidity;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.Money;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,6 +51,11 @@ public class ArangoDBAnonymousCardRepositoryTest {
         repository.save(a3);
     }
 
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+
+    }
+
     @Test
     public void save() {
         AnonymousCard a = repository.find("a2");
@@ -62,7 +68,7 @@ public class ArangoDBAnonymousCardRepositoryTest {
         a.debit(Money.of(67.45, "CNY"));
         a.debit(Money.of(67.45, "CNY"));
         repository.save(a);
-        System.out.println(a);
+        //System.out.println(a);
     }
 
     @Test
@@ -84,7 +90,7 @@ public class ArangoDBAnonymousCardRepositoryTest {
     @Test
     public void findByCardFaceNumber() {
         AnonymousCard a3 = repository.findByCardFaceNumber("22156791");
-        System.out.println(a3);
+        //System.out.println(a3);
         Assert.assertNotNull(a3);
     }
 }

@@ -63,14 +63,14 @@ public class CoreSetup {
         arangoDB.db(databaseName).collection("anonymous_card").ensureHashIndex(index, hashIndexOptions);
 
         //edge
-        for (String s : new String[]{"belong", "next", "has"}) {
+        for (String s : new String[]{"has"}) {
             CollectionCreateOptions options = new CollectionCreateOptions().type(CollectionType.EDGES);
             arangoDB.db(databaseName).createCollection(s, options);
         }
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
-        edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
-        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card").to("appearance"));
+        //edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
+        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "person", "frozen_person").to("debit_card", "appearance"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();
         System.out.println(databaseName + " create success");

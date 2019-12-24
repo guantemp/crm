@@ -121,8 +121,8 @@ public class Person extends Customer {
         return MonthDay.now().compareTo(birthday) == 0 ? true : false;
     }
 
-    public FrozenPerson frozen() {
-        return new FrozenPerson(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
+    public void freeze() {
+        FreezePerson freezePerson = new FreezePerson(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
     }
 
     public PersonSnapshot toSnapshot() {

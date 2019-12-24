@@ -16,6 +16,7 @@
 
 package crm.hoprxi.domain.model.card;
 
+import com.arangodb.velocypack.annotations.Expose;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
 import crm.hoprxi.domain.model.balance.Rounded;
@@ -38,6 +39,7 @@ import java.util.regex.Pattern;
  */
 public class DebitCard extends Card {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
+    @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
 
@@ -70,6 +72,10 @@ public class DebitCard extends Card {
             this.cardFaceNumber = newCardFaceNumber;
             DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(super.id(), newCardFaceNumber));
         }
+    }
+
+    public String customerId() {
+        return customerId;
     }
 
     @Override

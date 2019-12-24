@@ -27,12 +27,12 @@ import java.time.MonthDay;
  * @since JDK8.0
  * @version 0.0.1 builder 2019-12-23
  */
-public class FrozenPerson extends Customer {
+public class FreezePerson extends Customer {
     private PostalAddressBook postalAddressBook;
     private IdentityCard identityCard;
     private MonthDay birthday;
 
-    private FrozenPerson(String id, String name, Data data, URI headPortrait,
+    private FreezePerson(String id, String name, Data data, URI headPortrait,
                          PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
         super(id, name, data, headPortrait);
         this.postalAddressBook = postalAddressBook;
@@ -40,7 +40,7 @@ public class FrozenPerson extends Customer {
         this.birthday = birthday;
     }
 
-    protected FrozenPerson(String id, String name, String transactionPassword, Data data, URI headPortrait,
+    protected FreezePerson(String id, String name, String transactionPassword, Data data, URI headPortrait,
                            PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
         super(id, name, data, headPortrait);
         super.transactionPassword = transactionPassword;
@@ -62,7 +62,7 @@ public class FrozenPerson extends Customer {
         return birthday;
     }
 
-    public Person unfreeze() {
-        return new Person(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
+    public void unfreeze() {
+        Person person = new Person(id(), name(), super.transactionPassword, data(), headPortrait(), postalAddressBook, identityCard, birthday);
     }
 }

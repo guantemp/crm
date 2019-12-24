@@ -27,8 +27,8 @@ import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
-import crm.hoprxi.domain.model.customer.person.FrozenPerson;
-import crm.hoprxi.domain.model.customer.person.FrozenPersonRepository;
+import crm.hoprxi.domain.model.customer.person.FreezePerson;
+import crm.hoprxi.domain.model.customer.person.FreezePersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Data;
@@ -47,15 +47,15 @@ import java.util.*;
  * @since JDK8.0
  * @version 0.0.1 builder 2019-12-17
  */
-public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
+public class ArangoDBFreezePersonRepository implements FreezePersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBFrozenPersonRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBFreezePersonRepository.class);
     private static Field transactionPasswordField;
-    private static Constructor<FrozenPerson> frozenPersonConstructor;
+    private static Constructor<FreezePerson> frozenPersonConstructor;
 
     static {
         try {
-            frozenPersonConstructor = FrozenPerson.class.getDeclaredConstructor(String.class, String.class, Data.class, URI.class,
+            frozenPersonConstructor = FreezePerson.class.getDeclaredConstructor(String.class, String.class, Data.class, URI.class,
                     PostalAddressBook.class, IdentityCard.class, MonthDay.class);
             frozenPersonConstructor.setAccessible(true);
             transactionPasswordField = Customer.class.getDeclaredField("transactionPassword");
@@ -69,7 +69,7 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
 
     private final ArangoDatabase crm;
 
-    public ArangoDBFrozenPersonRepository(String databaseName) {
+    public ArangoDBFreezePersonRepository(String databaseName) {
         crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
@@ -78,18 +78,18 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
     }
 
     @Override
-    public void save(FrozenPerson frozenPerson) {
-        boolean exists = isExists(frozenPerson.id());
+    public void save(FreezePerson freezePerson) {
+        boolean exists = isExists(freezePerson.id());
         ArangoGraph graph = crm.graph("core");
         if (exists) {
-            graph.vertexCollection("frozen_person").updateVertex(frozenPerson.id(), frozenPerson, UPDATE_OPTIONS);
+            graph.vertexCollection("frozen_person").updateVertex(freezePerson.id(), freezePerson, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("frozen_person").insertVertex(frozenPerson);
+            graph.vertexCollection("frozen_person").insertVertex(freezePerson);
         }
     }
 
     @Override
-    public FrozenPerson findBy(String id) {
+    public FreezePerson findBy(String id) {
         ArangoGraph graph = crm.graph("core");
         VPackSlice slice = graph.vertexCollection("frozen_person").getVertex(id, VPackSlice.class);
         try {
@@ -101,7 +101,7 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
         return null;
     }
 
-    private FrozenPerson rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private FreezePerson rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (slice == null)
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
@@ -155,9 +155,9 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
             VPackSlice birthdaySlice = slice.get("birthday");
             birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
         }
-        FrozenPerson frozenPerson = frozenPersonConstructor.newInstance(id, name, data, headPortrait, book, identityCard, birthday);
-        transactionPasswordField.set(frozenPerson, transactionPassword);
-        return frozenPerson;
+        FreezePerson freezePerson = frozenPersonConstructor.newInstance(id, name, data, headPortrait, book, identityCard, birthday);
+        transactionPasswordField.set(freezePerson, transactionPassword);
+        return freezePerson;
     }
 
     @Override
@@ -171,8 +171,8 @@ public class ArangoDBFrozenPersonRepository implements FrozenPersonRepository {
     }
 
     @Override
-    public FrozenPerson[] findAll(int offset, int limit) {
-        FrozenPerson[] frozenPeople = ArangoDBUtil.calculationCollectionSize(crm, FrozenPerson.class, offset, limit);
+    public FreezePerson[] findAll(int offset, int limit) {
+        FreezePerson[] frozenPeople = ArangoDBUtil.calculationCollectionSize(crm, FreezePerson.class, offset, limit);
         if (frozenPeople.length == 0)
             return frozenPeople;
         final String query = "FOR f IN frozen_person LIMIT @offset,@limit RETURN f\"";
