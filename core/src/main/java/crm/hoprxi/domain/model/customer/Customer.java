@@ -33,9 +33,9 @@ import java.util.regex.Pattern;
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Data.EMPTY_DATA, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, new Name(RESERVED_WORD, RESERVED_WORD), Data.EMPTY_DATA, null) {
         @Override
-        public void rename(String newName) {
+        public void rename(Name newName) {
         }
     };
     private static final int NAME_MAX_LENGTH = 255;
@@ -46,21 +46,21 @@ public abstract class Customer {
     private static final Pattern TRANSACTION_PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
-    private String name;
+    private Name name;
     private URI headPortrait;
     private Data data;
     //transaction password
     protected String transactionPassword;
 
 
-    protected Customer(String id, String name, Data data, URI headPortrait) {
+    protected Customer(String id, Name name, Data data, URI headPortrait) {
         setId(id);
         setName(name);
         setData(data);
         this.headPortrait = headPortrait;
     }
 
-    public Customer(String id, String name, String transactionPassword, Data data, URI headPortrait) {
+    public Customer(String id, Name name, String transactionPassword, Data data, URI headPortrait) {
         setId(id);
         setName(name);
         setTransactionPassword(transactionPassword);
@@ -85,10 +85,8 @@ public abstract class Customer {
         return false;
     }
 
-    private void setName(String name) {
-        name = Objects.requireNonNull(name, "name required").trim();
-        if (name.isEmpty() || name.length() > NAME_MAX_LENGTH)
-            throw new IllegalArgumentException("name length range is [1-128]");
+    private void setName(Name name) {
+        Objects.requireNonNull(name, "name required");
         this.name = name;
     }
 
@@ -107,10 +105,8 @@ public abstract class Customer {
         this.data = Objects.requireNonNull(data, "data required");
     }
 
-    public void rename(String newName) {
-        newName = Objects.requireNonNull(newName, "newName required").trim();
-        if (newName.isEmpty() || newName.length() > NAME_MAX_LENGTH)
-            throw new IllegalArgumentException("newName length range is 1-" + NAME_MAX_LENGTH);
+    public void rename(Name newName) {
+        newName = Objects.requireNonNull(newName, "newName required");
         if (!name.equals(newName)) {
             name = newName;
             DomainRegistry.domainEventPublisher().publish(new CustomerRenamed(id, newName));
@@ -163,7 +159,7 @@ public abstract class Customer {
         return data;
     }
 
-    public String name() {
+    public Name name() {
         return name;
     }
 

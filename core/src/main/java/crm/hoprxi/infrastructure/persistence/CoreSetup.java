@@ -43,18 +43,18 @@ public class CoreSetup {
         }
         arangoDB.createDatabase(databaseName);
         //vertex
-        for (String s : new String[]{"person", "frozen_person", "debit_card", "anonymous_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
+        for (String s : new String[]{"person", "enterprise", "debit_card", "anonymous_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);
         }
         //index
         Collection<String> index = new ArrayList<>();
-        //customer.nickName
-        index.add("nickName");
+        //name.nickName
+        index.add("name.nickName");
         SkiplistIndexOptions skiplistIndexOptions = new SkiplistIndexOptions().unique(false).sparse(true);
         arangoDB.db(databaseName).collection("person").ensureSkiplistIndex(index, skiplistIndexOptions);
-        arangoDB.db(databaseName).collection("frozen_person").ensureSkiplistIndex(index, skiplistIndexOptions);
+        arangoDB.db(databaseName).collection("enterprise").ensureSkiplistIndex(index, skiplistIndexOptions);
         //name.mnemonic
         index.clear();
         index.add("cardFaceNumber");
@@ -70,7 +70,7 @@ public class CoreSetup {
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
         //edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
-        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "person", "frozen_person").to("debit_card", "appearance"));
+        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "person", "enterprise").to("debit_card", "appearance"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();
         System.out.println(databaseName + " create success");
