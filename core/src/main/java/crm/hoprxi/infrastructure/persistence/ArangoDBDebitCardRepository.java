@@ -45,6 +45,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -98,13 +100,12 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
     }
 
     @Override
-    public DebitCard authenticCredentials(String id, String password) {
-        return null;
-    }
-
-    @Override
     public void remove(String id) {
-
+        boolean exists = crm.collection("debit_card").documentExists(id);
+        if (exists) {
+            ArangoGraph graph = crm.graph("core");
+            graph.vertexCollection("debit_card").deleteVertex(id);
+        }
     }
 
     @Override
@@ -130,17 +131,60 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
     @Override
     public DebitCard[] findAll(int offset, int limit) {
         DebitCard[] debitCards = ArangoDBUtil.calculationCollectionSize(crm, DebitCard.class, offset, limit);
-
+        final String query = "WITH person,debit_card,appearance\n" +
+                "FOR c IN debit_card LIMIT @offset,@limit\n" +
+                "FOR p in 1..1 INBOUND c._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+        final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        try {
+            for (int i = 0; slices.hasNext(); i++)
+                debitCards[i] = rebuild(slices.next());
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Can't rebuild person", e);
+        }
         return debitCards;
     }
 
     @Override
     public DebitCard[] findByCustomer(String customerId) {
-        return null;
+        List<DebitCard> debitCardList = new ArrayList<>();
+        final String query = "WITH person,debit_card,appearance\n" +
+                "FOR p IN person FILTER p._key == @key\n" +
+                "FOR c IN 1..1 OUTBOUND p._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+        final Map<String, Object> bindVars = new MapBuilder().put("key", customerId).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        try {
+            while (slices.hasNext())
+                debitCardList.add(rebuild(slices.next()));
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Can't rebuild DebitCard", e);
+        }
+        return debitCardList.toArray(new DebitCard[debitCardList.size()]);
     }
 
     @Override
     public DebitCard findByCardFaceNumber(String cardFaceNumber) {
+        final String query = "WITH person,debit_card,appearance\n" +
+                "FOR c IN debit_card FILTER c.cardFaceNumber == @cardFaceNumber\n" +
+                "FOR p in 1..1 INBOUND c._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+        final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        try {
+            if (slices.hasNext())
+                return rebuild(slices.next());
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Can't rebuild DebitCard", e);
+            }
+        }
         return null;
     }
 

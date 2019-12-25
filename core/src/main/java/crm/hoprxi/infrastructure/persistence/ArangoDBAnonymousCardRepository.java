@@ -175,7 +175,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     public void remove(String id) {
         boolean exists = crm.collection("anonymous_card").documentExists(id);
         if (exists) {
-            crm.graph("core").vertexCollection("an").deleteVertex("anonymous_card/" + id);
+            crm.graph("core").vertexCollection("anonymous_card").deleteVertex(id);
         }
     }
 

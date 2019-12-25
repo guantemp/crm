@@ -30,14 +30,21 @@ public interface DebitCardRepository {
         return String.valueOf(LongId.generate());
     }
 
-    DebitCard authenticCredentials(String id, String password);
-
     void remove(String id);
 
     DebitCard find(String id);
 
+    /**
+     * @param offset
+     * @param limit
+     * @return
+     */
     DebitCard[] findAll(int offset, int limit);
 
+    /**
+     * @param customerId
+     * @return
+     */
     DebitCard[] findByCustomer(String customerId);
 
     /**

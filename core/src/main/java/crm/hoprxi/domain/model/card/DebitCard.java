@@ -82,6 +82,11 @@ public class DebitCard extends Card {
         }
     }
 
+    public boolean authenticatePassword(String password) {
+        HashService hash = DomainRegistry.getHashService();
+        return hash.check(password, this.password);
+    }
+
     public String customerId() {
         return customerId;
     }

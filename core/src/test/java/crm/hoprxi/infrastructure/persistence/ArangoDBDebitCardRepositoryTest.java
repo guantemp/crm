@@ -30,6 +30,8 @@ import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Spss;
+import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,8 +49,6 @@ public class ArangoDBDebitCardRepositoryTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        Issuer issuer = new Issuer("9634578512046PX", "小市店");
-
         PostalAddressBook book = new PostalAddressBook();
         PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
                 new Contact("官相焕", "18982455056", "0830-2517218"));
@@ -63,10 +63,15 @@ public class ArangoDBDebitCardRepositoryTest {
                 book, identityCard, MonthDay.of(6, 4));
         personRepository.save(guan);
 
-        DebitCard card1 = new DebitCard(issuer, "18982455056", "668888", "975426", "888888", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card1 = new DebitCard(new Issuer("963565548754158X", "小市店"), "18982455056", "667788", "975426", "888888", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card1);
-        DebitCard card2 = new DebitCard(issuer, "18982455056", "668889", "123456", "999999", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card2 = new DebitCard(new Issuer("963457MA120486PX", "山岩瑙"), "18982455056", "778899", "123456", "999999", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card2);
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+
     }
 
     @Test
@@ -74,25 +79,19 @@ public class ArangoDBDebitCardRepositoryTest {
     }
 
     @Test
-    public void authenticCredentials() {
-    }
-
-    @Test
-    public void remove() {
-    }
-
-    @Test
     public void find() {
-        DebitCard debitCard = repository.find("668888");
-        System.out.println(debitCard);
+        DebitCard debitCard = repository.find("667788");
+        Assert.assertNotNull(debitCard);
+        debitCard = repository.find("778899");
+        Assert.assertNotNull(debitCard);
     }
 
 
     @Test
-    public void findByCustomer() {
-    }
-
-    @Test
-    public void findByCardFaceNumber() {
+    public void findBy() {
+        DebitCard[] debitCards = repository.findByCustomer("18982455056");
+        Assert.assertEquals(2, debitCards.length);
+        DebitCard debitCard = repository.findByCardFaceNumber("999999");
+        Assert.assertNotNull(debitCard);
     }
 }
