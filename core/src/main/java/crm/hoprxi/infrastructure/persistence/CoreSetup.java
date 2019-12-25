@@ -23,6 +23,8 @@ import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
 import com.arangodb.model.UserCreateOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,11 +36,12 @@ import java.util.Collection;
  */
 
 public class CoreSetup {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoreSetup.class);
 
     public static void setup(String databaseName) {
         ArangoDB arangoDB = ArangoDBUtil.getResource();
         if (arangoDB.db(databaseName).exists()) {
-            System.out.println(databaseName + " has exists,will be drop");
+            LOGGER.info("{} has exists,will be drop.", databaseName);
             arangoDB.db(databaseName).drop();
         }
         arangoDB.createDatabase(databaseName);
@@ -50,8 +53,8 @@ public class CoreSetup {
         }
         //index
         Collection<String> index = new ArrayList<>();
-        //name.nickName
-        index.add("name.nickName");
+        //name
+        index.add("name");
         SkiplistIndexOptions skiplistIndexOptions = new SkiplistIndexOptions().unique(false).sparse(true);
         arangoDB.db(databaseName).collection("person").ensureSkiplistIndex(index, skiplistIndexOptions);
         arangoDB.db(databaseName).collection("enterprise").ensureSkiplistIndex(index, skiplistIndexOptions);
@@ -73,7 +76,7 @@ public class CoreSetup {
         edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "person", "enterprise").to("debit_card", "appearance"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();
-        System.out.println(databaseName + " create success");
+        LOGGER.info("{} create success.", databaseName);
         arangoDB = null;
     }
 

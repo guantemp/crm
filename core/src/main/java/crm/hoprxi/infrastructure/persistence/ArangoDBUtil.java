@@ -28,7 +28,7 @@ import java.lang.reflect.Array;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2018-07-24
+ * @version 0.0.1 2019-07-24
  */
 public class ArangoDBUtil {
     public static ArangoDB getResource() {
@@ -65,10 +65,5 @@ public class ArangoDBUtil {
             return (T[]) Array.newInstance(t, 0);
         int capacity = difference >= limit ? limit : difference;
         return (T[]) Array.newInstance(t, capacity);
-    }
-
-    public static void main(String[] args) {
-        //Brand[] brands = ArangoDBUtil.calculationCollectionSize(null, Brand.class, 1, 512);
-        //System.out.println(brands.length);
     }
 }

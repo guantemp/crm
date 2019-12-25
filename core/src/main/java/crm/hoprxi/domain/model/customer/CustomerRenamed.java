@@ -30,9 +30,9 @@ public class CustomerRenamed implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String customerId;
-    private Name name;
+    private String name;
 
-    public CustomerRenamed(String customerId, Name name) {
+    public CustomerRenamed(String customerId, String name) {
         this.customerId = customerId;
         this.name = name;
         occurredOn = LocalDateTime.now();
