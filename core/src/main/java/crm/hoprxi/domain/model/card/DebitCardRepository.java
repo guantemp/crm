@@ -40,5 +40,11 @@ public interface DebitCardRepository {
 
     DebitCard findByCustomer(String customerId);
 
+    /**
+     * @param cardFaceNumber
+     * @return
+     */
     DebitCard findByCardFaceNumber(String cardFaceNumber);
+
+    int size();
 }

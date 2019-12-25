@@ -136,24 +136,15 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         if (slices.hasNext())
             return rebuild(slices.next());
-        /*
-        while (slices.hasNext()) {
-            try {
-                return rebuild(slices.next());
-            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Can't rebuild card", e);
-            }
-        }*/
         return null;
     }
 
     private AnonymousCard rebuild(VPackSlice slice) {
         if (slice == null)
             return null;
-        String id = slice.get("id").getAsString();
         VPackSlice issuerSlice = slice.get("issuer");
         Issuer issuer = new Issuer(issuerSlice.get("id").getAsString(), issuerSlice.get("name").getAsString());
+        String id = slice.get("id").getAsString();
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
         //termOfValidity
         VPackSlice termOfValiditySlice = slice.get("termOfValidity");

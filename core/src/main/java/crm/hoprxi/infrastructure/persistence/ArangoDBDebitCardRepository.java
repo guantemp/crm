@@ -16,6 +16,7 @@
 
 package crm.hoprxi.infrastructure.persistence;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentEntity;
@@ -113,6 +114,9 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        if (slices.hasNext())
+            return rebuild(slices.next());
         return null;
     }
 
@@ -131,13 +135,19 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         return null;
     }
 
+    @Override
+    public int size() {
+        return 0;
+    }
+
     private DebitCard rebuild(VPackSlice slice) {
         if (slice == null)
             return null;
         VPackSlice issuerSlice = slice.get("issuer");
         Issuer issuer = new Issuer(issuerSlice.get("id").getAsString(), issuerSlice.get("name").getAsString());
-        String id = slice.get("id").getAsString();
         String customerId = slice.get("customerId").getAsString();
+        String id = slice.get("id").getAsString();
+        String password = slice.get("password").getAsString();
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
         //termOfValidity
         VPackSlice termOfValiditySlice = slice.get("termOfValidity");

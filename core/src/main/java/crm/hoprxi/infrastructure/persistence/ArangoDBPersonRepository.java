@@ -76,13 +76,9 @@ public class ArangoDBPersonRepository implements PersonRepository {
         crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
-    private boolean isExists(String id) {
-        return crm.collection("person").documentExists(id);
-    }
-
     @Override
     public void save(Person person) {
-        boolean exists = isExists(person.id());
+        boolean exists = crm.collection("person").documentExists(person.id());
         ArangoGraph graph = crm.graph("core");
         if (exists) {
             graph.vertexCollection("person").updateVertex(person.id(), person, UPDATE_OPTIONS);
@@ -187,7 +183,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
 
     @Override
     public void remove(String id) {
-        boolean exists = isExists(id);
+        boolean exists = crm.collection("person").documentExists(id);
         if (exists) {
             final String remove = "FOR p IN person FILTER p._key == @identity REMOVE p IN person";
             final Map<String, Object> bindVars = new MapBuilder().put("identity", id).get();
