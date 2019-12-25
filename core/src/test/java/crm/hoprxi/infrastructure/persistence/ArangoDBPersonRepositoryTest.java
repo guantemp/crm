@@ -23,6 +23,7 @@ import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.domain.model.spss.Spss;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,7 +34,7 @@ import java.util.Locale;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-19
+ * @version 0.0.1 2019-12-25
  */
 public class ArangoDBPersonRepositoryTest {
     private static final ArangoDBPersonRepository repository = new ArangoDBPersonRepository("crm");
@@ -53,34 +54,34 @@ public class ArangoDBPersonRepositoryTest {
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",
                 new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "市中区", "沙湖路22"));
-        Person guan = new Person("18982455056", "官相焕", "111222", Spss.EMPTY_SPSS, null,
+        Person guan = new Person("18982455056", "官相焕", "111222", true, Spss.EMPTY_SPSS, null,
                 book, identityCard, MonthDay.of(4, 20));
         repository.save(guan);
 
-        Person wang = new Person("18982455062", "王浩", "207896", Spss.EMPTY_SPSS, null,
+        Person wang = new Person("18982455062", "王浩", "207896", true, Spss.EMPTY_SPSS, null,
                 new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "四川省", "泸州市", "江阳区", "喝咖啡", "酒谷大道3段3号", "614000"),
                         new Contact("王浩", "18982455062", null))), null, MonthDay.of(6, 5));
         repository.save(wang);
-        Person du = new Person("18982435017", "杜红桃", "657895", Spss.EMPTY_SPSS, null,
+        Person du = new Person("18982435017", "杜红桃", "657895", false, Spss.EMPTY_SPSS, null,
                 null, null, MonthDay.of(11, 12));
         repository.save(du);
 
-        Person yang = new Person("13618514021", "杨安顺", "975421", Spss.EMPTY_SPSS, null,
+        Person yang = new Person("13618514021", "杨安顺", "175421", true, Spss.EMPTY_SPSS, null,
                 new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "贵州", "贵阳市", "南明区", "喝咖啡", "宝山南路208号", "325897"),
                         new Contact("杨安顺", "13618514021", null))), null, MonthDay.of(1, 12));
         repository.save(yang);
     }
 
-    /*
+
     @AfterClass
-    public static void teardown() {
+    public static void teardownAfterClass() {
         repository.remove("13618514021");
         repository.remove("18982435017");
         repository.remove("18982455062");
         repository.remove("18982455056");
         repository.remove("18982455056");
     }
-*/
+
     @Test
     public void find() {
         Person guan = repository.find("18982455056");
@@ -91,7 +92,7 @@ public class ArangoDBPersonRepositoryTest {
         Assert.assertTrue(wang.authenticateTransactionPassword("207896"));
         Person yang = repository.find("13618514021");
         Assert.assertNotNull(yang);
-        yang.changeTransactionPassword("975421", "204316");
+        yang.changeTransactionPassword("175421", "204316");
         repository.save(yang);
         yang = repository.find("13618514021");
         Assert.assertTrue(yang.authenticateTransactionPassword("204316"));

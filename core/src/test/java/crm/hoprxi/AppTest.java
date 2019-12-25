@@ -18,6 +18,9 @@
 package crm.hoprxi;
 
 import crm.hoprxi.domain.model.customer.person.Person;
+import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
+import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
+import crm.hoprxi.domain.model.spss.Spss;
 import mi.hoprxi.to.ByteToHex;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -31,11 +34,13 @@ import javax.money.convert.CurrencyConversion;
 import javax.money.convert.ExchangeRate;
 import javax.money.convert.ExchangeRateProvider;
 import javax.money.convert.MonetaryConversions;
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.MonthDay;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -49,12 +54,15 @@ public class AppTest {
      * Rigorous Test :-)
      */
     @Test
-    public void shouldAnswerWithTrue() throws NoSuchAlgorithmException, NoSuchFieldException {
+    public void shouldAnswerWithTrue() throws NoSuchAlgorithmException, NoSuchFieldException, NoSuchMethodException {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
         messageDigest.update("Qwe123465".getBytes(StandardCharsets.UTF_8));
         System.out.println("Qwe123465 Sha-256:" + ByteToHex.toHexStr(messageDigest.digest()));
 
-        Field transactionPasswordField = Person.class.getDeclaredField("transactionPassword");
+        Constructor<Person> personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, boolean.class, Spss.class, URI.class,
+                PostalAddressBook.class, IdentityCard.class, MonthDay.class);
+
+        personConstructor.setAccessible(true);
 
         String source = "AnonymousCardWordSizeOf";
         Matcher matcher = Pattern.compile("[A-Z]").matcher(source);

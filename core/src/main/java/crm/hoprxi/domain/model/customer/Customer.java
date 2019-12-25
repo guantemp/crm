@@ -44,31 +44,28 @@ public abstract class Customer {
     private String name;
     private URI headPortrait;
     private Spss spss;
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Spss.EMPTY_SPSS, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, true, Spss.EMPTY_SPSS, null) {
         @Override
         public void rename(String newName) {
             //do nothing
-        }
-
-        @Override
-        public boolean isFreeze() {
-            return true;
         }
     };
     private String transactionPassword;     //transaction password
     private boolean freeze;
 
-    protected Customer(String id, String name, Spss spss, URI headPortrait) {
+    protected Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait) {
         setId(id);
         setName(name);
+        this.freeze = freeze;
         setSpss(spss);
         this.headPortrait = headPortrait;
     }
 
-    public Customer(String id, String name, String transactionPassword, Spss spss, URI headPortrait) {
+    public Customer(String id, String name, String transactionPassword, boolean freeze, Spss spss, URI headPortrait) {
         setId(id);
         setName(name);
         setTransactionPassword(transactionPassword);
+        this.freeze = freeze;
         setSpss(spss);
         this.headPortrait = headPortrait;
     }

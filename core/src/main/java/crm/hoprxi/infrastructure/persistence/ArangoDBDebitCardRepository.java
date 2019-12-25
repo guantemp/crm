@@ -25,14 +25,24 @@ import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import crm.hoprxi.domain.model.card.Card;
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.DebitCard;
 import crm.hoprxi.domain.model.card.DebitCardRepository;
+import crm.hoprxi.domain.model.card.TermOfValidity;
+import crm.hoprxi.domain.model.card.appearance.Appearance;
+import crm.hoprxi.domain.model.collaborator.Issuer;
+import org.javamoney.moneta.FastMoney;
+import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.money.MonetaryAmount;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,22 +55,24 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBDebitCardRepository.class);
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static Field passwordField;
-    private static Constructor<Card> cardConstructor;
+    private static Constructor<DebitCard> debitCardConstructor;
 
     static {
         try {
+            debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, TermOfValidity.class, Balance.class, SmallChange.class, Appearance.class);
+            debitCardConstructor.setAccessible(true);
             passwordField = DebitCard.class.getDeclaredField("password");
             passwordField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Not find field password in class DebitCard", e);
+                LOGGER.debug("The debitCard class cannot find such a field or constructor", e);
         }
     }
 
     private final ArangoDatabase crm;
 
     public ArangoDBDebitCardRepository(String databaseName) {
-        databaseName = Objects.requireNonNull(databaseName, "").trim();
+        databaseName = Objects.requireNonNull(databaseName, "databaseName required").trim();
         if (!ArangoDBUtil.getResource().db(databaseName).exists())
             LOGGER.error("{} not exists", databaseName);
         crm = ArangoDBUtil.getResource().db(databaseName);
@@ -99,7 +111,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 "FOR c IN debit_card FILTER c._key == @key \n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         return null;
     }
@@ -119,7 +131,32 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         return null;
     }
 
-    private DebitCard rebuilder(VPackSlice slice) {
+    private DebitCard rebuild(VPackSlice slice) {
+        if (slice == null)
+            return null;
+        VPackSlice issuerSlice = slice.get("issuer");
+        Issuer issuer = new Issuer(issuerSlice.get("id").getAsString(), issuerSlice.get("name").getAsString());
+        String id = slice.get("id").getAsString();
+        String customerId = slice.get("customerId").getAsString();
+        String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
+        //termOfValidity
+        VPackSlice termOfValiditySlice = slice.get("termOfValidity");
+        LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);
+        //balance
+        VPackSlice balanceSlice = slice.get("balance");
+        VPackSlice valuableSlice = balanceSlice.get("valuable");
+        MonetaryAmount valuable = Money.of(valuableSlice.get("number").getAsBigDecimal(), valuableSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        VPackSlice giveSlice = balanceSlice.get("give");
+        MonetaryAmount give = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        Balance balance = new Balance(valuable, give);
+        //smallChange
+        VPackSlice smallChangeSlice = slice.get("smallChange");
+        SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
+        VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
+        MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
         return null;
     }
 

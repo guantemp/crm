@@ -51,23 +51,22 @@ public class ArangoDBDebitCardRepositoryTest {
 
         PostalAddressBook book = new PostalAddressBook();
         PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
-                Contact.withMobilePhone("官相焕", "18982455056"));
+                new Contact("官相焕", "18982455056", "0830-2517218"));
         book = book.add(address1);
-        PostalAddress address2 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
-                Contact.withTelephone("官相焕", "0830-2517210"));
-        book = book.add(address2);
         PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "泸州", "龙马潭区", "鱼塘街道", "沙湖路22", "614000"),
                 new Contact("库电话", "13679692401", "0830-3217589"));
         book = book.addAndSetAcquiescence(four);
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",
                 new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "市中区", "沙湖路22"));
-        Person guan = new Person("18982455056", "官相焕", "111220", Spss.EMPTY_SPSS, null,
-                book, identityCard, MonthDay.of(4, 20));
+        Person guan = new Person("18982455056", "hope xi'er", "333222", true, Spss.EMPTY_SPSS, null,
+                book, identityCard, MonthDay.of(6, 4));
         personRepository.save(guan);
 
-        DebitCard card1 = new DebitCard(issuer, "18982455056", "668888", "975426", "88888888", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card1 = new DebitCard(issuer, "18982455056", "668888", "975426", "888888", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card1);
+        DebitCard card2 = new DebitCard(issuer, "18982455056", "668889", "123456", "999999", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        repository.save(card2);
     }
 
     @Test

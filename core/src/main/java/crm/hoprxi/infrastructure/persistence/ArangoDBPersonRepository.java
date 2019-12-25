@@ -55,7 +55,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
 
     static {
         try {
-            personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, Spss.class, URI.class,
+            personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, boolean.class, Spss.class, URI.class,
                     PostalAddressBook.class, IdentityCard.class, MonthDay.class);
             personConstructor.setAccessible(true);
             transactionPasswordField = Customer.class.getDeclaredField("transactionPassword");
@@ -70,6 +70,9 @@ public class ArangoDBPersonRepository implements PersonRepository {
     private final ArangoDatabase crm;
 
     public ArangoDBPersonRepository(String databaseName) {
+        databaseName = Objects.requireNonNull(databaseName, "databaseName required").trim();
+        if (!ArangoDBUtil.getResource().db(databaseName).exists())
+            LOGGER.error("{} not exists", databaseName);
         crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
@@ -109,6 +112,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         String name = slice.get("name").getAsString();
         String transactionPassword = slice.get("transactionPassword").getAsString();
+        boolean freeze = slice.get("freeze").getAsBoolean();
         Spss spss = Spss.EMPTY_SPSS;
         if (!slice.get("spss").isNone()) {
 
@@ -157,7 +161,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             VPackSlice birthdaySlice = slice.get("birthday");
             birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
         }
-        Person person = personConstructor.newInstance(id, name, spss, headPortrait, book, identityCard, birthday);
+        Person person = personConstructor.newInstance(id, name, freeze, spss, headPortrait, book, identityCard, birthday);
         transactionPasswordField.set(person, transactionPassword);
         return person;
     }

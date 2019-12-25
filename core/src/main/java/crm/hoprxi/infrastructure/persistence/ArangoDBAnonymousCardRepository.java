@@ -149,6 +149,8 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     }
 
     private AnonymousCard rebuild(VPackSlice slice) {
+        if (slice == null)
+            return null;
         String id = slice.get("id").getAsString();
         VPackSlice issuerSlice = slice.get("issuer");
         Issuer issuer = new Issuer(issuerSlice.get("id").getAsString(), issuerSlice.get("name").getAsString());

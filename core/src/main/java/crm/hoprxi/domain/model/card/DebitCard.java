@@ -49,6 +49,14 @@ public class DebitCard extends Card {
         setPassword(password);
     }
 
+    /**
+     * for rebuild
+     */
+    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+        setCustomerId(customerId);
+    }
+
     private void setPassword(String password) {
         password = Objects.requireNonNull(password, "password is required").trim();
         if (!password.isEmpty()) {

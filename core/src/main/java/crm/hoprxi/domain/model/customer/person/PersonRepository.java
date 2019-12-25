@@ -20,7 +20,7 @@ import mi.hoprxi.id.LongId;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-20
+ * @version 0.0.1 builder 2019-12-20
  */
 public interface PersonRepository {
     /**
