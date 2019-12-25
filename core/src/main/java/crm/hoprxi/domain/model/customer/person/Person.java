@@ -35,7 +35,6 @@ public class Person extends Customer {
     private PostalAddressBook postalAddressBook;
     private IdentityCard identityCard;
     private MonthDay birthday;
-    private boolean freeze;
 
     public Person(String id, String name) {
         this(id, name, "", Spss.EMPTY_SPSS, null, null, null, null);
@@ -120,18 +119,6 @@ public class Person extends Customer {
 
     public boolean isTodayBirthday() {
         return MonthDay.now().compareTo(birthday) == 0 ? true : false;
-    }
-
-    public boolean isFreeze() {
-        return freeze;
-    }
-
-    public void freeze() {
-        freeze = true;
-    }
-
-    public void unfreeze() {
-        freeze = false;
     }
 
     public PersonSnapshot toSnapshot() {

@@ -33,11 +33,6 @@ import java.util.regex.Pattern;
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Spss.EMPTY_SPSS, null) {
-        @Override
-        public void rename(String newName) {
-        }
-    };
     private static final int NAME_MAX_LENGTH = 255;
     private static final int ID_MAX_LENGTH = 64;
     private static final Pattern CHINA_MOBILE_PHONE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
@@ -49,9 +44,19 @@ public abstract class Customer {
     private String name;
     private URI headPortrait;
     private Spss spss;
-    //transaction password
-    private String transactionPassword;
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Spss.EMPTY_SPSS, null) {
+        @Override
+        public void rename(String newName) {
+            //do nothing
+        }
 
+        @Override
+        public boolean isFreeze() {
+            return true;
+        }
+    };
+    private String transactionPassword;     //transaction password
+    private boolean freeze;
 
     protected Customer(String id, String name, Spss spss, URI headPortrait) {
         setId(id);
@@ -167,14 +172,27 @@ public abstract class Customer {
         return name;
     }
 
+    public boolean isFreeze() {
+        return freeze;
+    }
+
+    public void freeze() {
+        freeze = true;
+    }
+
+    public void unfreeze() {
+        freeze = false;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Customer.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
                 .add("name='" + name + "'")
                 .add("headPortrait=" + headPortrait)
-                .add("data=" + spss)
+                .add("spss=" + spss)
                 .add("transactionPassword='" + transactionPassword + "'")
+                .add("freeze=" + freeze)
                 .toString();
     }
 }
