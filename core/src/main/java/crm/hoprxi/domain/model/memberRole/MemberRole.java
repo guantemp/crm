@@ -20,7 +20,7 @@ import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.power.PowerBook;
-import crm.hoprxi.domain.model.spss.Data;
+import crm.hoprxi.domain.model.spss.Spss;
 
 import java.util.Objects;
 
@@ -33,11 +33,11 @@ public class MemberRole implements Comparable<MemberRole> {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
-    private Data lowerLimit;
+    private Spss lowerLimit;
     private PowerBook powerBook;
     private Appearance cardAppearance;
 
-    public MemberRole(String id, String name, Data lowerLimit, Appearance cardAppearance, PowerBook powerBook) {
+    public MemberRole(String id, String name, Spss lowerLimit, Appearance cardAppearance, PowerBook powerBook) {
         setId(id);
         setName(name);
         setLowerLimit(lowerLimit);
@@ -45,7 +45,7 @@ public class MemberRole implements Comparable<MemberRole> {
         this.cardAppearance = cardAppearance;
     }
 
-    public MemberRole(String id, String name, Data credite) {
+    public MemberRole(String id, String name, Spss credite) {
         this(id, name, credite, null, null);
     }
 
@@ -64,9 +64,9 @@ public class MemberRole implements Comparable<MemberRole> {
         return lowerLimit.compareTo(customer.data()) >= 0 ? true : false;
     }
 
-    private void setLowerLimit(Data lowerLimit) {
+    private void setLowerLimit(Spss lowerLimit) {
         if (lowerLimit == null)
-            lowerLimit = Data.EMPTY_DATA;
+            lowerLimit = Spss.EMPTY_SPSS;
         this.lowerLimit = lowerLimit;
     }
 

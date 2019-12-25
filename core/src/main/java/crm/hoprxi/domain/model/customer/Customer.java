@@ -17,7 +17,7 @@ package crm.hoprxi.domain.model.customer;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
-import crm.hoprxi.domain.model.spss.Data;
+import crm.hoprxi.domain.model.spss.Spss;
 import mi.hoprxi.crypto.HashService;
 
 import java.net.URI;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Data.EMPTY_DATA, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, Spss.EMPTY_SPSS, null) {
         @Override
         public void rename(String newName) {
         }
@@ -48,23 +48,23 @@ public abstract class Customer {
     private String id;
     private String name;
     private URI headPortrait;
-    private Data data;
+    private Spss spss;
     //transaction password
-    protected String transactionPassword;
+    private String transactionPassword;
 
 
-    protected Customer(String id, String name, Data data, URI headPortrait) {
+    protected Customer(String id, String name, Spss spss, URI headPortrait) {
         setId(id);
         setName(name);
-        setData(data);
+        setSpss(spss);
         this.headPortrait = headPortrait;
     }
 
-    public Customer(String id, String name, String transactionPassword, Data data, URI headPortrait) {
+    public Customer(String id, String name, String transactionPassword, Spss spss, URI headPortrait) {
         setId(id);
         setName(name);
         setTransactionPassword(transactionPassword);
-        setData(data);
+        setSpss(spss);
         this.headPortrait = headPortrait;
     }
 
@@ -88,7 +88,7 @@ public abstract class Customer {
     private void setName(String name) {
         name = Objects.requireNonNull(name, "name required").trim();
         if (name.isEmpty() || name.length() > NAME_MAX_LENGTH)
-            throw new IllegalArgumentException("name length range is [1-128]");
+            throw new IllegalArgumentException("name length range is 1-" + NAME_MAX_LENGTH);
         this.name = name;
     }
 
@@ -103,8 +103,8 @@ public abstract class Customer {
         this.transactionPassword = hashService.hash(transactionPassword);
     }
 
-    private void setData(Data data) {
-        this.data = Objects.requireNonNull(data, "data required");
+    private void setSpss(Spss spss) {
+        this.spss = Objects.requireNonNull(spss, "data required");
     }
 
     public void rename(String newName) {
@@ -159,8 +159,8 @@ public abstract class Customer {
         return id != null ? id.hashCode() : 0;
     }
 
-    public Data data() {
-        return data;
+    public Spss data() {
+        return spss;
     }
 
     public String name() {
@@ -173,7 +173,7 @@ public abstract class Customer {
                 .add("id='" + id + "'")
                 .add("name='" + name + "'")
                 .add("headPortrait=" + headPortrait)
-                .add("data=" + data)
+                .add("data=" + spss)
                 .add("transactionPassword='" + transactionPassword + "'")
                 .toString();
     }

@@ -26,21 +26,21 @@ import java.util.*;
  * @version 0.0.1 builder 2018-09-10
  */
 public final class Frequency {
-    private Map<Rate, Data> corresponding;
+    private Map<Rate, Spss> corresponding;
 
-    public Frequency(Map<Rate, Data> corresponding) {
+    public Frequency(Map<Rate, Spss> corresponding) {
         setCorresponding(corresponding);
     }
 
     public static void main(String[] args) {
-        Map<Rate, Data> map = new HashMap<>();
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 15), new Data(400));
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 3), new Data(100));
-        map.put(new Rate(Cycle.ONE_WEEK, (short) 7), new Data(700));
-        map.put(new Rate(Cycle.ONE_WEEK, (short) 3), new Data(300));
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 7), new Data(200));
-        map.put(new Rate(Cycle.ONE_WEEK, (short) 1), new Data(100));
-        map.put(new Rate(Cycle.ONE_MONTH, (short) 10), new Data(300));
+        Map<Rate, Spss> map = new HashMap<>();
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 15), new Spss(400));
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 3), new Spss(100));
+        map.put(new Rate(Cycle.ONE_WEEK, (short) 7), new Spss(700));
+        map.put(new Rate(Cycle.ONE_WEEK, (short) 3), new Spss(300));
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 7), new Spss(200));
+        map.put(new Rate(Cycle.ONE_WEEK, (short) 1), new Spss(100));
+        map.put(new Rate(Cycle.ONE_MONTH, (short) 10), new Spss(300));
         Frequency frequency = new Frequency(map);
 
         LocalDateTime[] sample = new LocalDateTime[]{
@@ -71,7 +71,7 @@ public final class Frequency {
         System.out.println(frequency.calculate(Arrays.asList(sample)));
     }
 
-    private void setCorresponding(Map<Rate, Data> corresponding) {
+    private void setCorresponding(Map<Rate, Spss> corresponding) {
         Objects.requireNonNull(corresponding, "corresponding required");
         this.corresponding = corresponding;
     }
@@ -80,7 +80,7 @@ public final class Frequency {
      * @param sample
      * @return
      */
-    public Data calculate(LocalDateTime[] sample) {
+    public Spss calculate(LocalDateTime[] sample) {
         Arrays.parallelSort(sample, (o1, o2) -> o2.compareTo(o1));
         Rate[] rates = corresponding.keySet().toArray(new Rate[0]);
         Arrays.sort(rates, (Rate o1, Rate o2) -> {
@@ -100,14 +100,14 @@ public final class Frequency {
                     return corresponding.get(rate);
             }
         }
-        return Data.EMPTY_DATA;
+        return Spss.EMPTY_SPSS;
     }
 
     /**
      * @param sample Sort according to the time of occurrence.
      * @return
      */
-    public Data calculate(List<LocalDateTime> sample) {
+    public Spss calculate(List<LocalDateTime> sample) {
         Collections.sort(sample);
         Rate[] rates = corresponding.keySet().toArray(new Rate[0]);
         Arrays.sort(rates, (Rate o1, Rate o2) -> {
@@ -127,7 +127,7 @@ public final class Frequency {
                     return corresponding.get(rate);
             }
         }
-        return Data.EMPTY_DATA;
+        return Spss.EMPTY_SPSS;
     }
 
     public static class Rate {

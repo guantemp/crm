@@ -28,18 +28,18 @@ import java.util.*;
  * @version 0.0.1 builder 2018-09-10
  */
 public final class Monetary {
-    private Map<Consumption, Data> corresponding;
+    private Map<Consumption, Spss> corresponding;
 
-    public Monetary(Map<Consumption, Data> corresponding) {
+    public Monetary(Map<Consumption, Spss> corresponding) {
         setCorresponding(corresponding);
     }
 
-    private void setCorresponding(Map<Consumption, Data> corresponding) {
+    private void setCorresponding(Map<Consumption, Spss> corresponding) {
         Objects.requireNonNull(corresponding, "corresponding required");
         this.corresponding = corresponding;
     }
 
-    public Data calculate(List<ConsumptionRecord> sample) {
+    public Spss calculate(List<ConsumptionRecord> sample) {
         Collections.sort(sample);
         Consumption[] consumptions = corresponding.keySet().toArray(new Consumption[0]);
         Arrays.sort(consumptions, (Consumption o1, Consumption o2) -> {
@@ -59,7 +59,7 @@ public final class Monetary {
                     return corresponding.get(consumption);
             }
         }
-        return Data.EMPTY_DATA;
+        return Spss.EMPTY_SPSS;
     }
 
     public static class Consumption {

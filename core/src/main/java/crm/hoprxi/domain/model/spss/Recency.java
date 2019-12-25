@@ -29,30 +29,30 @@ import java.util.Objects;
  * @version 0.0.1 builder 2018-09-10
  */
 public final class Recency {
-    private EnumMap<Cycle, Data> corresponding;
+    private EnumMap<Cycle, Spss> corresponding;
 
-    public Recency(EnumMap<Cycle, Data> corresponding) {
+    public Recency(EnumMap<Cycle, Spss> corresponding) {
         setCorresponding(corresponding);
     }
 
     public static void main(String[] args) {
-        EnumMap<Cycle, Data> corresponding = new EnumMap<Cycle, Data>(Cycle.class);
-        corresponding.put(Cycle.ONE_WEEK, new Data(200));
-        corresponding.put(Cycle.ONE_MONTH, new Data(100));
-        corresponding.put(Cycle.THERE_MONTHS, new Data(0));
-        corresponding.put(Cycle.SIX_MONTHS, new Data(-50));
-        corresponding.put(Cycle.ONE_YEAR, new Data(-200));
+        EnumMap<Cycle, Spss> corresponding = new EnumMap<Cycle, Spss>(Cycle.class);
+        corresponding.put(Cycle.ONE_WEEK, new Spss(200));
+        corresponding.put(Cycle.ONE_MONTH, new Spss(100));
+        corresponding.put(Cycle.THERE_MONTHS, new Spss(0));
+        corresponding.put(Cycle.SIX_MONTHS, new Spss(-50));
+        corresponding.put(Cycle.ONE_YEAR, new Spss(-200));
         Recency recency = new Recency(corresponding);
         System.out.println(recency.calculate(LocalDate.of(2017, 1, 28)));
         System.out.println(recency.calculate(LocalDate.now().minusDays(1)));
     }
 
-    private void setCorresponding(EnumMap<Cycle, Data> corresponding) {
+    private void setCorresponding(EnumMap<Cycle, Spss> corresponding) {
         Objects.requireNonNull(corresponding, "corresponding required");
         this.corresponding = corresponding;
     }
 
-    public Data calculate(LocalDate lastDate) {
+    public Spss calculate(LocalDate lastDate) {
         Cycle temp = null;
         long days = ChronoUnit.DAYS.between(lastDate, LocalDate.now());
         for (Cycle cycle : Cycle.values()) {
@@ -66,7 +66,7 @@ public final class Recency {
         return corresponding.get(temp);
     }
 
-    public Data calculate(LocalDateTime lastDateTime) {
+    public Spss calculate(LocalDateTime lastDateTime) {
         return calculate(lastDateTime.toLocalDate());
     }
 
@@ -74,9 +74,9 @@ public final class Recency {
      * @param sample this sample must sort by occerOn
      * @return
      */
-    public Data calculate(List<ConsumptionRecord> sample) {
+    public Spss calculate(List<ConsumptionRecord> sample) {
         if (sample.isEmpty())
-            return Data.EMPTY_DATA;
+            return Spss.EMPTY_SPSS;
         return calculate(sample.get(1).occurOn());
     }
 }

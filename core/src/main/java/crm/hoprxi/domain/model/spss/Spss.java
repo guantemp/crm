@@ -23,11 +23,11 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 2019-07-15
  */
-public class Data implements Comparable<Data> {
-    public static final Data EMPTY_DATA = new Data(0);
+public class Spss implements Comparable<Spss> {
+    public static final Spss EMPTY_SPSS = new Spss(0);
     private int value;
 
-    public Data(int value) {
+    public Spss(int value) {
         setValue(value);
     }
 
@@ -38,13 +38,13 @@ public class Data implements Comparable<Data> {
     }
 
     @Override
-    public int compareTo(Data o) {
+    public int compareTo(Spss o) {
         return value == o.value ? 0 : value > o.value ? 1 : -1;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Data.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Spss.class.getSimpleName() + "[", "]")
                 .add("value=" + value)
                 .toString();
     }

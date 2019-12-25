@@ -19,7 +19,7 @@ package crm.hoprxi.domain.model.customer.person;
 import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.domain.model.spss.Data;
+import crm.hoprxi.domain.model.spss.Spss;
 
 import java.net.URI;
 import java.time.MonthDay;
@@ -38,12 +38,12 @@ public class Person extends Customer {
     private boolean freeze;
 
     public Person(String id, String name) {
-        this(id, name, "", Data.EMPTY_DATA, null, null, null, null);
+        this(id, name, "", Spss.EMPTY_SPSS, null, null, null, null);
     }
 
-    private Person(String id, String name, Data data, URI headPortrait,
+    private Person(String id, String name, Spss spss, URI headPortrait,
                    PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
-        super(id, name, data, headPortrait);
+        super(id, name, spss, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
@@ -53,15 +53,15 @@ public class Person extends Customer {
      * @param id
      * @param name
      * @param transactionPassword
-     * @param data
+     * @param spss
      * @param headPortrait
      * @param postalAddressBook
      * @param identityCard
      * @param birthday
      */
-    public Person(String id, String name, String transactionPassword, Data data, URI headPortrait,
+    public Person(String id, String name, String transactionPassword, Spss spss, URI headPortrait,
                   PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
-        super(id, name, transactionPassword, data, headPortrait);
+        super(id, name, transactionPassword, spss, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;

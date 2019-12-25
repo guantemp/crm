@@ -29,7 +29,7 @@ import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.domain.model.spss.Data;
+import crm.hoprxi.domain.model.spss.Spss;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -62,7 +62,7 @@ public class ArangoDBDebitCardRepositoryTest {
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",
                 new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "市中区", "沙湖路22"));
-        Person guan = new Person("18982455056", "官相焕", "111220", Data.EMPTY_DATA, null,
+        Person guan = new Person("18982455056", "官相焕", "111220", Spss.EMPTY_SPSS, null,
                 book, identityCard, MonthDay.of(4, 20));
         personRepository.save(guan);
 

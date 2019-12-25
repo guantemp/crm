@@ -16,7 +16,7 @@
 
 package crm.hoprxi.domain.model.memberRole;
 
-import crm.hoprxi.domain.model.spss.Data;
+import crm.hoprxi.domain.model.spss.Spss;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -24,6 +24,6 @@ import crm.hoprxi.domain.model.spss.Data;
  * @version 0.0.1 2019-08-27
  */
 public class ScopeOfApplication {
-    private Data lowerLimit;
-    private Data upperLimit;
+    private Spss lowerLimit;
+    private Spss upperLimit;
 }
