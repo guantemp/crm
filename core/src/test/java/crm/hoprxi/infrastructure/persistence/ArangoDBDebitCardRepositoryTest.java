@@ -83,11 +83,10 @@ public class ArangoDBDebitCardRepositoryTest {
 
     @Test
     public void find() {
+        DebitCard debitCard = repository.find("668888");
+        System.out.println(debitCard);
     }
 
-    @Test
-    public void findAll() {
-    }
 
     @Test
     public void findByCustomer() {

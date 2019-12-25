@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import javax.money.MonetaryAmount;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -109,24 +110,32 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
     @Override
     public DebitCard find(String id) {
         final String query = "WITH person,debit_card,appearance\n" +
-                "FOR c IN debit_card FILTER c._key == @key \n" +
+                "FOR c IN debit_card FILTER c._key == @key\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
-        if (slices.hasNext())
-            return rebuild(slices.next());
+        try {
+            if (slices.hasNext())
+                return rebuild(slices.next());
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Can't rebuild DebitCard", e);
+            }
+        }
         return null;
     }
 
     @Override
     public DebitCard[] findAll(int offset, int limit) {
-        return new DebitCard[0];
+        DebitCard[] debitCards = ArangoDBUtil.calculationCollectionSize(crm, DebitCard.class, offset, limit);
+
+        return debitCards;
     }
 
     @Override
-    public DebitCard findByCustomer(String customerId) {
+    public DebitCard[] findByCustomer(String customerId) {
         return null;
     }
 
@@ -137,10 +146,15 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
 
     @Override
     public int size() {
+        final String query = " RETURN LENGTH(debit_card)";
+        final ArangoCursor<VPackSlice> cursor = crm.query(query, null, null, VPackSlice.class);
+        for (; cursor.hasNext(); ) {
+            return cursor.next().getAsInt();
+        }
         return 0;
     }
 
-    private DebitCard rebuild(VPackSlice slice) {
+    private DebitCard rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (slice == null)
             return null;
         VPackSlice issuerSlice = slice.get("issuer");
@@ -167,7 +181,10 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
         MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
-        return null;
+
+        DebitCard debitCard = debitCardConstructor.newInstance(issuer, customerId, id, cardFaceNumber, termOfValidity, balance, smallChange, null);
+        passwordField.set(debitCard, password);
+        return debitCard;
     }
 
     private static class HasEdge {

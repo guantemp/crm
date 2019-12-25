@@ -38,7 +38,7 @@ public interface DebitCardRepository {
 
     DebitCard[] findAll(int offset, int limit);
 
-    DebitCard findByCustomer(String customerId);
+    DebitCard[] findByCustomer(String customerId);
 
     /**
      * @param cardFaceNumber
