@@ -140,7 +140,7 @@ public abstract class Card {
         return balance;
     }
 
-    public SmallChange smallChangeBalance() {
+    public SmallChange smallChange() {
         return smallChange;
     }
 

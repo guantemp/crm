@@ -78,18 +78,17 @@ public class Balance {
         return new Balance(zero, zero);
     }
 
+    private void setValuable(MonetaryAmount valuable) {
+        Objects.requireNonNull(valuable, "valuable required");
+        this.valuable = valuable;
+    }
 
     private void setGive(MonetaryAmount give) {
         if (give == null || give.isNegative())
             throw new IllegalArgumentException("give required positive");
         if (!give.getCurrency().equals(valuable.getCurrency()))
-            throw new IllegalArgumentException("give currency equal valuable currency");
+            throw new IllegalArgumentException("give currency required equal valuable currency");
         this.give = give;
-    }
-
-    private void setValuable(MonetaryAmount valuable) {
-        Objects.requireNonNull(valuable, "balance required");
-        this.valuable = valuable;
     }
 
     public MonetaryAmount valuable() {
@@ -119,11 +118,11 @@ public class Balance {
     }
 
     /**
-     * @param valuableAmount
+     * @param valuable
      * @return
      */
-    public Balance deposit(MonetaryAmount valuableAmount) {
-        return deposit(valuableAmount, Money.zero(valuable.getCurrency()));
+    public Balance deposit(MonetaryAmount valuable) {
+        return deposit(valuable, Money.zero(this.valuable.getCurrency()));
     }
 
 
@@ -160,11 +159,16 @@ public class Balance {
         return new Balance(valuable, give);
     }
 
+    public Balance pay(MonetaryAmount amount) {
+        return pay(amount, 5);
+    }
+
     /**
      * @param amount
+     * @param scale
      * @return
      */
-    public Balance pay(MonetaryAmount amount) {
+    public Balance pay(MonetaryAmount amount, int scale) {
         MonetaryAmount available = valuable.add(give);
         if (available.isLessThan(amount))
             throw new InsufficientBalanceException("insufficient balance");
@@ -180,7 +184,7 @@ public class Balance {
         double d1 = valuable.getNumber().doubleValue();
         double d2 = give.getNumber().doubleValue();
         double d3 = d2 / (d1 + d2);
-        MonetaryAmount temp = amount.multiply(BigDecimal.valueOf(d3).setScale(5, BigDecimal.ROUND_HALF_EVEN));
+        MonetaryAmount temp = amount.multiply(BigDecimal.valueOf(d3).setScale(scale, BigDecimal.ROUND_HALF_EVEN));
         return new Balance(valuable.subtract(amount.subtract(temp)), give.subtract(temp));
     }
 

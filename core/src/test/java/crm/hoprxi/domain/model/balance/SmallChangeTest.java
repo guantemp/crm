@@ -28,7 +28,7 @@ import org.junit.Test;
 public class SmallChangeTest {
 
     @Test
-    public void smallChangeBalanceTest() {
+    public void smallChangeTest() {
         //零钱金额一元
         SmallChange smallChange = new SmallChange(Money.of(0.55, "CNY"), SmallChangDenominationEnum.ONE);
         Rounded rounded = smallChange.round(Money.of(5.25, "CNY"));

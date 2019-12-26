@@ -42,19 +42,30 @@ public class DebitCard extends Card {
     @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
+    private boolean freeze;
 
-    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
         setPassword(password);
+        setFreeze(freeze);
     }
 
     /**
      * for rebuild
      */
-    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
+        setFreeze(freeze);
+    }
+
+    public void changeCardFaceNumber(String newCardFaceNumber) {
+        newCardFaceNumber = Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required").trim();
+        if (!cardFaceNumber.equals(newCardFaceNumber)) {
+            this.cardFaceNumber = newCardFaceNumber;
+            DomainRegistry.domainEventPublisher().publish(new DebitCardFaceNumberChanged(super.id(), newCardFaceNumber));
+        }
     }
 
     private void setPassword(String password) {
@@ -74,17 +85,24 @@ public class DebitCard extends Card {
         this.customerId = customerId;
     }
 
-    public void changeCardFaceNumber(String newCardFaceNumber) {
-        newCardFaceNumber = Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required").trim();
-        if (!cardFaceNumber.equals(newCardFaceNumber)) {
-            this.cardFaceNumber = newCardFaceNumber;
-            DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(super.id(), newCardFaceNumber));
+    public void changePassword(String currentPassword, String newPassword) {
+        currentPassword = Objects.requireNonNull(currentPassword).trim();
+        newPassword = Objects.requireNonNull(newPassword).trim();
+        if (!currentPassword.equals(newPassword)) {
+            HashService hashService = DomainRegistry.getHashService();
+            if (hashService.check(currentPassword, password)) {
+                this.password = hashService.hash(newPassword);
+            }
         }
     }
 
     public boolean authenticatePassword(String password) {
         HashService hash = DomainRegistry.getHashService();
         return hash.check(password, this.password);
+    }
+
+    public boolean isFreeze() {
+        return freeze;
     }
 
     public String customerId() {
@@ -108,11 +126,24 @@ public class DebitCard extends Card {
         balance = balance.pay(rounded.integer());
     }
 
+    private void setFreeze(boolean freeze) {
+        this.freeze = freeze;
+    }
+
+    public void freeze() {
+        freeze = true;
+    }
+
+    public void unfreeze() {
+        freeze = false;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
                 .add("customerId='" + customerId + "'")
+                .add("freeze=" + freeze)
                 .toString();
     }
 }

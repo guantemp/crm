@@ -42,19 +42,17 @@ public class BalanceTest {
     public void zeroTest() {
         Balance rmb = Balance.zero(Locale.getDefault());
         assertTrue(rmb == Balance.zero(Locale.CHINESE));
+        assertTrue(rmb == Balance.zero(Locale.PRC));
+        assertTrue(rmb == Balance.zero(Locale.CHINA));
         thrown.expect(InsufficientBalanceException.class);
         rmb = rmb.pay(FastMoney.of(20, "CNY"));
-        //assertTrue(rmb == Balance.zero(Locale.PRC));
-        //assertTrue(rmb == Balance.zero(Locale.CHINA));
         rmb = rmb.withdrawal(FastMoney.of(120, "CNY"));
-        //assertTrue(rmb == Balance.zero(Locale.PRC));
-        //assertTrue(rmb == Balance.zero(Locale.CHINA));
 
         Balance usd = Balance.zero(Locale.US);
+        assertTrue(usd == Balance.zero(Locale.US));
         thrown.expect(InsufficientBalanceException.class);
         usd.pay(FastMoney.of(20, "USD"));
         usd.withdrawal(FastMoney.of(120, "USD"));
-        //assertTrue(usd == Balance.zero(Locale.US));
     }
 
     @Test
@@ -103,5 +101,4 @@ public class BalanceTest {
         rmb.pay(Money.of(0.00000001, "CNY"));
         rmb.withdrawal(Money.of(0.00000001, "CNY"));
     }
-
 }

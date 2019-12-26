@@ -25,13 +25,13 @@ import java.time.LocalDateTime;
  * @since JDK8.0
  * @version 0.0.1 2019-12-05
  */
-public class CardFaceNumberChanged implements DomainEvent {
+public class DebitCardFaceNumberChanged implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
     private String cardFaceNumber;
 
-    public CardFaceNumberChanged(String id, String cardFaceNumber) {
+    public DebitCardFaceNumberChanged(String id, String cardFaceNumber) {
         this.id = id;
         this.cardFaceNumber = cardFaceNumber;
         occurredOn = LocalDateTime.now();
