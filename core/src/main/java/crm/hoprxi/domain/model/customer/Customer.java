@@ -50,7 +50,7 @@ public abstract class Customer {
             //do nothing
         }
     };
-    private String transactionPassword;     //transaction password
+    private String paymentPassword;     //transaction password
     private boolean freeze;
 
     protected Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait) {
@@ -61,10 +61,10 @@ public abstract class Customer {
         this.headPortrait = headPortrait;
     }
 
-    public Customer(String id, String name, String transactionPassword, boolean freeze, Spss spss, URI headPortrait) {
+    public Customer(String id, String name, String paymentPassword, boolean freeze, Spss spss, URI headPortrait) {
         setId(id);
         setName(name);
-        setTransactionPassword(transactionPassword);
+        setPaymentPassword(paymentPassword);
         this.freeze = freeze;
         setSpss(spss);
         this.headPortrait = headPortrait;
@@ -94,15 +94,15 @@ public abstract class Customer {
         this.name = name;
     }
 
-    private void setTransactionPassword(String transactionPassword) {
-        transactionPassword = Objects.requireNonNull(transactionPassword, "transactionPassword is required").trim();
-        if (!transactionPassword.isEmpty()) {
-            Matcher matcher = TRANSACTION_PASSWORD_PATTERN.matcher(transactionPassword);
+    private void setPaymentPassword(String paymentPassword) {
+        paymentPassword = Objects.requireNonNull(paymentPassword, "transactionPassword is required").trim();
+        if (!paymentPassword.isEmpty()) {
+            Matcher matcher = TRANSACTION_PASSWORD_PATTERN.matcher(paymentPassword);
             if (!matcher.matches())
                 throw new IllegalArgumentException("transactionPassword must 6 digit number");
         }
         HashService hashService = DomainRegistry.getHashService();
-        this.transactionPassword = hashService.hash(transactionPassword);
+        this.paymentPassword = hashService.hash(paymentPassword);
     }
 
     private void setSpss(Spss spss) {
@@ -120,16 +120,16 @@ public abstract class Customer {
     }
 
     /**
-     * @param currentTransactionPassword
-     * @param changedTransactionPassword
+     * @param currentPaymentPassword
+     * @param changedPaymentPassword
      */
-    public void changeTransactionPassword(String currentTransactionPassword, String changedTransactionPassword) {
-        changedTransactionPassword = Objects.requireNonNull(changedTransactionPassword, "changedTransactionPassword required").trim();
-        if (currentTransactionPassword.equals(changedTransactionPassword))
-            throw new IllegalArgumentException("transactionPassword will not change");
+    public void changeTransactionPassword(String currentPaymentPassword, String changedPaymentPassword) {
+        changedPaymentPassword = Objects.requireNonNull(changedPaymentPassword, "changedPaymentPassword required").trim();
+        if (currentPaymentPassword.equals(changedPaymentPassword))
+            throw new IllegalArgumentException("paymentPassword will not change");
         HashService hashService = DomainRegistry.getHashService();
-        if (hashService.check(currentTransactionPassword, transactionPassword)) {
-            this.transactionPassword = hashService.hash(changedTransactionPassword);
+        if (hashService.check(currentPaymentPassword, paymentPassword)) {
+            this.paymentPassword = hashService.hash(changedPaymentPassword);
         }
     }
 
@@ -141,9 +141,9 @@ public abstract class Customer {
         return headPortrait;
     }
 
-    public boolean authenticateTransactionPassword(String transactionPassword) {
+    public boolean authenticatePaymentPassword(String paymentPassword) {
         HashService hash = DomainRegistry.getHashService();
-        return hash.check(transactionPassword, this.transactionPassword);
+        return hash.check(paymentPassword, this.paymentPassword);
     }
 
     @Override
@@ -188,7 +188,7 @@ public abstract class Customer {
                 .add("name='" + name + "'")
                 .add("headPortrait=" + headPortrait)
                 .add("spss=" + spss)
-                .add("transactionPassword='" + transactionPassword + "'")
+                .add("transactionPassword='" + paymentPassword + "'")
                 .add("freeze=" + freeze)
                 .toString();
     }

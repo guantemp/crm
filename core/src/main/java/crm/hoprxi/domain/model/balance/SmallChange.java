@@ -105,9 +105,8 @@ public class SmallChange {
      * @return
      */
     public SmallChange deposit(MonetaryAmount amount) {
-        Objects.requireNonNull(amount, "amount required");
-        if (amount.isNegativeOrZero())
-            throw new IllegalArgumentException("deposit amount must large zero");
+        if (amount == null || amount.isNegativeOrZero())
+            return this;
         return new SmallChange(this.amount.add(amount), smallChangDenominationEnum);
     }
 

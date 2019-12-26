@@ -43,14 +43,14 @@ public class Person extends Customer {
         this.birthday = birthday;
     }
 
-    public Person(String id, String name, String transactionPassword) {
-        this(id, name, transactionPassword, true, Spss.EMPTY_SPSS, null, null, null, null);
+    public Person(String id, String name, String paymentPassword) {
+        this(id, name, paymentPassword, true, Spss.EMPTY_SPSS, null, null, null, null);
     }
 
     /**
      * @param id
      * @param name
-     * @param transactionPassword
+     * @param paymentPassword
      * @param freeze
      * @param spss
      * @param headPortrait
@@ -58,9 +58,9 @@ public class Person extends Customer {
      * @param identityCard
      * @param birthday
      */
-    public Person(String id, String name, String transactionPassword, boolean freeze, Spss spss, URI headPortrait,
+    public Person(String id, String name, String paymentPassword, boolean freeze, Spss spss, URI headPortrait,
                   PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
-        super(id, name, transactionPassword, freeze, spss, headPortrait);
+        super(id, name, paymentPassword, freeze, spss, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;

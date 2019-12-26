@@ -50,7 +50,7 @@ import java.util.*;
 public class ArangoDBPersonRepository implements PersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPersonRepository.class);
-    private static Field transactionPasswordField;
+    private static Field paymentPasswordField;
     private static Constructor<Person> personConstructor;
 
     static {
@@ -58,8 +58,8 @@ public class ArangoDBPersonRepository implements PersonRepository {
             personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, boolean.class, Spss.class, URI.class,
                     PostalAddressBook.class, IdentityCard.class, MonthDay.class);
             personConstructor.setAccessible(true);
-            transactionPasswordField = Customer.class.getDeclaredField("transactionPassword");
-            transactionPasswordField.setAccessible(true);
+            paymentPasswordField = Customer.class.getDeclaredField("paymentPassword");
+            paymentPasswordField.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("The Person class cannot find such a field or constructor", e);
@@ -107,7 +107,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         String name = slice.get("name").getAsString();
-        String transactionPassword = slice.get("transactionPassword").getAsString();
+        String paymentPassword = slice.get("paymentPassword").getAsString();
         boolean freeze = slice.get("freeze").getAsBoolean();
         Spss spss = Spss.EMPTY_SPSS;
         if (!slice.get("spss").isNone()) {
@@ -158,7 +158,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
         }
         Person person = personConstructor.newInstance(id, name, freeze, spss, headPortrait, book, identityCard, birthday);
-        transactionPasswordField.set(person, transactionPassword);
+        paymentPasswordField.set(person, paymentPassword);
         return person;
     }
 

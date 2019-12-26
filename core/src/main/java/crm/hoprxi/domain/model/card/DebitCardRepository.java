@@ -24,14 +24,27 @@ import mi.hoprxi.id.LongId;
  * @version 0.0.1 2019-12-20
  */
 public interface DebitCardRepository {
+    /**
+     * @param debitCard
+     */
     void save(DebitCard debitCard);
 
+    /**
+     * @return
+     */
     default String nextIdentity() {
         return String.valueOf(LongId.generate());
     }
 
+    /**
+     * @param id
+     */
     void remove(String id);
 
+    /**
+     * @param id
+     * @return
+     */
     DebitCard find(String id);
 
     /**

@@ -86,16 +86,16 @@ public class ArangoDBPersonRepositoryTest {
     public void find() {
         Person guan = repository.find("18982455056");
         Assert.assertNotNull(guan);
-        Assert.assertTrue(guan.authenticateTransactionPassword("111222"));
+        Assert.assertTrue(guan.authenticatePaymentPassword("111222"));
         Person wang = repository.find("18982455062");
         Assert.assertNotNull(wang);
-        Assert.assertTrue(wang.authenticateTransactionPassword("207896"));
+        Assert.assertTrue(wang.authenticatePaymentPassword("207896"));
         Person yang = repository.find("13618514021");
         Assert.assertNotNull(yang);
         yang.changeTransactionPassword("175421", "204316");
         repository.save(yang);
         yang = repository.find("13618514021");
-        Assert.assertTrue(yang.authenticateTransactionPassword("204316"));
+        Assert.assertTrue(yang.authenticatePaymentPassword("204316"));
         Person person = repository.find("18982435016");
         Assert.assertNull(person);
     }
