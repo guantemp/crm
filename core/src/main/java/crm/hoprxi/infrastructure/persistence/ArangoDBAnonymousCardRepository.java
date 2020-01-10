@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,8 +76,8 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     private void insertHasEdgeOfAppearance(ArangoGraph graph, DocumentEntity cardVertex, Appearance appearance) {
         if (appearance == null)
             return;
-        final String query = "WITH appearance\n"
-                + "FOR a IN appearance FILTER a.issuer.issuerId == @issuerId and a.name == @name RETURN a";
+        final String query = "WITH appearance\n" +
+                "FOR a IN appearance FILTER a.issuer.issuerId == @issuerId and a.name == @name RETURN a";
         final Map<String, Object> bindVars = new MapBuilder().put("issuerId", appearance.issuer().id()).put("name", appearance.name()).get();
         ArangoCursor<VertexEntity> slices = crm.query(query, bindVars, null, VertexEntity.class);
         if (slices.hasNext()) {
