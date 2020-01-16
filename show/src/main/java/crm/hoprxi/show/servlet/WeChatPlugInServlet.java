@@ -25,9 +25,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -45,6 +43,13 @@ public class WeChatPlugInServlet extends HttpServlet {
         String nonce = arrays[3].split("=")[1];
         String token = "guantemp";
 
+        String[] dictionary = new String[]{token, nonce, timestamp};
+        Arrays.sort(dictionary, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
         List<String> check = new ArrayList<>();
         check.add(token);
         check.add(nonce);

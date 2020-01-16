@@ -22,11 +22,11 @@
     <display-name>Archetype Created Web Application</display-name>
 
     <servlet>
-        <servlet-name>WeChatPlugIn</servlet-name>
+        <servlet-name>wechatplugin</servlet-name>
         <servlet-class>crm.hoprxi.show.servlet.WeChatPlugInServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>WeChatPlugIn</servlet-name>
-        <url-pattern>WeChatPlugIn</url-pattern>
+        <servlet-name>wechatplugin</servlet-name>
+        <url-pattern>wechatplugin</url-pattern>
     </servlet-mapping>
 </web-app>
