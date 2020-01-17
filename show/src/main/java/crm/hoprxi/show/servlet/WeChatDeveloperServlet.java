@@ -16,6 +16,8 @@
 
 package crm.hoprxi.show.servlet;
 
+import mi.hoprxi.to.ByteToHex;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +27,15 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2020-01-10
  */
-public class WeChatPlugInServlet extends HttpServlet {
+public class WeChatDeveloperServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String contex = req.getQueryString();
@@ -43,21 +46,16 @@ public class WeChatPlugInServlet extends HttpServlet {
         String nonce = arrays[3].split("=")[1];
         String token = "guantemp";
 
-        String[] dictionary = new String[]{token, nonce, timestamp};
-        Arrays.sort(dictionary, new Comparator<String>() {
+        String[] check = new String[]{token, nonce, timestamp};
+        Arrays.sort(check, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return o1.compareTo(o2);
             }
         });
-        List<String> check = new ArrayList<>();
-        check.add(token);
-        check.add(nonce);
-        check.add(timestamp);
-        Collections.sort(check);
 
         try {
-            String checkSignature = getSha1((check.get(0) + check.get(1) + check.get(2)).getBytes(StandardCharsets.UTF_8));
+            String checkSignature = sha1((check[0] + check[1] + check[2]).getBytes(StandardCharsets.UTF_8));
             System.out.println(signature);
             System.out.println(checkSignature);
             if (signature.equals(checkSignature)) {
@@ -69,16 +67,18 @@ public class WeChatPlugInServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
     }
 
-    private String getSha1(byte[] input) throws NoSuchAlgorithmException {
+    private String sha1(byte[] input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA1");
         byte[] result = mDigest.digest(input);
+        return ByteToHex.toHexStr(result);
+        /*
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < result.length; i++) {
             sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
         }
         return sb.toString();
+         */
     }
 }
