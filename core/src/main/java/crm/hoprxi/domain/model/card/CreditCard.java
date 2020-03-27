@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package crm.hoprxi.domain.model.card;
 
 
+import com.arangodb.velocypack.annotations.Expose;
 import crm.hoprxi.domain.model.DomainRegistry;
-import crm.hoprxi.domain.model.LineOfCredit;
 import crm.hoprxi.domain.model.balance.Balance;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
@@ -29,10 +29,13 @@ import javax.money.MonetaryAmount;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-15
+ * @version 0.0.1 2020-03-27
  */
 public class CreditCard extends Card {
+    @Expose(serialize = false, deserialize = false)
     private String customerId;
+    private String password;
+    private boolean freeze;
     private LineOfCredit lineOfCredit;
 
     public CreditCard(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance, String customerId, LineOfCredit lineOfCredit) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class TermOfValidityTest {
     public void test() {
         TermOfValidity permanent = TermOfValidity.PERMANENCE;
         Assert.assertTrue(permanent.isValidityPeriod());
-        TermOfValidity permanent1 = permanent.cutDownTo(LocalDate.now().plusDays(2));
+        TermOfValidity permanent1 = permanent.broughtForwardTo(LocalDate.now().plusDays(2));
         Assert.assertTrue(permanent1 == permanent);
         permanent1 = permanent.postponeTo(LocalDate.now().plusDays(20));
         Assert.assertTrue(permanent1 == permanent);
@@ -52,7 +52,7 @@ public class TermOfValidityTest {
         System.out.println(termOfValidity);
         Assert.assertTrue(termOfValidity.isValidityPeriod());
 
-        termOfValidity = termOfValidity.cutDownTo(LocalDate.now().plusDays(45));
+        termOfValidity = termOfValidity.broughtForwardTo(LocalDate.now().plusDays(45));
         System.out.println(termOfValidity);
         Assert.assertTrue(termOfValidity.isValidityPeriod());
 

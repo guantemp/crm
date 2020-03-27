@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,6 @@ public abstract class Card {
      * @param appearance
      * @throws IllegalArgumentException if id is null or empty
      * @throws IllegalArgumentException if issuer does not exist
-     * @throws IllegalArgumentException if issuer does not exist
      */
     public Card(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
         setIssuer(issuer);
@@ -70,14 +69,14 @@ public abstract class Card {
         setAppearance(appearance);
     }
 
-    public Card(String id, Issuer issuer) {
+    public Card(Issuer issuer, String id) {
         this(issuer, id, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
         id = Objects.requireNonNull(id, "id required").trim();
         if (id.isEmpty() || id.length() > ID_MAX_LENGTH)
-            throw new IllegalArgumentException("Card id rang is [1-." + ID_MAX_LENGTH + "]");
+            throw new IllegalArgumentException("The id length rang is [1-." + ID_MAX_LENGTH + "]");
         this.id = id;
     }
 
@@ -171,9 +170,6 @@ public abstract class Card {
             this.smallChange = newSmallChange;
     }
 
-    /**
-     * @param amount
-     */
     public void withdraw(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card failed");

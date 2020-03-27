@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.domain.model;
+package crm.hoprxi.domain.model.card;
 
 import javax.money.MonetaryAmount;
 import java.time.LocalDate;
@@ -24,32 +24,33 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-25
+ * @version 0.0.2 2020-03-27
  */
 public class LineOfCredit {
     private MonetaryAmount quota;
-    private LocalDate billDate;
-    private int billingCycleDays;
+    private LocalDate repaymentDate;
+    private int billDate;
 
-    public LineOfCredit(MonetaryAmount quota, int billingCycleDays) {
-        setQuota(quota);
-        setBillingCycleDays(billingCycleDays);
-        billDate = LocalDate.now().minusDays(billingCycleDays);
+    public LineOfCredit(MonetaryAmount quota, int billDate) {
+        this(quota, billDate, LocalDate.now().minusDays(billDate));
     }
 
-    public LineOfCredit(MonetaryAmount quota, int billingCycleDays, LocalDate billDate) {
+    private LineOfCredit(MonetaryAmount quota, int billDate, LocalDate repaymentDate) {
         setQuota(quota);
-        setBillingCycleDays(billingCycleDays);
         setBillDate(billDate);
+        this.repaymentDate = repaymentDate;
     }
 
-    private void setBillingCycleDays(int billingCycleDays) {
-        if (billingCycleDays <= 0)
-            throw new IllegalArgumentException("billingCycleDays will larger zero");
-        this.billingCycleDays = billingCycleDays;
+    private void setBillDate(int billDate) {
+        if (billDate < 3 || billDate > 28)
+            throw new IllegalArgumentException("Bill date will is 4-28");
+        this.billDate = billDate;
     }
 
     private void setQuota(MonetaryAmount quota) {
+        Objects.requireNonNull(quota, "quota required");
+        if (quota.isNegativeOrZero())
+            throw new IllegalArgumentException("quota must larger zero");
         this.quota = quota;
     }
 
@@ -57,37 +58,30 @@ public class LineOfCredit {
      * @param quota
      * @return this if quota is negative or zero or greater old quota
      */
-    public LineOfCredit reductionTo(MonetaryAmount quota) {
+    public LineOfCredit reductionQuota(MonetaryAmount quota) {
         Objects.requireNonNull(quota, "quota required");
         if (quota.isNegativeOrZero() || quota.isGreaterThan(this.quota))
             return this;
-        return new LineOfCredit(quota, billingCycleDays, billDate);
+        return new LineOfCredit(quota, billDate, repaymentDate);
     }
 
     /**
      * @param quota
      * @return this if quota is negative or zero or less old quota
      */
-    public LineOfCredit IncreaseTo(MonetaryAmount quota) {
+    public LineOfCredit upgradeQuota(MonetaryAmount quota) {
         Objects.requireNonNull(quota, "quota required");
         if (quota.isNegativeOrZero() || quota.isLessThan(this.quota))
             return this;
-        return new LineOfCredit(quota, billingCycleDays, billDate);
+        return new LineOfCredit(quota, billDate, repaymentDate);
     }
 
-    public boolean isBillDate() {
-        return LocalDate.now().isBefore(billDate);
+    public LocalDate repaymentDate() {
+        return repaymentDate;
     }
 
-    private void setBillDate(LocalDate billDate) {
-        Objects.requireNonNull(billDate, "billDate required");
-        if (billDate.isBefore(LocalDate.now()))
-            throw new IllegalArgumentException("Billing date must be later than now");
-        this.billDate = billDate;
-    }
-
-    public LineOfCredit updateBillDate() {
-        return new LineOfCredit(quota, billingCycleDays, LocalDate.now().minusDays(billingCycleDays));
+    public LineOfCredit nextRepaymentDate() {
+        return new LineOfCredit(quota, billDate, LocalDate.now().minusDays(billDate));
     }
 
     @Override
@@ -97,16 +91,16 @@ public class LineOfCredit {
 
         LineOfCredit that = (LineOfCredit) o;
 
-        if (billingCycleDays != that.billingCycleDays) return false;
+        if (billDate != that.billDate) return false;
         if (quota != null ? !quota.equals(that.quota) : that.quota != null) return false;
-        return billDate != null ? billDate.equals(that.billDate) : that.billDate == null;
+        return repaymentDate != null ? repaymentDate.equals(that.repaymentDate) : that.repaymentDate == null;
     }
 
     @Override
     public int hashCode() {
         int result = quota != null ? quota.hashCode() : 0;
-        result = 31 * result + (billDate != null ? billDate.hashCode() : 0);
-        result = 31 * result + billingCycleDays;
+        result = 31 * result + (repaymentDate != null ? repaymentDate.hashCode() : 0);
+        result = 31 * result + billDate;
         return result;
     }
 
@@ -114,8 +108,8 @@ public class LineOfCredit {
     public String toString() {
         return new StringJoiner(", ", LineOfCredit.class.getSimpleName() + "[", "]")
                 .add("quota=" + quota)
+                .add("repaymentDate=" + repaymentDate)
                 .add("billDate=" + billDate)
-                .add("billingCycleDays=" + billingCycleDays)
                 .toString();
     }
 }
