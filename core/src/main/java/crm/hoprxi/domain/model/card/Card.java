@@ -172,7 +172,7 @@ public abstract class Card {
 
     public void withdraw(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card failed");
+            throw new BeOverdueException("Card be overdue");
         if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
             throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
@@ -180,15 +180,17 @@ public abstract class Card {
             return;
         }
         MonetaryAmount temp = amount.subtract(balance.valuable());
-        balance = Balance.zero(balance.valuable().getCurrency());
+        balance = new Balance(Money.zero(balance.valuable().getCurrency()), balance.give());
         smallChange = smallChange.pay(temp);
     }
 
     public void withdrawAll() {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card failed");
         CurrencyUnit unit = balance.valuable().getCurrency();
         if (balance.valuable().add(smallChange.amount()).isLessThan(Money.zero(unit)))
             throw new InsufficientBalanceException("Insufficient balance");
-        balance = Balance.zero(unit);
+        balance = new Balance(Money.zero(unit), balance.give());
         smallChange = SmallChange.zero(unit);
     }
 

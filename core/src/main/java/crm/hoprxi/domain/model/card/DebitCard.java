@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2019-11-06
+ * @version 0.0.2 builder 2020-03-27
  */
 public class DebitCard extends Card {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
@@ -44,20 +44,22 @@ public class DebitCard extends Card {
     private String password;
     private boolean freeze;
 
-    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
+                     Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
         setPassword(password);
-        setFreeze(freeze);
+        this.freeze = freeze;
     }
 
     /**
      * for rebuild
      */
-    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity, Balance balance,
+                      SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
-        setFreeze(freeze);
+        this.freeze = freeze;
     }
 
     public void changeCardFaceNumber(String newCardFaceNumber) {
@@ -126,10 +128,6 @@ public class DebitCard extends Card {
         balance = balance.pay(rounded.integer());
     }
 
-    private void setFreeze(boolean freeze) {
-        this.freeze = freeze;
-    }
-
     public void freeze() {
         freeze = true;
     }
@@ -141,9 +139,12 @@ public class DebitCard extends Card {
     @Override
     public String toString() {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
-                .add("super=" + super.toString())
                 .add("customerId='" + customerId + "'")
                 .add("freeze=" + freeze)
+                .add("termOfValidity=" + termOfValidity)
+                .add("cardFaceNumber='" + cardFaceNumber + "'")
+                .add("balance=" + balance)
+                .add("smallChange=" + smallChange)
                 .toString();
     }
 }

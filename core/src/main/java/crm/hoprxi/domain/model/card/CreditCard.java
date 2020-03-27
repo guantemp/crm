@@ -20,11 +20,18 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.velocypack.annotations.Expose;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.Rounded;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
+import mi.hoprxi.crypto.HashService;
 
 import javax.money.MonetaryAmount;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -32,40 +39,98 @@ import javax.money.MonetaryAmount;
  * @version 0.0.1 2020-03-27
  */
 public class CreditCard extends Card {
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
     private boolean freeze;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance, String customerId, LineOfCredit lineOfCredit) {
+    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
+                      LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
+        setPassword(password);
         setLineOfCredit(lineOfCredit);
+        this.freeze = freeze;
     }
 
     private void setLineOfCredit(LineOfCredit lineOfCredit) {
+        Objects.requireNonNull(lineOfCredit, "lineOfCredit required.");
         this.lineOfCredit = lineOfCredit;
     }
 
     private void setCustomerId(String customerId) {
         if (!DomainRegistry.validCustomerId(customerId))
-            throw new IllegalArgumentException("customerId isn't valid");
+            throw new IllegalArgumentException("customerId isn't valid.");
         this.customerId = customerId;
+    }
+
+    private void setPassword(String password) {
+        password = Objects.requireNonNull(password, "password is required").trim();
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("password is 6 digit number");
+        }
+        HashService hashService = DomainRegistry.getHashService();
+        this.password = hashService.hash(password);
+    }
+
+    public boolean authenticatePassword(String password) {
+        HashService hash = DomainRegistry.getHashService();
+        return hash.check(password, this.password);
+    }
+
+    public boolean isFreeze() {
+        return freeze;
     }
 
     @Override
     public void debit(MonetaryAmount amount) {
-
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
+            balance = balance.pay(amount);
+            return;
+        }
+        Rounded rounded = smallChange.round(amount);
+        if (rounded.isOverflow()) {
+            smallChange = smallChange.deposit(rounded.remainder());
+        } else {
+            smallChange = smallChange.pay(rounded.remainder().negate());
+        }
+        balance = balance.pay(rounded.integer());
     }
 
+    public void freeze() {
+        freeze = true;
+    }
 
-    public void overdraw(MonetaryAmount amount) {
-        if (balance().valuable().isPositive()) {
-            double d1 = balance().valuable().getNumber().doubleValue();
-            double d2 = balance().give().getNumber().doubleValue();
-            double d3 = d1 / (d1 + d2);
-            MonetaryAmount temp = amount.multiply(d3);
+    public void unfreeze() {
+        freeze = false;
+    }
+
+    /*
+        public void overdraw(MonetaryAmount amount) {
+            if (balance().valuable().isPositive()) {
+                double d1 = balance().valuable().getNumber().doubleValue();
+                double d2 = balance().give().getNumber().doubleValue();
+                double d3 = d1 / (d1 + d2);
+                MonetaryAmount temp = amount.multiply(d3);
+            }
         }
+    */
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", CreditCard.class.getSimpleName() + "[", "]")
+                .add("customerId='" + customerId + "'")
+                .add("freeze=" + freeze)
+                .add("lineOfCredit=" + lineOfCredit)
+                .add("termOfValidity=" + termOfValidity)
+                .add("cardFaceNumber='" + cardFaceNumber + "'")
+                .add("balance=" + balance)
+                .add("smallChange=" + smallChange)
+                .toString();
     }
 }
