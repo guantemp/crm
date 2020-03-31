@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,15 +60,15 @@ public class BalanceTest {
         Balance rmb = Balance.zero(Locale.CHINA);
         rmb = rmb.deposit(FastMoney.of(20, "CNY"));
         assertEquals(rmb.valuable(), Money.of(20, "CNY"));
-        assertEquals(rmb.give(), Money.of(0, "CNY"));
+        assertEquals(rmb.redPackets(), Money.of(0, "CNY"));
 
         rmb = rmb.deposit(FastMoney.of(200, "CNY"), FastMoney.of(20, "CNY"));
         assertEquals(rmb.valuable(), Money.of(220, "CNY"));
-        assertEquals(rmb.give(), Money.of(20, "CNY"));
+        assertEquals(rmb.redPackets(), Money.of(20, "CNY"));
 
         rmb = rmb.withdrawal(FastMoney.of(150, "CNY"));
         assertEquals(rmb.valuable(), Money.of(70, "CNY"));
-        assertEquals(rmb.give(), Money.of(20, "CNY"));
+        assertEquals(rmb.redPackets(), Money.of(20, "CNY"));
 
         rmb = rmb.pay(FastMoney.of(64.50, "CNY"));
         System.out.println(rmb);
@@ -82,7 +82,7 @@ public class BalanceTest {
         System.out.println(rmb);
         assertTrue(rmb == Balance.zero(Locale.CHINESE));
         assertEquals(rmb.valuable(), Money.of(0, "CNY"));
-        assertEquals(rmb.give(), Money.of(0, "CNY"));
+        assertEquals(rmb.redPackets(), Money.of(0, "CNY"));
 
         rmb = rmb.overdraw(FastMoney.of(10, "CNY"));
         assertEquals(rmb.valuable(), Money.of(-10, "CNY"));

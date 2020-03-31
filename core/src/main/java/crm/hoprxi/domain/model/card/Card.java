@@ -180,7 +180,7 @@ public abstract class Card {
             return;
         }
         MonetaryAmount temp = amount.subtract(balance.valuable());
-        balance = new Balance(Money.zero(balance.valuable().getCurrency()), balance.give());
+        balance = new Balance(Money.zero(balance.valuable().getCurrency()), balance.redPackets());
         smallChange = smallChange.pay(temp);
     }
 
@@ -190,7 +190,7 @@ public abstract class Card {
         CurrencyUnit unit = balance.valuable().getCurrency();
         if (balance.valuable().add(smallChange.amount()).isLessThan(Money.zero(unit)))
             throw new InsufficientBalanceException("Insufficient balance");
-        balance = new Balance(Money.zero(unit), balance.give());
+        balance = new Balance(Money.zero(unit), balance.redPackets());
         smallChange = SmallChange.zero(unit);
     }
 

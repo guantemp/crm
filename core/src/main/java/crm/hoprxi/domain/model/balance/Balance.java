@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.javamoney.moneta.Money;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
-import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -34,26 +33,47 @@ public class Balance {
     private static final Balance RMB_ZERO = new Balance(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
     private static final Balance USD_ZERO = new Balance(Money.zero(Monetary.getCurrency(Locale.US)), Money.zero(Monetary.getCurrency(Locale.US)));
     private MonetaryAmount valuable;
-    private MonetaryAmount give;
+    private MonetaryAmount redPackets;
 
     /**
      * @param valuable
-     * @param give     required positive
+     * @param redPackets required positive
      */
-    public Balance(MonetaryAmount valuable, MonetaryAmount give) {
+    public Balance(MonetaryAmount valuable, MonetaryAmount redPackets) {
         setValuable(valuable);
-        setGive(give);
+        setRedPackets(redPackets);
     }
 
     /**
      * @param valuable
-     * @param give
+     * @param redPackets
      * @return
      */
-    public static Balance getInstance(MonetaryAmount valuable, MonetaryAmount give) {
-        if (valuable.isZero() && give.isZero())
+    public static Balance getInstance(MonetaryAmount valuable, MonetaryAmount redPackets) {
+        if (valuable.isZero() && redPackets.isZero())
             return zero(valuable.getCurrency());
-        return new Balance(valuable, give);
+        return new Balance(valuable, redPackets);
+    }
+
+    public static Balance zeroRMB() {
+        return RMB_ZERO;
+    }
+
+    public static Balance zeroUSD() {
+        return USD_ZERO;
+    }
+
+    private void setValuable(MonetaryAmount valuable) {
+        Objects.requireNonNull(valuable, "valuable required");
+        this.valuable = valuable;
+    }
+
+    private void setRedPackets(MonetaryAmount redPackets) {
+        if (redPackets == null || redPackets.isNegative())
+            throw new IllegalArgumentException("give required positive");
+        if (!redPackets.getCurrency().equals(valuable.getCurrency()))
+            throw new IllegalArgumentException("give currency required equal valuable currency");
+        this.redPackets = redPackets;
     }
 
     /**
@@ -78,43 +98,33 @@ public class Balance {
         return new Balance(zero, zero);
     }
 
-    private void setValuable(MonetaryAmount valuable) {
-        Objects.requireNonNull(valuable, "valuable required");
-        this.valuable = valuable;
-    }
-
-    private void setGive(MonetaryAmount give) {
-        if (give == null || give.isNegative())
-            throw new IllegalArgumentException("give required positive");
-        if (!give.getCurrency().equals(valuable.getCurrency()))
-            throw new IllegalArgumentException("give currency required equal valuable currency");
-        this.give = give;
-    }
-
     public MonetaryAmount valuable() {
         return valuable;
     }
 
-    public MonetaryAmount give() {
-        return give;
+    public MonetaryAmount redPackets() {
+        return redPackets;
     }
 
     public MonetaryAmount total() {
-        return valuable.add(give);
+        return valuable.add(redPackets);
     }
 
     /**
      * @param valuable
-     * @param give     must is positive
+     * @param redPackets must is positive
      */
-    public Balance deposit(MonetaryAmount valuable, MonetaryAmount give) {
-        if (valuable == null && (give == null || give.isNegativeOrZero()))
+    public Balance deposit(MonetaryAmount valuable, MonetaryAmount redPackets) {
+        if (valuable == null && (redPackets == null || redPackets.isNegativeOrZero()))
             return this;
         if (valuable == null)
             valuable = Money.zero(this.valuable.getCurrency());
-        if (give == null)
-            give = Money.zero(this.give.getCurrency());
-        return new Balance(this.valuable.add(valuable), this.give.add(give));
+        if (redPackets == null)
+            redPackets = Money.zero(this.redPackets.getCurrency());
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(valuable.getCurrency()) || !currencyUnit.equals(redPackets.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
+        return new Balance(this.valuable.add(valuable), this.redPackets.add(redPackets));
     }
 
     /**
@@ -127,7 +137,7 @@ public class Balance {
 
 
     Balance pay(MonetaryAmount amount, PaymentStrategy strategy) {
-        MonetaryAmount available = valuable.add(give);
+        MonetaryAmount available = valuable.add(redPackets);
         if (available.isLessThan(amount))
             throw new InsufficientBalanceException("insufficient balance");
         switch (strategy) {
@@ -135,43 +145,43 @@ public class Balance {
                 valuable = valuable.subtract(amount);
                 if (valuable.isNegative()) {
                     valuable = Money.zero(valuable.getCurrency());
-                    give = give.add(valuable);
+                    redPackets = redPackets.add(valuable);
                 }
                 break;
             case RED_ENVELOPES_FIRST:
-                MonetaryAmount g = give.subtract(amount);
+                MonetaryAmount g = redPackets.subtract(amount);
                 if (g.isNegative()) {
-                    give = Money.zero(give.getCurrency());
+                    redPackets = Money.zero(redPackets.getCurrency());
                     valuable = valuable.add(g);
                 } else {
-                    give = g;
+                    redPackets = g;
                 }
                 break;
             case RATIO:
                 double d1 = valuable.getNumber().doubleValue();
-                double d2 = give.getNumber().doubleValue();
+                double d2 = redPackets.getNumber().doubleValue();
                 double d3 = d2 / (d1 + d2);
                 MonetaryAmount temp = amount.multiply(d3);
                 valuable = valuable.subtract(amount.subtract(temp));
-                give = give.subtract(temp);
+                redPackets = redPackets.subtract(temp);
                 break;
         }
-        return new Balance(valuable, give);
-    }
-
-    public Balance pay(MonetaryAmount amount) {
-        return pay(amount, 5);
+        return new Balance(valuable, redPackets);
     }
 
     /**
      * @param amount
-     * @param scale
      * @return
      */
-    public Balance pay(MonetaryAmount amount, int scale) {
-        MonetaryAmount available = valuable.add(give);
+    public Balance pay(MonetaryAmount amount) {
+        if (amount == null)
+            return this;
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
+        MonetaryAmount available = valuable.add(redPackets);
         if (available.isLessThan(amount))
-            throw new InsufficientBalanceException("insufficient balance");
+            throw new InsufficientBalanceException("The insufficient balance");
         if (amount.isEqualTo(available))
             return zero(valuable.getCurrency());
 /*
@@ -181,11 +191,17 @@ public class Balance {
         System.out.println(big1+" "+big2+" "+big3);
         System.out.println(big2.divide(big3,20, BigDecimal.ROUND_HALF_EVEN));
  */
+        if (this.valuable.isGreaterThanOrEqualTo(amount))
+            return new Balance(valuable.subtract(amount), redPackets);
+        MonetaryAmount temp = amount.subtract(valuable);
+        return new Balance(Money.zero(this.valuable.getCurrency()), redPackets.subtract(temp));
+/*
         double d1 = valuable.getNumber().doubleValue();
         double d2 = give.getNumber().doubleValue();
         double d3 = d2 / (d1 + d2);
         MonetaryAmount temp = amount.multiply(BigDecimal.valueOf(d3).setScale(scale, BigDecimal.ROUND_HALF_EVEN));
         return new Balance(valuable.subtract(amount.subtract(temp)), give.subtract(temp));
+        */
     }
 
     /**
@@ -193,14 +209,18 @@ public class Balance {
      * @return
      */
     public Balance overdraw(MonetaryAmount amount) {
-        Objects.requireNonNull(amount, "amount required");
-        if (valuable.isNegativeOrZero() && amount.isLessThanOrEqualTo(give))
-            return new Balance(valuable, give.subtract(amount));
-        MonetaryAmount total = valuable.add(give);
+        if (amount == null)
+            return this;
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
+        if (amount.isLessThanOrEqualTo(redPackets))
+            return new Balance(valuable, redPackets.subtract(amount));
+        MonetaryAmount total = valuable.add(redPackets);
         if (total.isGreaterThanOrEqualTo(amount))
             return pay(amount);
-        MonetaryAmount surplus = amount.subtract(give);
-        return new Balance(valuable.subtract(surplus), Money.zero(give.getCurrency()));
+        MonetaryAmount surplus = amount.subtract(redPackets);
+        return new Balance(valuable.subtract(surplus), Money.zero(redPackets.getCurrency()));
     }
 
 
@@ -209,14 +229,18 @@ public class Balance {
      * @return
      */
     public Balance withdrawal(MonetaryAmount amount) {
-        Objects.requireNonNull(amount, "amount required");
+        if (amount == null)
+            return this;
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
         if (valuable.isLessThan(amount))
-            throw new InsufficientBalanceException("insufficient balance");
-        return new Balance(valuable.subtract(amount), give);
+            throw new InsufficientBalanceException("The valuable insufficient balance");
+        return new Balance(valuable.subtract(amount), redPackets);
     }
 
     public boolean isZero() {
-        return valuable.isZero() && give.isZero();
+        return valuable.isZero() && redPackets.isZero();
     }
 
     /**
@@ -224,7 +248,7 @@ public class Balance {
      * @return
      */
     public Balance subtract(Balance balance) {
-        return new Balance(valuable.subtract(balance.valuable), give.subtract(balance.give));
+        return new Balance(valuable.subtract(balance.valuable), redPackets.subtract(balance.redPackets));
     }
 
     @Override
@@ -235,13 +259,13 @@ public class Balance {
         Balance balance = (Balance) o;
 
         if (valuable != null ? !valuable.equals(balance.valuable) : balance.valuable != null) return false;
-        return give != null ? give.equals(balance.give) : balance.give == null;
+        return redPackets != null ? redPackets.equals(balance.redPackets) : balance.redPackets == null;
     }
 
     @Override
     public int hashCode() {
         int result = valuable != null ? valuable.hashCode() : 0;
-        result = 31 * result + (give != null ? give.hashCode() : 0);
+        result = 31 * result + (redPackets != null ? redPackets.hashCode() : 0);
         return result;
     }
 
@@ -249,7 +273,7 @@ public class Balance {
     public String toString() {
         return new StringJoiner(", ", Balance.class.getSimpleName() + "[", "]")
                 .add("valuable=" + valuable)
-                .add("give=" + give)
+                .add("give=" + redPackets)
                 .toString();
     }
 
