@@ -225,6 +225,8 @@ public class Balance {
 
 
     /**
+     * Red packet amount cannot be cashed out
+     *
      * @param amount
      * @return
      */
@@ -239,6 +241,21 @@ public class Balance {
         return new Balance(valuable.subtract(amount), redPackets);
     }
 
+    /**
+     * @param amount
+     * @return
+     */
+    public Balance returnRedPackets(MonetaryAmount amount) {
+        if (amount == null)
+            return this;
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
+        if (redPackets.isLessThan(amount))
+            throw new InsufficientBalanceException("The redPackets insufficient balance");
+        return new Balance(valuable, redPackets.subtract(amount));
+    }
+
     public boolean isZero() {
         return valuable.isZero() && redPackets.isZero();
     }
@@ -248,7 +265,15 @@ public class Balance {
      * @return
      */
     public Balance subtract(Balance balance) {
+        if (!valuable.getCurrency().equals(balance.valuable.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + valuable.getCurrency());
         return new Balance(valuable.subtract(balance.valuable), redPackets.subtract(balance.redPackets));
+    }
+
+    public Balance add(Balance balance) {
+        if (!valuable.getCurrency().equals(balance.valuable.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + valuable.getCurrency());
+        return new Balance(valuable.add(balance.valuable), redPackets.add(balance.redPackets));
     }
 
     @Override
