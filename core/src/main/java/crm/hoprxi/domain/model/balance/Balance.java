@@ -27,7 +27,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-20
+ * @version 0.0.2 2020-04-02
  */
 public class Balance {
     private static final Balance RMB_ZERO = new Balance(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
@@ -55,11 +55,11 @@ public class Balance {
         return new Balance(valuable, redPackets);
     }
 
-    public static Balance zeroRMB() {
+    public static Balance rmbZero() {
         return RMB_ZERO;
     }
 
-    public static Balance zeroUSD() {
+    public static Balance usdZero() {
         return USD_ZERO;
     }
 
@@ -273,16 +273,6 @@ public class Balance {
 
     public boolean isZero() {
         return valuable.isZero() && redPackets.isZero();
-    }
-
-    /**
-     * @param balance
-     * @return
-     */
-    public Balance subtract(Balance balance) {
-        if (!valuable.getCurrency().equals(balance.valuable.getCurrency()))
-            throw new IllegalArgumentException("Inconsistent currency type,must is" + valuable.getCurrency());
-        return new Balance(valuable.subtract(balance.valuable), redPackets.subtract(balance.redPackets));
     }
 
     public Balance add(Balance balance) {

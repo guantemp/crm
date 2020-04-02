@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 package crm.hoprxi.domain.model.balance;
 
 
-import org.javamoney.moneta.FastMoney;
+import org.javamoney.moneta.Money;
 
+import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.util.Objects;
 
@@ -29,28 +30,32 @@ import java.util.Objects;
 public enum SmallChangDenominationEnum {
     ZERO(0) {
         @Override
-        public Rounded round(MonetaryAmount receivables, MonetaryAmount balance) {
-            return Rounded.zero(balance.getCurrency());
+        public Rounded round(MonetaryAmount receivables, MonetaryAmount smallChang) {
+            CurrencyUnit currencyUnit = smallChang.getCurrency();
+            return new Rounded(Money.zero(currencyUnit), Money.zero(currencyUnit));
         }
     },
 
     ONE(1), FIVE(5);
 
-    protected int factor;
+    private int factor;
 
     SmallChangDenominationEnum(int factor) {
         this.factor = factor;
     }
 
-    public Rounded round(MonetaryAmount receivables, MonetaryAmount balance) {
+    public Rounded round(MonetaryAmount receivables, MonetaryAmount smallChang) {
         Objects.requireNonNull(receivables, "receivables required");
+        CurrencyUnit currencyUnit = smallChang.getCurrency();
+        if (!currencyUnit.equals(receivables.getCurrency()))
+            throw new IllegalArgumentException("receivables currency required equal smallChang currency");
         if (receivables.isNegative())
             throw new IllegalArgumentException("receivables must larger zero");
         MonetaryAmount integer = receivables.divideToIntegralValue(factor);
         MonetaryAmount remainder = receivables.remainder(factor);
-        if (balance.isGreaterThanOrEqualTo(remainder))
+        if (smallChang.isGreaterThanOrEqualTo(remainder))
             return new Rounded(integer.multiply(factor), remainder.negate());
-        return new Rounded(integer.add(FastMoney.of(1, balance.getCurrency())).multiply(factor), FastMoney.of(factor, balance.getCurrency()).subtract(remainder));
+        return new Rounded(integer.add(Money.of(1, currencyUnit)).multiply(factor), Money.of(factor, currencyUnit).subtract(remainder));
     }
 /*
     public static SmallChangDenominationEnum of(String s) {

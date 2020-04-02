@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,15 @@
 
 package crm.hoprxi.domain.model.balance;
 
-import org.javamoney.moneta.Money;
-
-import javax.money.CurrencyUnit;
-import javax.money.Monetary;
 import javax.money.MonetaryAmount;
-import java.util.Locale;
 import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-15
+ * @version 0.0.2 2020-04-02
  */
 public class Rounded {
-    private static final Rounded RMB_ZERO = new Rounded(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
-    private static final Rounded USD_ZERO = new Rounded(Money.zero(Monetary.getCurrency(Locale.US)), Money.zero(Monetary.getCurrency(Locale.US)));
     private MonetaryAmount integer;
     private MonetaryAmount remainder;
 
@@ -40,31 +33,13 @@ public class Rounded {
         setRemainder(remainder);
     }
 
-    public static Rounded zero(CurrencyUnit currencyUnit) {
-        if (currencyUnit.getNumericCode() == 156)
-            return RMB_ZERO;
-        if (currencyUnit.getNumericCode() == 840)
-            return USD_ZERO;
-        MonetaryAmount zero = Money.zero(currencyUnit);
-        return new Rounded(zero, zero);
-    }
-
-    public static Rounded zero(Locale locale) {
-        if (locale == Locale.CHINA || locale == Locale.CHINESE || locale == Locale.SIMPLIFIED_CHINESE || locale == Locale.PRC)
-            return RMB_ZERO;
-        if (locale == Locale.US)
-            return USD_ZERO;
-        MonetaryAmount zero = Money.zero(Monetary.getCurrency(locale));
-        return new Rounded(zero, zero);
-    }
-
     private void setRemainder(MonetaryAmount remainder) {
         this.remainder = remainder;
     }
 
     private void setInteger(MonetaryAmount integer) {
         if (integer.isNegative())
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Positive integer expected");
         MonetaryAmount remainder = integer.remainder(1);
         if (!remainder.isZero())
             throw new IllegalArgumentException("integer required");

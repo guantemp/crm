@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-11-14
+ * @version 0.0.2 2020-04-02
  */
 public class SmallChange {
     private static final SmallChange RMB_ZERO = new SmallChange(FastMoney.zero(Monetary.getCurrency(Locale.CHINA)), SmallChangDenominationEnum.ZERO);
@@ -38,6 +38,15 @@ public class SmallChange {
     public SmallChange(MonetaryAmount amount, SmallChangDenominationEnum smallChangDenominationEnum) {
         setAmount(amount);
         setSmallChangDenominationEnum(smallChangDenominationEnum);
+    }
+
+    /**
+     * SmallChangDenominationEnum will set ZERO
+     *
+     * @param amount
+     */
+    public SmallChange(MonetaryAmount amount) {
+        this(amount, SmallChangDenominationEnum.ZERO);
     }
 
     public static SmallChange zero(Locale locale) {
@@ -56,9 +65,16 @@ public class SmallChange {
         return new SmallChange(FastMoney.zero(currencyUnit), SmallChangDenominationEnum.ZERO);
     }
 
+    public static SmallChange rmbZero() {
+        return RMB_ZERO;
+    }
+
+    public static SmallChange usdZero() {
+        return USD_ZERO;
+    }
+
     private void setSmallChangDenominationEnum(SmallChangDenominationEnum smallChangDenominationEnum) {
-        if (smallChangDenominationEnum == null)
-            smallChangDenominationEnum = SmallChangDenominationEnum.ZERO;
+        Objects.requireNonNull(smallChangDenominationEnum, "smallChangDenominationEnum required");
         this.smallChangDenominationEnum = smallChangDenominationEnum;
     }
 
@@ -90,11 +106,12 @@ public class SmallChange {
      * @return
      */
     public SmallChange pay(MonetaryAmount amount) {
-        Objects.requireNonNull(amount, "amount required");
-        if (amount.isNegativeOrZero())
-            throw new IllegalArgumentException("pay amount must large zero");
+        if (amount == null || amount.isNegativeOrZero())
+            return this;
+        if (!this.amount.getCurrency().equals(amount.getCurrency()))
+            throw new IllegalArgumentException("amount currency must is:" + this.amount.getCurrency());
         if (amount.isGreaterThan(this.amount))
-            throw new InsufficientBalanceException("insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         if (amount.isEqualTo(this.amount))
             return zero(this.amount.getCurrency());
         return new SmallChange(this.amount.subtract(amount), smallChangDenominationEnum);
