@@ -39,20 +39,25 @@ public class BalanceTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void zeroTest() {
+    public void zeroRMBTest() {
         Balance rmb = Balance.zero(Locale.getDefault());
         assertTrue(rmb == Balance.zero(Locale.CHINESE));
         assertTrue(rmb == Balance.zero(Locale.PRC));
         assertTrue(rmb == Balance.zero(Locale.CHINA));
         thrown.expect(InsufficientBalanceException.class);
-        rmb = rmb.pay(FastMoney.of(20, "CNY"));
-        rmb = rmb.withdrawal(FastMoney.of(120, "CNY"));
+        rmb = rmb.pay(FastMoney.of(0.0001, "CNY"));
+        thrown.expect(InsufficientBalanceException.class);
+        rmb = rmb.withdrawal(Money.of(0.000000001, "CNY"));
+    }
 
+    @Test
+    public void zeroUSDTest() {
         Balance usd = Balance.zero(Locale.US);
         assertTrue(usd == Balance.zero(Locale.US));
         thrown.expect(InsufficientBalanceException.class);
-        usd.pay(FastMoney.of(20, "USD"));
-        usd.withdrawal(FastMoney.of(120, "USD"));
+        usd.pay(FastMoney.of(0.0001, "USD"));
+        thrown.expect(InsufficientBalanceException.class);
+        usd.withdrawal(Money.of(0.000005, "USD"));
     }
 
     @Test
@@ -71,28 +76,46 @@ public class BalanceTest {
         assertEquals(rmb.redPackets(), Money.of(20, "CNY"));
 
         rmb = rmb.pay(FastMoney.of(64.50, "CNY"));
-        System.out.println(rmb);
-        assertEquals(rmb.total(), Money.of(25.5, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(5.5, "CNY"));
+        assertEquals(rmb.redPackets(), Money.of(20, "CNY"));
 
         rmb = rmb.pay(Money.of(15.50, "CNY"));
-        System.out.println(rmb);
-        assertEquals(rmb.total(), Money.of(10, "CNY"));
-
-        rmb = rmb.pay(FastMoney.of(10, "CNY"));
-        System.out.println(rmb);
-        assertTrue(rmb == Balance.zero(Locale.CHINESE));
         assertEquals(rmb.valuable(), Money.of(0, "CNY"));
-        assertEquals(rmb.redPackets(), Money.of(0, "CNY"));
+        assertEquals(rmb.redPackets(), Money.of(10, "CNY"));
 
-        rmb = rmb.overdraw(FastMoney.of(10, "CNY"));
-        assertEquals(rmb.valuable(), Money.of(-10, "CNY"));
+        rmb = rmb.pay(Money.of(10, "CNY"));
+        assertTrue(rmb == Balance.zero(Locale.CHINESE));
+
+        Balance temp = new Balance(FastMoney.of(-20, "CNY"), FastMoney.of(35, "CNY"));
+        rmb = temp.overdraw(Money.of(15, "CNY"));
+        assertTrue(rmb.valuable().isEqualTo(FastMoney.of(-20, "CNY")));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(20, "CNY")));
+
+        rmb = temp.overdraw(Money.of(35.5, "CNY"));
+        assertTrue(rmb.valuable().isEqualTo(FastMoney.of(-20.5, "CNY")));
+        assertTrue(rmb.redPackets().isEqualTo(Money.of(0, "CNY")));
+
+        rmb = temp.overdraw(Money.of(19.5, "CNY"));
+        assertTrue(rmb.valuable().isEqualTo(FastMoney.of(-20, "CNY")));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(15.5, "CNY")));
+
+        rmb = temp.overdraw(Money.of(35, "CNY"));
+        assertTrue(rmb.valuable().isEqualTo(FastMoney.of(-20, "CNY")));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(0, "CNY")));
+
+        rmb = new Balance(FastMoney.of(5, "CNY"), FastMoney.of(15, "CNY"));
+        rmb = rmb.overdraw(Money.of(16.5, "CNY"));
+        assertTrue(rmb.valuable().isEqualTo(FastMoney.of(0, "CNY")));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(3.5, "CNY")));
 
         rmb = Balance.zero(Locale.CHINA);
-        rmb = rmb.deposit(FastMoney.of(20, "CNY"), FastMoney.of(2, "CNY"));
-        rmb = rmb.overdraw(FastMoney.of(25, "CNY"));
-        assertEquals(rmb.valuable(), Money.of(-3, "CNY"));
+        rmb = rmb.deposit(Money.of(20, "CNY"), Money.of(2, "CNY"));
+        rmb = rmb.overdraw(FastMoney.of(21, "CNY"));
+        assertTrue(rmb.valuable().isEqualTo(FastMoney.of(0, "CNY")));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(1, "CNY")));
         rmb = rmb.overdraw(FastMoney.of(100, "CNY"));
-        assertEquals(rmb.valuable(), Money.of(-103, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(-99, "CNY"));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(0, "CNY")));
 
         rmb = Balance.getInstance(Money.zero(Monetary.getCurrency(Locale.CHINA)), Money.zero(Monetary.getCurrency(Locale.CHINA)));
         assertTrue(rmb == Balance.zero(Locale.CHINESE));
@@ -100,5 +123,16 @@ public class BalanceTest {
         thrown.expect(InsufficientBalanceException.class);
         rmb.pay(Money.of(0.00000001, "CNY"));
         rmb.withdrawal(Money.of(0.00000001, "CNY"));
+    }
+
+    @Test
+    public void redPacketsTest() {
+        Balance rmb = Balance.zero(Locale.CHINESE);
+        rmb = rmb.giveRedPackets(FastMoney.of(20.5, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(0, "CNY"));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(20.5, "CNY")));
+        rmb = rmb.returnRedPackets(FastMoney.of(10, "CNY"));
+        assertEquals(rmb.valuable(), Money.of(0, "CNY"));
+        assertTrue(rmb.redPackets().isEqualTo(FastMoney.of(10.5, "CNY")));
     }
 }

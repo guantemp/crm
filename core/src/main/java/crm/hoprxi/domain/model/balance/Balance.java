@@ -128,11 +128,24 @@ public class Balance {
     }
 
     /**
-     * @param valuable
+     * @param amount
      * @return
      */
-    public Balance deposit(MonetaryAmount valuable) {
-        return deposit(valuable, Money.zero(this.valuable.getCurrency()));
+    public Balance deposit(MonetaryAmount amount) {
+        if (amount == null || amount.isNegativeOrZero())
+            return this;
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
+        return new Balance(valuable.add(amount), redPackets);
+    }
+
+    public Balance giveRedPackets(MonetaryAmount redPackets) {
+        if (redPackets == null || redPackets.isNegativeOrZero())
+            return this;
+        if (!this.redPackets.getCurrency().equals(redPackets.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + this.redPackets.getCurrency());
+        return new Balance(valuable, this.redPackets.add(redPackets));
     }
 
 
@@ -214,15 +227,17 @@ public class Balance {
         CurrencyUnit currencyUnit = this.valuable.getCurrency();
         if (!currencyUnit.equals(amount.getCurrency()))
             throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
-        if (amount.isLessThanOrEqualTo(redPackets))
-            return new Balance(valuable, redPackets.subtract(amount));
         MonetaryAmount total = valuable.add(redPackets);
-        if (total.isGreaterThanOrEqualTo(amount))
-            return pay(amount);
+        if (total.isGreaterThanOrEqualTo(amount)) {
+            if (valuable.isPositiveOrZero())
+                return pay(amount);
+            return new Balance(valuable, redPackets.subtract(amount));
+        }
+        if (redPackets.isGreaterThanOrEqualTo(amount))
+            return new Balance(valuable, redPackets.subtract(amount));
         MonetaryAmount surplus = amount.subtract(redPackets);
         return new Balance(valuable.subtract(surplus), Money.zero(redPackets.getCurrency()));
     }
-
 
     /**
      * Red packet amount cannot be cashed out
