@@ -16,6 +16,7 @@
 
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
@@ -66,12 +67,23 @@ public class DebitCardTest {
         Assert.assertTrue(Money.of(200, "CNY").isEqualTo(card.balance().valuable()));
         Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
 
+        card.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
+        card.debit(Money.of(99.5, Monetary.getCurrency(locale)));
+        Assert.assertTrue(Money.of(100, "CNY").isEqualTo(card.balance().valuable()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
+        Assert.assertTrue(Money.of(0.5, "CNY").isEqualTo(card.smallChange().amount()));
+
+        card.debit(Money.of(10.6, Monetary.getCurrency(locale)));
+        Assert.assertTrue(Money.of(89, "CNY").isEqualTo(card.balance().valuable()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
+        Assert.assertTrue(Money.of(0.9, "CNY").isEqualTo(card.smallChange().amount()));
+
     }
 
     @Test
     public void testException() {
        DebitCard card = new DebitCard(new Issuer("600156", "泸州看画城"), "52275427", "123465","2002123456");
-       System.out.println(card);
+       //System.out.println(card);
     }
 
 }

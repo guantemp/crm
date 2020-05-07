@@ -16,6 +16,7 @@
 
 package crm.hoprxi.domain.model.balance;
 
+import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,13 +30,15 @@ public class SmallChangeTest {
 
     @Test
     public void smallChangeTest() {
-        //零钱金额一元
+        //零钱最大金额一元
         SmallChange smallChange = new SmallChange(Money.of(0.55, "CNY"), SmallChangDenominationEnum.ONE);
         Rounded rounded = smallChange.round(Money.of(5.25, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(-0.25, "CNY").isEqualTo(rounded.remainder()));
         Assert.assertFalse(rounded.isOverflow());
         smallChange = smallChange.pay(rounded.remainder().negate());
+        Assert.assertTrue(Money.of(0.3, "CNY").isEqualTo(smallChange.amount()));
+
         rounded = smallChange.round(Money.of(4.75, "CNY"));
         Assert.assertTrue(Money.of(5, "CNY").isEqualTo(rounded.integer()));
         Assert.assertTrue(Money.of(0.25, "CNY").isEqualTo(rounded.remainder()));
@@ -79,11 +82,11 @@ public class SmallChangeTest {
         smallChange = new SmallChange(Money.of(0, "CNY"), SmallChangDenominationEnum.ZERO);
         rounded = smallChange.round(Money.of(3.28, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
-        Assert.assertTrue(rounded.integer().isZero());
+        Assert.assertTrue(Money.of(3.28, "CNY").isEqualTo(rounded.integer()));
         Assert.assertFalse(rounded.isOverflow());
         rounded = smallChange.round(Money.of(7.89, "CNY"));
         Assert.assertTrue(rounded.remainder().isZero());
-        Assert.assertTrue(rounded.integer().isZero());
+        Assert.assertTrue(FastMoney.of(7.89, "CNY").isEqualTo(rounded.integer()));
         Assert.assertFalse(rounded.isOverflow());
     }
 }

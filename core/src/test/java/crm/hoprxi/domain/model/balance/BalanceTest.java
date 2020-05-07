@@ -48,7 +48,7 @@ public class BalanceTest {
         thrown.expect(InsufficientBalanceException.class);
         rmb = rmb.pay(FastMoney.of(0.0001, "CNY"));
         thrown.expect(InsufficientBalanceException.class);
-        rmb = rmb.withdrawal(Money.of(0.000000001, "CNY"));
+        rmb = rmb.cashWithdrawal(Money.of(0.000000001, "CNY"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BalanceTest {
         thrown.expect(InsufficientBalanceException.class);
         usd.pay(FastMoney.of(0.0001, "USD"));
         thrown.expect(InsufficientBalanceException.class);
-        usd.withdrawal(Money.of(0.000005, "USD"));
+        usd.cashWithdrawal(Money.of(0.000005, "USD"));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class BalanceTest {
         assertEquals(rmb.redPackets(), Money.of(20, "CNY"));
         assertEquals(rmb.total(), Money.of(240, "CNY"));
 
-        rmb = rmb.withdrawal(FastMoney.of(150, "CNY"));
+        rmb = rmb.cashWithdrawal(FastMoney.of(150, "CNY"));
         assertEquals(rmb.valuable(), Money.of(70, "CNY"));
         assertEquals(rmb.redPackets(), Money.of(20, "CNY"));
 
@@ -128,7 +128,7 @@ public class BalanceTest {
 
         thrown.expect(InsufficientBalanceException.class);
         rmb.pay(Money.of(0.00000001, "CNY"));
-        rmb.withdrawal(Money.of(0.00000001, "CNY"));
+        rmb.cashWithdrawal(Money.of(0.00000001, "CNY"));
     }
 
     @Test

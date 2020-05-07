@@ -20,6 +20,7 @@ import org.javamoney.moneta.Money;
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -150,40 +151,6 @@ public class Balance {
         return new Balance(valuable, this.redPackets.subtract(redPackets));
     }
 
-
-    Balance pay(MonetaryAmount amount, PaymentStrategy strategy) {
-        MonetaryAmount available = valuable.add(redPackets);
-        if (available.isLessThan(amount))
-            throw new InsufficientBalanceException("insufficient balance");
-        switch (strategy) {
-            case BALANCE_FIRST:
-                valuable = valuable.subtract(amount);
-                if (valuable.isNegative()) {
-                    valuable = Money.zero(valuable.getCurrency());
-                    redPackets = redPackets.add(valuable);
-                }
-                break;
-            case RED_ENVELOPES_FIRST:
-                MonetaryAmount g = redPackets.subtract(amount);
-                if (g.isNegative()) {
-                    redPackets = Money.zero(redPackets.getCurrency());
-                    valuable = valuable.add(g);
-                } else {
-                    redPackets = g;
-                }
-                break;
-            case RATIO:
-                double d1 = valuable.getNumber().doubleValue();
-                double d2 = redPackets.getNumber().doubleValue();
-                double d3 = d2 / (d1 + d2);
-                MonetaryAmount temp = amount.multiply(d3);
-                valuable = valuable.subtract(amount.subtract(temp));
-                redPackets = redPackets.subtract(temp);
-                break;
-        }
-        return new Balance(valuable, redPackets);
-    }
-
     /**
      * @param amount
      * @return
@@ -194,29 +161,15 @@ public class Balance {
         CurrencyUnit currencyUnit = this.valuable.getCurrency();
         if (!currencyUnit.equals(amount.getCurrency()))
             throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
-        MonetaryAmount available = valuable.add(redPackets);
-        if (available.isLessThan(amount))
+        MonetaryAmount total = valuable.add(redPackets);
+        if (total.isLessThan(amount))
             throw new InsufficientBalanceException("The insufficient balance");
-        if (amount.isEqualTo(available))
+        if (total.isEqualTo(amount))
             return zero(valuable.getCurrency());
-/*
-        BigDecimal big1 = valuable.getNumber().numberValue(BigDecimal.class);
-        BigDecimal big2 = give.getNumber().numberValue(BigDecimal.class);
-        BigDecimal big3 = big1.add(big2);
-        System.out.println(big1+" "+big2+" "+big3);
-        System.out.println(big2.divide(big3,20, BigDecimal.ROUND_HALF_EVEN));
- */
         if (this.valuable.isGreaterThanOrEqualTo(amount))
             return new Balance(valuable.subtract(amount), redPackets);
         MonetaryAmount temp = amount.subtract(valuable);
-        return new Balance(Money.zero(this.valuable.getCurrency()), redPackets.subtract(temp));
-/*
-        double d1 = valuable.getNumber().doubleValue();
-        double d2 = give.getNumber().doubleValue();
-        double d3 = d2 / (d1 + d2);
-        MonetaryAmount temp = amount.multiply(BigDecimal.valueOf(d3).setScale(scale, BigDecimal.ROUND_HALF_EVEN));
-        return new Balance(valuable.subtract(amount.subtract(temp)), give.subtract(temp));
-        */
+        return new Balance(Money.zero(currencyUnit), redPackets.subtract(temp));
     }
 
     /**
@@ -247,7 +200,7 @@ public class Balance {
      * @param amount
      * @return
      */
-    public Balance withdrawal(MonetaryAmount amount) {
+    public Balance cashWithdrawal(MonetaryAmount amount) {
         if (amount == null)
             return this;
         CurrencyUnit currencyUnit = this.valuable.getCurrency();
@@ -290,8 +243,48 @@ public class Balance {
     public String toString() {
         return new StringJoiner(", ", Balance.class.getSimpleName() + "[", "]")
                 .add("valuable=" + valuable)
-                .add("give=" + redPackets)
+                .add("redPackets=" + redPackets)
                 .toString();
+    }
+
+    Balance pay(MonetaryAmount amount, PaymentStrategy strategy) {
+        MonetaryAmount available = valuable.add(redPackets);
+        if (available.isLessThan(amount))
+            throw new InsufficientBalanceException("insufficient balance");
+        /*
+        BigDecimal big1 = valuable.getNumber().numberValue(BigDecimal.class);
+        BigDecimal big2 = give.getNumber().numberValue(BigDecimal.class);
+        BigDecimal big3 = big1.add(big2);
+        System.out.println(big1+" "+big2+" "+big3);
+        System.out.println(big2.divide(big3,20, BigDecimal.ROUND_HALF_EVEN));
+ */
+        switch (strategy) {
+            case BALANCE_FIRST:
+                valuable = valuable.subtract(amount);
+                if (valuable.isNegative()) {
+                    valuable = Money.zero(valuable.getCurrency());
+                    redPackets = redPackets.add(valuable);
+                }
+                break;
+            case RED_ENVELOPES_FIRST:
+                MonetaryAmount g = redPackets.subtract(amount);
+                if (g.isNegative()) {
+                    redPackets = Money.zero(redPackets.getCurrency());
+                    valuable = valuable.add(g);
+                } else {
+                    redPackets = g;
+                }
+                break;
+            case RATIO:
+                double d1 = valuable.getNumber().doubleValue();
+                double d2 = redPackets.getNumber().doubleValue();
+                double d3 = d2 / (d1 + d2);
+                MonetaryAmount temp = amount.multiply(BigDecimal.valueOf(d3).setScale(5, BigDecimal.ROUND_HALF_EVEN));
+                valuable = valuable.subtract(amount.subtract(temp));
+                redPackets = redPackets.subtract(temp);
+                break;
+        }
+        return new Balance(valuable, redPackets);
     }
 
     enum PaymentStrategy {

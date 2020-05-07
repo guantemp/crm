@@ -16,30 +16,10 @@
 
 package crm.hoprxi.domain.model.card;
 
-import mi.hoprxi.id.LongId;
-
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2020-03-27
+ * @version 0.0.1 2020-05-07
  */
-public interface CreditCardRepository {
-    /**
-     * @return
-     */
-    default String nextIdentity() {
-        return String.valueOf(LongId.generate());
-    }
-
-    void save(CreditCard creditCard);
-
-    void remove(String id);
-
-    CreditCard find(String id);
-
-    CreditCard findByCardFaceNumber(String cardFaceNumber);
-
-    CreditCard[] findByCustomer(String customerId);
-
-    CreditCard[] findAll(int offset, int limit);
+public class CreditCardSnapshot {
 }

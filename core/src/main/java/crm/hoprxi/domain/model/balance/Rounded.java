@@ -40,9 +40,6 @@ public class Rounded {
     private void setInteger(MonetaryAmount integer) {
         if (integer.isNegative())
             throw new IllegalArgumentException("Positive integer expected");
-        MonetaryAmount remainder = integer.remainder(1);
-        if (!remainder.isZero())
-            throw new IllegalArgumentException("integer required");
         this.integer = integer;
     }
 

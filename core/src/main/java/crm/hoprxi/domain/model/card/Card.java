@@ -178,7 +178,7 @@ public abstract class Card {
         if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
             throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
-            balance = balance.withdrawal(amount);
+            balance = balance.cashWithdrawal(amount);
             return;
         }
         MonetaryAmount temp = amount.subtract(balance.valuable());

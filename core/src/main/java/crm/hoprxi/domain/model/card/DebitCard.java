@@ -121,10 +121,13 @@ public class DebitCard extends Card {
     public void debit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
+       /*
         if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
             balance = balance.pay(amount);
             return;
         }
+        */
+
         Rounded rounded = smallChange.round(amount);
         if (rounded.isOverflow()) {
             smallChange = smallChange.deposit(rounded.remainder());

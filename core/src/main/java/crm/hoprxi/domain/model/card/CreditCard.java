@@ -30,8 +30,6 @@ import mi.hoprxi.crypto.HashService;
 import javax.money.MonetaryAmount;
 import java.util.Objects;
 import java.util.StringJoiner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -39,14 +37,13 @@ import java.util.regex.Pattern;
  * @version 0.0.1 2020-03-27
  */
 public class CreditCard extends Card {
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
     private boolean freeze;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
+    public CreditCard(Issuer issuer, String customerId, String id, int password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
                       LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
@@ -66,20 +63,31 @@ public class CreditCard extends Card {
         this.customerId = customerId;
     }
 
-    private void setPassword(String password) {
-        password = Objects.requireNonNull(password, "password is required").trim();
-        if (!password.isEmpty()) {
-            Matcher matcher = PASSWORD_PATTERN.matcher(password);
-            if (!matcher.matches())
-                throw new IllegalArgumentException("password is 6 digit number");
-        }
+    private void setPassword(int password) {
+        if (password < 100000 || password > 999999)
+            throw new IllegalArgumentException("password is 6 digit number");
         HashService hashService = DomainRegistry.getHashService();
-        this.password = hashService.hash(password);
+        this.password = hashService.hash(String.valueOf(password));
     }
 
-    public boolean authenticatePassword(String password) {
+    public boolean authenticatePassword(int password) {
+        if (password < 100000 || password > 999999)
+            throw new IllegalArgumentException("password is 6 digit number");
         HashService hash = DomainRegistry.getHashService();
-        return hash.check(password, this.password);
+        return hash.check(String.valueOf(password), this.password);
+    }
+
+    public void changePassword(int currentPassword, int newPassword) {
+        if (currentPassword < 100000 || currentPassword > 999999)
+            throw new IllegalArgumentException("password is 6 digit number");
+        if (newPassword < 100000 || newPassword > 999999)
+            throw new IllegalArgumentException("password is 6 digit number");
+        if (currentPassword != newPassword) {
+            HashService hashService = DomainRegistry.getHashService();
+            if (hashService.check(Integer.toString(currentPassword), password)) {
+                this.password = hashService.hash(Integer.toString(newPassword));
+            }
+        }
     }
 
     public boolean isFreeze() {
@@ -91,16 +99,22 @@ public class CreditCard extends Card {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
         if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
-            balance = balance.pay(amount);
+            balance = balance.overdraw(amount);
             return;
         }
-        Rounded rounded = smallChange.round(amount);
-        if (rounded.isOverflow()) {
-            smallChange = smallChange.deposit(rounded.remainder());
+        MonetaryAmount total = balance.redPackets().add(smallChange.amount());
+        if (total.isGreaterThanOrEqualTo(amount)) {
+            Rounded rounded = smallChange.round(amount);
+            if (rounded.isOverflow()) {
+                smallChange = smallChange.deposit(rounded.remainder());
+            } else {
+                smallChange = smallChange.pay(rounded.remainder().negate());
+            }
+            balance = new Balance(balance.valuable(), balance.redPackets().subtract(rounded.integer()));
         } else {
-            smallChange = smallChange.pay(rounded.remainder().negate());
+
+           // balance = balance.overdraw(rounded.integer());
         }
-        balance = balance.pay(rounded.integer());
     }
 
     public void freeze() {

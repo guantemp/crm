@@ -21,5 +21,5 @@ package crm.hoprxi.domain.model.card;
  * @since JDK8.0
  * @version 0.0.1 2019-12-05
  */
-public class CardWithdrawn {
+public class CardCashWithdrawn {
 }
