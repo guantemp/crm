@@ -70,9 +70,9 @@ public class Balance {
 
     private void setRedPackets(MonetaryAmount redPackets) {
         if (redPackets == null || redPackets.isNegative())
-            throw new IllegalArgumentException("give required positive");
+            throw new IllegalArgumentException("redPackets required positive");
         if (!redPackets.getCurrency().equals(valuable.getCurrency()))
-            throw new IllegalArgumentException("give currency required equal valuable currency");
+            throw new IllegalArgumentException("redPackets currency required equal valuable currency");
         this.redPackets = redPackets;
     }
 
@@ -111,23 +111,6 @@ public class Balance {
     }
 
     /**
-     * @param valuable
-     * @param redPackets must is positive
-     */
-    public Balance deposit(MonetaryAmount valuable, MonetaryAmount redPackets) {
-        if (valuable == null && (redPackets == null || redPackets.isNegativeOrZero()))
-            return this;
-        if (valuable == null)
-            valuable = Money.zero(this.valuable.getCurrency());
-        if (redPackets == null)
-            redPackets = Money.zero(this.redPackets.getCurrency());
-        CurrencyUnit currencyUnit = this.valuable.getCurrency();
-        if (!currencyUnit.equals(valuable.getCurrency()) || !currencyUnit.equals(redPackets.getCurrency()))
-            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
-        return new Balance(this.valuable.add(valuable), this.redPackets.add(redPackets));
-    }
-
-    /**
      * @param amount
      * @return
      */
@@ -140,12 +123,31 @@ public class Balance {
         return new Balance(valuable.add(amount), redPackets);
     }
 
+    /**
+     * @param redPackets
+     * @return
+     */
     public Balance giveRedPackets(MonetaryAmount redPackets) {
         if (redPackets == null || redPackets.isNegativeOrZero())
             return this;
         if (!this.redPackets.getCurrency().equals(redPackets.getCurrency()))
             throw new IllegalArgumentException("Inconsistent currency type,must is" + this.redPackets.getCurrency());
         return new Balance(valuable, this.redPackets.add(redPackets));
+    }
+
+    /**
+     * @param redPackets
+     * @return
+     */
+    public Balance withdrawRedPackets(MonetaryAmount redPackets) {
+        if (redPackets == null)
+            return this;
+        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        if (!currencyUnit.equals(redPackets.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
+        if (this.redPackets.isLessThan(redPackets))
+            throw new InsufficientBalanceException("The redPackets insufficient balance");
+        return new Balance(valuable, this.redPackets.subtract(redPackets));
     }
 
 
@@ -254,21 +256,6 @@ public class Balance {
         if (valuable.isLessThan(amount))
             throw new InsufficientBalanceException("The valuable insufficient balance");
         return new Balance(valuable.subtract(amount), redPackets);
-    }
-
-    /**
-     * @param amount
-     * @return
-     */
-    public Balance returnRedPackets(MonetaryAmount amount) {
-        if (amount == null)
-            return this;
-        CurrencyUnit currencyUnit = this.valuable.getCurrency();
-        if (!currencyUnit.equals(amount.getCurrency()))
-            throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
-        if (redPackets.isLessThan(amount))
-            throw new InsufficientBalanceException("The redPackets insufficient balance");
-        return new Balance(valuable, redPackets.subtract(amount));
     }
 
     public boolean isZero() {

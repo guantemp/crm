@@ -19,7 +19,8 @@
     <orderEntry type="library" name="Maven: mi.hoprxi:util:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: mi.hoprxi:crypto:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: de.svenkubiak:jBCrypt:0.4.1" level="project" />
-    <orderEntry type="library" name="Maven: com.lambdaworks:scrypt:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.62" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.62" level="project" />
     <orderEntry type="library" name="Maven: event.hoprxi:core:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:arangodb-java-driver-async:5.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:arangodb-java-driver:5.0.7" level="project" />

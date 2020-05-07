@@ -149,14 +149,16 @@ public abstract class Card {
         balance = balance.deposit(amount);
     }
 
-    /**
-     * @param amount
-     * @param give
-     */
-    public void credit(MonetaryAmount amount, MonetaryAmount give) {
+    public void giveRedPackets(MonetaryAmount redPackets) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        balance = balance.deposit(amount, give);
+        balance = balance.giveRedPackets(redPackets);
+    }
+
+    public void withdrawRedPackets(MonetaryAmount redPackets) {
+        if (!termOfValidity.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        balance = balance.withdrawRedPackets(redPackets);
     }
 
     /**
@@ -170,7 +172,7 @@ public abstract class Card {
             this.smallChange = newSmallChange;
     }
 
-    public void withdraw(MonetaryAmount amount) {
+    public void cashWithdrawal(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
         if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
@@ -184,7 +186,7 @@ public abstract class Card {
         smallChange = smallChange.pay(temp);
     }
 
-    public void withdrawAll() {
+    public void cashWithdrawalAll() {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card failed");
         CurrencyUnit unit = balance.valuable().getCurrency();

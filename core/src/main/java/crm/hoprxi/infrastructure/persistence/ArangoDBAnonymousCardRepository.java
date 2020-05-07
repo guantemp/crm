@@ -155,7 +155,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
         MonetaryAmount valuable = Money.of(valuableSlice.get("number").getAsBigDecimal(), valuableSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        VPackSlice giveSlice = balanceSlice.get("give");
+        VPackSlice giveSlice = balanceSlice.get("redPackets");
         MonetaryAmount give = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
         Balance balance = new Balance(valuable, give);
         //smallChange

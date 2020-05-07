@@ -17,6 +17,7 @@
 package crm.hoprxi.domain.model.card;
 
 import mi.hoprxi.to.StringToNumber;
+import mi.hoprxi.util.DigitPreferenceFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,11 +77,21 @@ public class CardFaceNumberGeneratorService {
                     int code = computeCheckSum(sb);
                     sb.append(code);
                     // Meet the filter criteria
-                    if (filter(sb, filter, global)) {
-                        StringBuilder tmp = new StringBuilder(prefix);
-                        tmp.append(sb);
-                        tmp.append(suffix);
-                        result.add(tmp.toString().trim());
+                    if(global){
+                        if(DigitPreferenceFilter.preferenceFilter(sb,filter)){
+                            StringBuilder tmp = new StringBuilder(prefix);
+                            tmp.append(sb);
+                            tmp.append(suffix);
+                            result.add(tmp.toString().trim());
+                        }
+
+                    }else{
+                        if(DigitPreferenceFilter.mantissaPreferenceFilter(sb,filter)){
+                            StringBuilder tmp = new StringBuilder(prefix);
+                            tmp.append(sb);
+                            tmp.append(suffix);
+                            result.add(tmp.toString().trim());
+                        }
                     }
                     j += stepping;
                 }
@@ -107,11 +118,21 @@ public class CardFaceNumberGeneratorService {
                     int code = computeCheckSum(sb);
                     sb.delete(0, 5).append(code);
                     // Meet the filter criteria
-                    if (filter(sb, filter, global)) {
-                        StringBuilder tmp = new StringBuilder(prefix);
-                        tmp.append(sb);
-                        tmp.append(suffix);
-                        result.add(tmp.toString().trim());
+                    if(global){
+                        if(DigitPreferenceFilter.preferenceFilter(sb,filter)){
+                            StringBuilder tmp = new StringBuilder(prefix);
+                            tmp.append(sb);
+                            tmp.append(suffix);
+                            result.add(tmp.toString().trim());
+                        }
+
+                    }else{
+                        if(DigitPreferenceFilter.mantissaPreferenceFilter(sb,filter)){
+                            StringBuilder tmp = new StringBuilder(prefix);
+                            tmp.append(sb);
+                            tmp.append(suffix);
+                            result.add(tmp.toString().trim());
+                        }
                     }
                     j += stepping;
                 }
@@ -138,34 +159,6 @@ public class CardFaceNumberGeneratorService {
                     sum += 3 * (barcode.charAt(i) - '0');// i=1,3,5,7...
             }
             return (10 - sum % 10) % 10;
-        }
-
-   /*
-        private static boolean check(char c, int i) {
-            return (c - '0') == i;
-        }
-    */
-
-        /**
-         * @param s
-         * @return
-         */
-        public static boolean filter(CharSequence s, int[] filter,
-                                     boolean global) {
-            if (global) {// Filtering char each character
-                for (int i : filter) {
-                    for (int j = s.length() - 1; j >= 0; j--) {
-                        if ((s.charAt(j) - '0') == i)
-                            return false;
-                    }
-                }
-            } else {// Filter char in mantissa
-                for (int i : filter) {
-                    if ((s.charAt(s.length() - 1) - '0') == i)
-                        return false;
-                }
-            }
-            return true;
         }
 
         /**

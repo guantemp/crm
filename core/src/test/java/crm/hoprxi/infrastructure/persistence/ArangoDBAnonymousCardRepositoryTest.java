@@ -42,7 +42,7 @@ public class ArangoDBAnonymousCardRepositoryTest {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        Issuer issuer = new Issuer("9678512046PX", "自己");
+        Issuer issuer = new Issuer("9678512046PX", "总公司");
         AnonymousCard a1 = new AnonymousCard(issuer, "a1", "22156789", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a1);
         AnonymousCard a2 = new AnonymousCard(issuer, "a2", "22156790", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
@@ -60,7 +60,8 @@ public class ArangoDBAnonymousCardRepositoryTest {
     public void save() {
         AnonymousCard a = repository.find("a2");
         Assert.assertNotNull(a);
-        a.credit(Money.of(200, "CNY"), Money.of(20, "CNY"));
+        a.credit(Money.of(200, "CNY"));
+        a.giveRedPackets( Money.of(20, "CNY"));
         repository.save(a);
         a = repository.find("a2");
         a.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);

@@ -217,9 +217,9 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
         MonetaryAmount valuable = Money.of(valuableSlice.get("number").getAsBigDecimal(), valuableSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        VPackSlice giveSlice = balanceSlice.get("give");
-        MonetaryAmount give = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        Balance balance = new Balance(valuable, give);
+        VPackSlice giveSlice = balanceSlice.get("redPackets");
+        MonetaryAmount redPackets = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        Balance balance = new Balance(valuable, redPackets);
         //smallChange
         VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());

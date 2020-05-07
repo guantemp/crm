@@ -19,6 +19,7 @@ package crm.hoprxi.domain.model;
 import event.hoprxi.domain.model.DomainEventPublisher;
 import event.hoprxi.infrastruture.simple.SimpleDomainEventPublisher;
 import mi.hoprxi.crypto.HashService;
+import mi.hoprxi.crypto.SM3Hash;
 import mi.hoprxi.crypto.ScryptHash;
 
 /***
@@ -51,6 +52,6 @@ public class DomainRegistry {
     }
 
     public static HashService getHashService() {
-        return new ScryptHash();
+        return new SM3Hash();
     }
 }

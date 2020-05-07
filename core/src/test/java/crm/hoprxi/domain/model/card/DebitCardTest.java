@@ -16,8 +16,11 @@
 
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.Money;
+import org.junit.Assert;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.money.Monetary;
@@ -38,63 +41,37 @@ public class DebitCardTest {
     MonetaryAmount thirty = Money.of(30, "CNY");
     MonetaryAmount two_hundred = Money.of(200, Monetary.getCurrency(locale));
     MonetaryAmount one_hundred = Money.of(100, Monetary.getCurrency(locale));
-/*
+
     @Test
     public void all() {
-        DebitCard card = new DebitCard("600256", "宜宾总店", "327885095", "123456", zero, zero, zero);
-        card.prepay(three_hundred);
-        Assert.assertTrue(three_hundred.isEqualTo(card.totalBalance()));
-        Assert.assertTrue(three_hundred.isEqualTo(card.availableBalance()));
-        card.prepay(three_hundred, thirty);
-        Assert.assertTrue(thirty.isEqualTo(card.give()));
+        DebitCard card = new DebitCard(new Issuer("600256", "宜宾总店"), "327885095", "123456", "2002123456");
+        card.credit(three_hundred);
+        Assert.assertTrue(three_hundred.isEqualTo(card.balance().total()));
+        card.credit(three_hundred);
+        card.giveRedPackets(thirty);
+        Assert.assertTrue(thirty.isEqualTo(card.balance().redPackets()));
 
-        card.frozen(two_hundred);
-        Assert.assertTrue(Money.of(630, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(430, "CNY").isEqualTo(card.availableBalance()));
-        Assert.assertTrue(Money.of(200, "CNY").isEqualTo(card.freeze()));
-        card.thaw(one_hundred);
-        Assert.assertTrue(Money.of(630, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(530, "CNY").isEqualTo(card.availableBalance()));
-        Assert.assertTrue(Money.of(100, "CNY").isEqualTo(card.freeze()));
+        card.cashWithdrawal(one_hundred);
+        Assert.assertTrue(Money.of(530, "CNY").isEqualTo(card.balance().total()));
+        Assert.assertTrue(Money.of(500, "CNY").isEqualTo(card.balance().valuable()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
 
-        card.withdrawal(one_hundred);
-        Assert.assertTrue(Money.of(530, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(500, "CNY").isEqualTo(card.principal()));
-        Assert.assertTrue(Money.of(430, "CNY").isEqualTo(card.availableBalance()));
-        card.withdrawal(two_hundred);
-        Assert.assertTrue(Money.of(330, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(300, "CNY").isEqualTo(card.principal()));
-        Assert.assertTrue(Money.of(230, "CNY").isEqualTo(card.availableBalance()));
+        card.cashWithdrawal(two_hundred);
+        Assert.assertTrue(Money.of(330, "CNY").isEqualTo(card.balance.total()));
+        Assert.assertTrue(Money.of(300, "CNY").isEqualTo(card.balance.valuable()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance.redPackets()));
 
-        card.frozen(Money.of(530, "CNY"));
-        Assert.assertTrue(Money.of(630, "CNY").isEqualTo(card.freeze()));
-        Assert.assertTrue(Money.of(300, "CNY").isEqualTo(card.principal()));
-        Assert.assertTrue(Money.of(0, "CNY").isEqualTo(card.availableBalance()));
-        card.thaw(Money.of(900, "CNY"));
+        card.debit(one_hundred);
+        Assert.assertTrue(Money.of(230, "CNY").isEqualTo(card.balance().total()));
+        Assert.assertTrue(Money.of(200, "CNY").isEqualTo(card.balance().valuable()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
 
-        card.pay(one_hundred, DebitCard.Usage.PRINCIPAL_FIRST);
-        Assert.assertTrue(Money.of(230, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(200, "CNY").isEqualTo(card.principal()));
-        Assert.assertTrue(Money.of(230, "CNY").isEqualTo(card.availableBalance()));
-        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.give()));
-        card.pay(Money.of(10, "CNY"), DebitCard.Usage.GIVE_FIRST);
-        Assert.assertTrue(Money.of(220, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(200, "CNY").isEqualTo(card.principal()));
-        Assert.assertTrue(Money.of(220, "CNY").isEqualTo(card.availableBalance()));
-        Assert.assertTrue(Money.of(20, "CNY").isEqualTo(card.give()));
-        card.pay(Money.of(150, "CNY"));
-        Assert.assertTrue(Money.of(70, "CNY").isEqualTo(card.totalBalance()));
-        Assert.assertTrue(Money.of(70, "CNY").isEqualTo(card.availableBalance()));
-        card.pay(Money.of(50, "CNY"));
-        Assert.assertTrue(Money.of(20, "CNY").isEqualTo(card.availableBalance()));
-        System.out.println(card);
     }
 
     @Test
     public void testException() {
-        DebitCard card = new DebitCard("600156", "泸州看画城", "327885095", "123465", zero, zero, zero);
-        System.out.println(card);
+       DebitCard card = new DebitCard(new Issuer("600156", "泸州看画城"), "52275427", "123465","2002123456");
+       System.out.println(card);
     }
 
- */
 }

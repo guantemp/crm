@@ -27,6 +27,7 @@ import crm.hoprxi.domain.model.collaborator.Issuer;
 import mi.hoprxi.crypto.HashService;
 
 import javax.money.MonetaryAmount;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
@@ -50,6 +51,11 @@ public class DebitCard extends Card {
         setCustomerId(customerId);
         setPassword(password);
         this.freeze = freeze;
+    }
+
+    public DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber) {
+        this(issuer, customerId, id, "", cardFaceNumber, false, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()),
+                SmallChange.zero(Locale.getDefault()), null);
     }
 
     /**
