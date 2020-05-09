@@ -16,14 +16,12 @@
 package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.DomainRegistry;
-import crm.hoprxi.domain.model.balance.Balance;
-import crm.hoprxi.domain.model.balance.Rounded;
-import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
-import crm.hoprxi.domain.model.balance.SmallChange;
+import crm.hoprxi.domain.model.balance.*;
 import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 
+import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.util.StringJoiner;
 
@@ -64,17 +62,29 @@ public class AnonymousCard extends Card {
     public void debit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
+        CurrencyUnit currencyUnit = balance.currencyUnit();
+        if(currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Amount currency required equal balance currency");
+        MonetaryAmount total = balance.total();
+        if (total.isGreaterThanOrEqualTo(amount)) {
             balance = balance.pay(amount);
             return;
         }
+        MonetaryAmount allTotal = total.add(smallChange.amount());
+        if (allTotal.isLessThan(amount)) {
+            throw new InsufficientBalanceException("The insufficient balance");
+        }
+        MonetaryAmount difference = amount.subtract(total);
+        balance = Balance.zero(currencyUnit);
+        smallChange = smallChange.pay(difference);
+        /*
         Rounded rounded = smallChange.round(amount);
         if (rounded.isOverflow()) {
             smallChange = smallChange.deposit(rounded.remainder());
         } else {
             smallChange = smallChange.pay(rounded.remainder().negate());
         }
-        balance = balance.pay(rounded.integer());
+*/
     }
 
     @Override

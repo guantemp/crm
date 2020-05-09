@@ -16,6 +16,7 @@
 
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.balance.InsufficientBalanceException;
 import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.Money;
@@ -77,6 +78,8 @@ public class DebitCardTest {
         Assert.assertTrue(Money.of(89, "CNY").isEqualTo(card.balance().valuable()));
         Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
         Assert.assertTrue(Money.of(0.9, "CNY").isEqualTo(card.smallChange().amount()));
+
+        thrown.expect(InsufficientBalanceException.class);
 
     }
 

@@ -127,14 +127,15 @@ public class DebitCard extends Card {
             return;
         }
         */
-
         Rounded rounded = smallChange.round(amount);
+        //Throw the balance shortage exception as soon as possible
+        balance = balance.pay(rounded.integer());
         if (rounded.isOverflow()) {
             smallChange = smallChange.deposit(rounded.remainder());
         } else {
             smallChange = smallChange.pay(rounded.remainder().negate());
         }
-        balance = balance.pay(rounded.integer());
+
     }
 
     public void freeze() {

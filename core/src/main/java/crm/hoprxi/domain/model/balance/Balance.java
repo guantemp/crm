@@ -156,9 +156,9 @@ public class Balance {
      * @return
      */
     public Balance pay(MonetaryAmount amount) {
-        if (amount == null)
+        if (amount == null|| amount.isNegativeOrZero())
             return this;
-        CurrencyUnit currencyUnit = this.valuable.getCurrency();
+        CurrencyUnit currencyUnit = valuable.getCurrency();
         if (!currencyUnit.equals(amount.getCurrency()))
             throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
         MonetaryAmount total = valuable.add(redPackets);
@@ -166,10 +166,10 @@ public class Balance {
             throw new InsufficientBalanceException("The insufficient balance");
         if (total.isEqualTo(amount))
             return zero(valuable.getCurrency());
-        if (this.valuable.isGreaterThanOrEqualTo(amount))
-            return new Balance(valuable.subtract(amount), redPackets);
-        MonetaryAmount temp = amount.subtract(valuable);
-        return new Balance(Money.zero(currencyUnit), redPackets.subtract(temp));
+        MonetaryAmount difference = valuable.subtract(amount);
+        if(difference.isPositiveOrZero())
+            return new Balance(difference, redPackets);
+        return new Balance(Money.zero(currencyUnit), redPackets.add(difference));
     }
 
     /**
@@ -192,6 +192,10 @@ public class Balance {
             return new Balance(valuable, redPackets.subtract(amount));
         MonetaryAmount surplus = amount.subtract(redPackets);
         return new Balance(valuable.subtract(surplus), Money.zero(redPackets.getCurrency()));
+    }
+
+    public CurrencyUnit currencyUnit(){
+        return valuable.getCurrency();
     }
 
     /**
