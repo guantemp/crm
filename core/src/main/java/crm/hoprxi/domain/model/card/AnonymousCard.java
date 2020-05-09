@@ -64,18 +64,23 @@ public class AnonymousCard extends Card {
     public void debit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
+        if (amount.isNegative())
+            throw new IllegalArgumentException("Amount must is positive");
         CurrencyUnit currencyUnit = balance.currencyUnit();
-        if (currencyUnit.equals(amount.getCurrency()))
+        if (!currencyUnit.equals(amount.getCurrency()))
             throw new IllegalArgumentException("Amount currency required equal balance currency");
+        if (amount.isZero())
+            return;
         MonetaryAmount difference = balance.total().subtract(amount);
         if (difference.isPositiveOrZero()) {
             balance = balance.pay(amount);
-        }
-        if (smallChange.amount().subtract(difference).isNegative()) {
-            throw new InsufficientBalanceException("The insufficient balance");
         } else {
-            balance = Balance.zero(currencyUnit);
-            smallChange = smallChange.pay(difference);
+            if (smallChange.amount().subtract(difference).isNegative()) {
+                throw new InsufficientBalanceException("The insufficient balance");
+            } else {
+                balance = Balance.zero(currencyUnit);
+                smallChange = smallChange.pay(difference.negate());
+            }
         }
         /*
         Rounded rounded = smallChange.round(amount);

@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-03-27
+ * @version 0.0.2 builder 2020-05-09
  */
 public class DebitCard extends Card {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");

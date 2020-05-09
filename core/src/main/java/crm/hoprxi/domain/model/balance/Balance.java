@@ -225,6 +225,12 @@ public class Balance {
         return new Balance(valuable.add(balance.valuable), redPackets.add(balance.redPackets));
     }
 
+    public Balance subtract(Balance balance) {
+        if (!valuable.getCurrency().equals(balance.valuable.getCurrency()))
+            throw new IllegalArgumentException("Inconsistent currency type,must is" + valuable.getCurrency());
+        return new Balance(valuable.subtract(balance.valuable), redPackets.subtract(balance.redPackets));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

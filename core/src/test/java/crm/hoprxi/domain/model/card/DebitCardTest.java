@@ -16,6 +16,7 @@
 
 package crm.hoprxi.domain.model.card;
 
+import crm.hoprxi.domain.model.balance.InsufficientBalanceException;
 import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.Money;
@@ -31,7 +32,7 @@ import java.util.Locale;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-15
+ * @version 0.0.2 2020-05-09
  */
 public class DebitCardTest {
     @Rule
@@ -79,16 +80,14 @@ public class DebitCardTest {
         card.smallChange = card.smallChange.deposit(Money.of(0.9, "CNY"));
         Assert.assertTrue(Money.of(0.9, "CNY").isEqualTo(card.smallChange().amount()));
         card.debit(Money.of(120.35, Monetary.getCurrency(locale)));
-        System.out.println(card);
-
-        //thrown.expect(InsufficientBalanceException.class);
-
     }
 
     @Test
     public void testException() {
         DebitCard card = new DebitCard(new Issuer("600156", "泸州看画城"), "52275427", "123465", "2002123456");
-        //System.out.println(card);
+        card.giveRedPackets(Money.of(0.45, Monetary.getCurrency(locale)));
+        thrown.expect(InsufficientBalanceException.class);
+        card.debit(Money.of(0.4501, Monetary.getCurrency(locale)));
     }
 
 }
