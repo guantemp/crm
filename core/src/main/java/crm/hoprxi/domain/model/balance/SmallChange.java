@@ -106,12 +106,15 @@ public class SmallChange {
      * @return
      */
     public SmallChange pay(MonetaryAmount amount) {
-        if (amount == null || amount.isNegativeOrZero())
-            return this;
+        Objects.requireNonNull(amount, "amount required");
+        if (amount.isNegative())
+            throw new IllegalArgumentException("Amount must is positive");
         if (!this.amount.getCurrency().equals(amount.getCurrency()))
             throw new IllegalArgumentException("amount currency must is:" + this.amount.getCurrency());
-        if (amount.isGreaterThan(this.amount))
+        if (this.amount.isLessThan(amount))
             throw new InsufficientBalanceException("Insufficient balance");
+        if (amount.isZero())
+            return this;
         if (amount.isEqualTo(this.amount))
             return zero(this.amount.getCurrency());
         return new SmallChange(this.amount.subtract(amount), smallChangDenominationEnum);
@@ -122,7 +125,10 @@ public class SmallChange {
      * @return
      */
     public SmallChange deposit(MonetaryAmount amount) {
-        if (amount == null || amount.isNegativeOrZero())
+        Objects.requireNonNull(amount, "amount required");
+        if (amount.isNegative())
+            throw new IllegalArgumentException("Amount must is positive");
+        if (amount.isZero())
             return this;
         return new SmallChange(this.amount.add(amount), smallChangDenominationEnum);
     }

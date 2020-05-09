@@ -16,7 +16,9 @@
 package crm.hoprxi.domain.model.card;
 
 import crm.hoprxi.domain.model.DomainRegistry;
-import crm.hoprxi.domain.model.balance.*;
+import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.InsufficientBalanceException;
+import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.bonus.Bonus;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
@@ -63,20 +65,18 @@ public class AnonymousCard extends Card {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
         CurrencyUnit currencyUnit = balance.currencyUnit();
-        if(currencyUnit.equals(amount.getCurrency()))
+        if (currencyUnit.equals(amount.getCurrency()))
             throw new IllegalArgumentException("Amount currency required equal balance currency");
-        MonetaryAmount total = balance.total();
-        if (total.isGreaterThanOrEqualTo(amount)) {
+        MonetaryAmount difference = balance.total().subtract(amount);
+        if (difference.isPositiveOrZero()) {
             balance = balance.pay(amount);
-            return;
         }
-        MonetaryAmount allTotal = total.add(smallChange.amount());
-        if (allTotal.isLessThan(amount)) {
+        if (smallChange.amount().subtract(difference).isNegative()) {
             throw new InsufficientBalanceException("The insufficient balance");
+        } else {
+            balance = Balance.zero(currencyUnit);
+            smallChange = smallChange.pay(difference);
         }
-        MonetaryAmount difference = amount.subtract(total);
-        balance = Balance.zero(currencyUnit);
-        smallChange = smallChange.pay(difference);
         /*
         Rounded rounded = smallChange.round(amount);
         if (rounded.isOverflow()) {

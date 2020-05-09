@@ -19,13 +19,13 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.velocypack.annotations.Expose;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
-import crm.hoprxi.domain.model.balance.Rounded;
-import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
+import crm.hoprxi.domain.model.balance.InsufficientBalanceException;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import mi.hoprxi.crypto.HashService;
 
+import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.util.Locale;
 import java.util.Objects;
@@ -121,21 +121,24 @@ public class DebitCard extends Card {
     public void debit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-       /*
-        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
-            balance = balance.pay(amount);
+        if (amount.isNegative())
+            throw new IllegalArgumentException("Amount must is positive");
+        CurrencyUnit currencyUnit = balance.currencyUnit();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Amount currency required equal balance currency");
+        if (amount.isZero())
             return;
-        }
-        */
-        Rounded rounded = smallChange.round(amount);
-        //Throw the balance shortage exception as soon as possible
-        balance = balance.pay(rounded.integer());
-        if (rounded.isOverflow()) {
-            smallChange = smallChange.deposit(rounded.remainder());
+        MonetaryAmount difference = balance.total().subtract(amount);
+        if (difference.isPositiveOrZero()) {
+            balance = balance.pay(amount);
         } else {
-            smallChange = smallChange.pay(rounded.remainder().negate());
+            if (smallChange.amount().subtract(difference).isNegative()) {
+                throw new InsufficientBalanceException("The insufficient balance");
+            } else {
+                balance = Balance.zero(currencyUnit);
+                smallChange = smallChange.pay(difference.negate());
+            }
         }
-
     }
 
     public void freeze() {
