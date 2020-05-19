@@ -17,6 +17,7 @@ package crm.hoprxi.domain.model.card;
 
 
 import com.arangodb.entity.DocumentField;
+import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
 import crm.hoprxi.domain.model.balance.InsufficientBalanceException;
 import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
@@ -113,6 +114,14 @@ public abstract class Card {
 
     private void setAppearance(Appearance appearance) {
         this.appearance = appearance;
+    }
+
+    public void changeCardFaceNumber(String newCardFaceNumber) {
+        newCardFaceNumber = Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required").trim();
+        if (!cardFaceNumber.equals(newCardFaceNumber)) {
+            this.cardFaceNumber = newCardFaceNumber;
+            DomainRegistry.domainEventPublisher().publish(new CardFaceNumberChanged(id, newCardFaceNumber));
+        }
     }
 
     public Issuer issuer() {

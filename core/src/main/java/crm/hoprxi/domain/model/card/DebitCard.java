@@ -68,14 +68,6 @@ public class DebitCard extends Card {
         this.freeze = freeze;
     }
 
-    public void changeCardFaceNumber(String newCardFaceNumber) {
-        newCardFaceNumber = Objects.requireNonNull(newCardFaceNumber, "newCardFaceNumber required").trim();
-        if (!cardFaceNumber.equals(newCardFaceNumber)) {
-            this.cardFaceNumber = newCardFaceNumber;
-            DomainRegistry.domainEventPublisher().publish(new DebitCardFaceNumberChanged(super.id(), newCardFaceNumber));
-        }
-    }
-
     private void setPassword(String password) {
         password = Objects.requireNonNull(password, "password is required").trim();
         if (!password.isEmpty()) {
@@ -159,5 +151,9 @@ public class DebitCard extends Card {
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)
                 .toString();
+    }
+
+    public DebitCardSnapshot toSnapshot() {
+        return null;
     }
 }

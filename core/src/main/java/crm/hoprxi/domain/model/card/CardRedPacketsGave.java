@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package crm.hoprxi.domain.model.card;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-05
+ * @version 0.0.1 builder 2020-05-19
  */
-public class CardCashWithdrawn {
+public class CardRedPacketsGave {
 }

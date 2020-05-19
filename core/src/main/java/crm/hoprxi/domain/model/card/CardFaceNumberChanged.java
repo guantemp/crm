@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ import java.time.LocalDateTime;
  * @since JDK8.0
  * @version 0.0.1 2019-12-05
  */
-public class DebitCardFaceNumberChanged implements DomainEvent {
+public class CardFaceNumberChanged implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
     private String cardFaceNumber;
 
-    public DebitCardFaceNumberChanged(String id, String cardFaceNumber) {
+    public CardFaceNumberChanged(String id, String cardFaceNumber) {
         this.id = id;
         this.cardFaceNumber = cardFaceNumber;
         occurredOn = LocalDateTime.now();
