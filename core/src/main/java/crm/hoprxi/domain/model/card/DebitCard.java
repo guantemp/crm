@@ -86,8 +86,18 @@ public class DebitCard extends Card {
     }
 
     public void changePassword(String currentPassword, String newPassword) {
-        currentPassword = Objects.requireNonNull(currentPassword).trim();
-        newPassword = Objects.requireNonNull(newPassword).trim();
+        currentPassword = Objects.requireNonNull(currentPassword, "currentPassword is required").trim();
+        newPassword = Objects.requireNonNull(newPassword, "newPassword is required").trim();
+        if (!currentPassword.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(currentPassword);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("currentPassword is 6 digit number");
+        }
+        if (!newPassword.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(newPassword);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("newPassword is 6 digit number");
+        }
         if (!currentPassword.equals(newPassword)) {
             HashService hashService = DomainRegistry.getHashService();
             if (hashService.check(currentPassword, password)) {
@@ -97,6 +107,13 @@ public class DebitCard extends Card {
     }
 
     public boolean authenticatePassword(String password) {
+        if (password == null)
+            return false;
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+            if (!matcher.matches())
+                return false;
+        }
         HashService hash = DomainRegistry.getHashService();
         return hash.check(password, this.password);
     }

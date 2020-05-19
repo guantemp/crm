@@ -156,7 +156,7 @@ public class Balance {
      * @return
      */
     public Balance pay(MonetaryAmount amount) {
-        if (amount == null|| amount.isNegativeOrZero())
+        if (amount == null || amount.isNegativeOrZero())
             return this;
         CurrencyUnit currencyUnit = valuable.getCurrency();
         if (!currencyUnit.equals(amount.getCurrency()))
@@ -167,7 +167,7 @@ public class Balance {
         if (total.isEqualTo(amount))
             return zero(valuable.getCurrency());
         MonetaryAmount difference = valuable.subtract(amount);
-        if(difference.isPositiveOrZero())
+        if (difference.isPositiveOrZero())
             return new Balance(difference, redPackets);
         return new Balance(Money.zero(currencyUnit), redPackets.add(difference));
     }
@@ -184,17 +184,17 @@ public class Balance {
             throw new IllegalArgumentException("Inconsistent currency type,must is" + currencyUnit);
         MonetaryAmount total = valuable.add(redPackets);
         if (total.isGreaterThanOrEqualTo(amount)) {
-            if (valuable.isPositiveOrZero())
-                return pay(amount);
-            return new Balance(valuable, redPackets.subtract(amount));
+            return pay(amount);
+        } else {
+            MonetaryAmount difference = redPackets.subtract(amount);
+            if (difference.isPositiveOrZero())
+                return new Balance(valuable, difference);
+            difference = difference.negate();
+            return new Balance(valuable.subtract(difference), Money.zero(currencyUnit));
         }
-        if (redPackets.isGreaterThanOrEqualTo(amount))
-            return new Balance(valuable, redPackets.subtract(amount));
-        MonetaryAmount surplus = amount.subtract(redPackets);
-        return new Balance(valuable.subtract(surplus), Money.zero(redPackets.getCurrency()));
     }
 
-    public CurrencyUnit currencyUnit(){
+    public CurrencyUnit currencyUnit() {
         return valuable.getCurrency();
     }
 

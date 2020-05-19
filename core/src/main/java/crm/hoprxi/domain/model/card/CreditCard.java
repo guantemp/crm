@@ -20,16 +20,17 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.velocypack.annotations.Expose;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
-import crm.hoprxi.domain.model.balance.Rounded;
-import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import mi.hoprxi.crypto.HashService;
 
+import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -37,13 +38,14 @@ import java.util.StringJoiner;
  * @version 0.0.1 2020-03-27
  */
 public class CreditCard extends Card {
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
     private boolean freeze;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(Issuer issuer, String customerId, String id, int password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
+    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
                       LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
         setCustomerId(customerId);
@@ -63,29 +65,46 @@ public class CreditCard extends Card {
         this.customerId = customerId;
     }
 
-    private void setPassword(int password) {
-        if (password < 100000 || password > 999999)
-            throw new IllegalArgumentException("password is 6 digit number");
+    private void setPassword(String password) {
+        password = Objects.requireNonNull(password, "password is required").trim();
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("password is 6 digit number");
+        }
         HashService hashService = DomainRegistry.getHashService();
-        this.password = hashService.hash(String.valueOf(password));
+        this.password = hashService.hash(password);
     }
 
-    public boolean authenticatePassword(int password) {
-        if (password < 100000 || password > 999999)
-            throw new IllegalArgumentException("password is 6 digit number");
+    public boolean authenticatePassword(String password) {
+        if (password == null)
+            return false;
+        if (!password.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(password);
+            if (!matcher.matches())
+                return false;
+        }
         HashService hash = DomainRegistry.getHashService();
-        return hash.check(String.valueOf(password), this.password);
+        return hash.check(password, this.password);
     }
 
-    public void changePassword(int currentPassword, int newPassword) {
-        if (currentPassword < 100000 || currentPassword > 999999)
-            throw new IllegalArgumentException("password is 6 digit number");
-        if (newPassword < 100000 || newPassword > 999999)
-            throw new IllegalArgumentException("password is 6 digit number");
-        if (currentPassword != newPassword) {
+    public void changePassword(String currentPassword, String newPassword) {
+        currentPassword = Objects.requireNonNull(currentPassword, "currentPassword is required").trim();
+        newPassword = Objects.requireNonNull(newPassword, "newPassword is required").trim();
+        if (!currentPassword.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(currentPassword);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("currentPassword is 6 digit number");
+        }
+        if (!newPassword.isEmpty()) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(newPassword);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("newPassword is 6 digit number");
+        }
+        if (!currentPassword.equals(newPassword)) {
             HashService hashService = DomainRegistry.getHashService();
-            if (hashService.check(Integer.toString(currentPassword), password)) {
-                this.password = hashService.hash(Integer.toString(newPassword));
+            if (hashService.check(currentPassword, password)) {
+                this.password = hashService.hash(newPassword);
             }
         }
     }
@@ -98,23 +117,14 @@ public class CreditCard extends Card {
     public void debit(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        if (smallChange.smallChangDenominationEnum() == SmallChangDenominationEnum.ZERO) {
-            balance = balance.overdraw(amount);
+        if (amount.isNegative())
+            throw new IllegalArgumentException("Amount must is positive");
+        CurrencyUnit currencyUnit = balance.currencyUnit();
+        if (!currencyUnit.equals(amount.getCurrency()))
+            throw new IllegalArgumentException("Amount currency required equal balance currency");
+        if (amount.isZero())
             return;
-        }
-        MonetaryAmount total = balance.redPackets().add(smallChange.amount());
-        if (total.isGreaterThanOrEqualTo(amount)) {
-            Rounded rounded = smallChange.round(amount);
-            if (rounded.isOverflow()) {
-                smallChange = smallChange.deposit(rounded.remainder());
-            } else {
-                smallChange = smallChange.pay(rounded.remainder().negate());
-            }
-            balance = new Balance(balance.valuable(), balance.redPackets().subtract(rounded.integer()));
-        } else {
-
-           // balance = balance.overdraw(rounded.integer());
-        }
+        Balance result = balance.overdraw(amount);
     }
 
     public void freeze() {

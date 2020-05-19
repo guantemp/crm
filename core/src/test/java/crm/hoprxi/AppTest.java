@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,6 +106,10 @@ public class AppTest {
         System.out.println("amount1.getContext():" + amount1.getContext());
         System.out.println("amount2.getContext():" + amount2.getContext());
 
+        System.out.println("MonetaryAmount.abs():" + FastMoney.of(1.34567, "CNY").abs());
+        System.out.println("MonetaryAmount.negate():" + FastMoney.of(1.34256, "CNY").negate());
+        System.out.println("MonetaryAmount.negate():" + FastMoney.of(0, "CNY").negate());
+
 
         CurrencyUnit usd = Monetary.getCurrency("USD");
         MonetaryAmount dollars = Money.of(12.34567, usd);
@@ -119,24 +123,29 @@ public class AppTest {
             System.out.println(s);
 
         // get a specific ExchangeRateProvider (here ECB)
-        ExchangeRateProvider ecbExchangeRateProvider = MonetaryConversions.getExchangeRateProvider("IMF");
-        ExchangeRate rate = ecbExchangeRateProvider.getExchangeRate("USD", "CNY");
+        ExchangeRateProvider IMFExchangeRateProvider = MonetaryConversions.getExchangeRateProvider("IMF");
+        ExchangeRate rate = IMFExchangeRateProvider.getExchangeRate("USD", "CNY");
 
         NumberValue factor = rate.getFactor(); // 1.2537 (at time writing)
         CurrencyUnit baseCurrency = rate.getBaseCurrency(); // EUR
         CurrencyUnit targetCurrency = rate.getCurrency(); // USD
-        System.out.println("factor CNY to USD:" + factor);
+        System.out.println("at time,CNY to USD factor is:" + factor);
 
         // get the CurrencyConversion from a specific provider
         CurrencyConversion dollarConversion = MonetaryConversions.getConversion("USD");
-        CurrencyConversion ecbDollarConversion = ecbExchangeRateProvider.getCurrencyConversion("USD");
+        CurrencyConversion imfDollarConversion = IMFExchangeRateProvider.getCurrencyConversion("USD");
 
-        MonetaryAmount tenEuro = Money.of(100, "JPY");
-
-        // convert 10 euro to us dollar
-        MonetaryAmount inDollar = tenEuro.with(dollarConversion);
-        System.out.println(inDollar);
-        inDollar = tenEuro.with(ecbDollarConversion);
-        System.out.println("ecbDollarConversion:" + inDollar);
+        // convert 100 jpy to us dollar
+        MonetaryAmount jpy = Money.of(100, "JPY");
+        MonetaryAmount inDollar = jpy.with(dollarConversion);
+        System.out.println("100 JPY to us dollar:" + inDollar);
+        inDollar = jpy.with(imfDollarConversion);
+        System.out.println("imfDollarConversion:" + inDollar);
+        // convert 100 rmb to us dollar
+        MonetaryAmount rmb = Money.of(100, "CNY");
+        inDollar = rmb.with(dollarConversion);
+        System.out.println("100 RMB to us dollar:" + inDollar);
+        inDollar = rmb.with(imfDollarConversion);
+        System.out.println("imfDollarConversion:" + inDollar);
     }
 }
