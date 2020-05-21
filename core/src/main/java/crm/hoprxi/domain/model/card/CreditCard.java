@@ -20,6 +20,7 @@ package crm.hoprxi.domain.model.card;
 import com.arangodb.velocypack.annotations.Expose;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.ExceedQuotaException;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.appearance.Appearance;
 import crm.hoprxi.domain.model.collaborator.Issuer;
@@ -124,7 +125,12 @@ public class CreditCard extends Card {
             throw new IllegalArgumentException("Amount currency required equal balance currency");
         if (amount.isZero())
             return;
-        Balance result = balance.overdraw(amount);
+        Balance temp = balance.overdraw(amount);
+        if (temp.redPackets().isZero() && temp.valuable().isNegative())
+            temp = new Balance(temp.valuable().add(smallChange.amount()), temp.redPackets());
+        if (temp.valuable().isGreaterThan(lineOfCredit.quota()))
+            throw new ExceedQuotaException("The credit card limit exceeded");
+        balance = temp;
     }
 
     public void freeze() {

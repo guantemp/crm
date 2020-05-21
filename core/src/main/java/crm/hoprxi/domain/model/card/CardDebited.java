@@ -16,10 +16,31 @@
 
 package crm.hoprxi.domain.model.card;
 
+import event.hoprxi.domain.model.DomainEvent;
+
+import javax.money.MonetaryAmount;
+import java.time.LocalDateTime;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 builder 2020-05-19
  */
-public class CardDebited {
+public class CardDebited implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+    private MonetaryAmount valuable;
+    private MonetaryAmount redPackets;
+    private MonetaryAmount smallChange;
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return null;
+    }
+
+    @Override
+    public int version() {
+        return 0;
+    }
 }

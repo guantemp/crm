@@ -54,6 +54,10 @@ public class LineOfCredit {
         this.quota = quota;
     }
 
+    public MonetaryAmount quota() {
+        return quota;
+    }
+
     /**
      * @param quota
      * @return this if quota is negative or zero or greater old quota
@@ -64,6 +68,7 @@ public class LineOfCredit {
             return this;
         return new LineOfCredit(quota, billDate, repaymentDate);
     }
+
 
     /**
      * @param quota
