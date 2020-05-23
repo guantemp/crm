@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,8 @@ public class CoreSetup {
         }
         arangoDB.createDatabase(databaseName);
         //vertex
-        for (String s : new String[]{"person", "enterprise", "debit_card", "anonymous_card", "appearance", "memberRole", "integral_history", "balance_history", "change_history"}) {
+        for (String s : new String[]{"person", "enterprise", "debit_card", "anonymous_card", "credit_card", "appearance", "memberRole", "integral_history", "balance_history",
+                "change_history"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);
@@ -64,6 +65,7 @@ public class CoreSetup {
         HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(true).sparse(true);
         arangoDB.db(databaseName).collection("debit_card").ensureHashIndex(index, hashIndexOptions);
         arangoDB.db(databaseName).collection("anonymous_card").ensureHashIndex(index, hashIndexOptions);
+        arangoDB.db(databaseName).collection("credit_card").ensureHashIndex(index, hashIndexOptions);
 
         //edge
         for (String s : new String[]{"has"}) {
@@ -73,7 +75,7 @@ public class CoreSetup {
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
         //edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
-        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "person", "enterprise").to("debit_card", "appearance"));
+        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "credit_card", "person", "enterprise").to("debit_card", "credit_card", "appearance"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();
         LOGGER.info("{} create success.", databaseName);

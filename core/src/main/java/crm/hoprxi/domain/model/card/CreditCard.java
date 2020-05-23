@@ -141,16 +141,24 @@ public class CreditCard extends Card {
         freeze = false;
     }
 
+    public String customerId() {
+        return customerId;
+    }
+
+    public LineOfCredit lineOfCredit() {
+        return lineOfCredit;
+    }
+
     /*
-        public void overdraw(MonetaryAmount amount) {
-            if (balance().valuable().isPositive()) {
-                double d1 = balance().valuable().getNumber().doubleValue();
-                double d2 = balance().give().getNumber().doubleValue();
-                double d3 = d1 / (d1 + d2);
-                MonetaryAmount temp = amount.multiply(d3);
+            public void overdraw(MonetaryAmount amount) {
+                if (balance().valuable().isPositive()) {
+                    double d1 = balance().valuable().getNumber().doubleValue();
+                    double d2 = balance().give().getNumber().doubleValue();
+                    double d3 = d1 / (d1 + d2);
+                    MonetaryAmount temp = amount.multiply(d3);
+                }
             }
-        }
-    */
+        */
     @Override
     public String toString() {
         return new StringJoiner(", ", CreditCard.class.getSimpleName() + "[", "]")

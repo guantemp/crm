@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,10 +53,10 @@ public class ArangoDBDebitCardRepositoryTest {
     public static void setUpBeforeClass() throws Exception {
         PostalAddressBook book = new PostalAddressBook();
         PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
-                new Contact("官相焕", "18982455056", "0830-2517218"));
+                new Contact("官相焕", "18982455055", "0830-2517218"));
         book = book.add(address1);
-        PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "泸州", "龙马潭区", "鱼塘街道", "沙湖路22", "614000"),
-                new Contact("库电话", "13679692401", "0830-3217589"));
+        PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "乐山市", "市中区", "消粑粑街道", "大田路22", "664000"),
+                new Contact("库电话", "13679692401", "0833-3217589"));
         book = book.addAndSetAcquiescence(four);
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",

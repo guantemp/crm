@@ -31,15 +31,40 @@ public interface CreditCardRepository {
         return String.valueOf(LongId.generate());
     }
 
+    /**
+     * @param creditCard
+     */
     void save(CreditCard creditCard);
 
+    /**
+     * @param id
+     */
     void remove(String id);
 
+    /**
+     * @param id
+     * @return
+     */
     CreditCard find(String id);
 
-    CreditCard findByCardFaceNumber(String cardFaceNumber);
+    /**
+     * @param cardFaceNumber is support regular
+     * @return
+     */
+    CreditCard[] findByCardFaceNumber(String cardFaceNumber);
 
+    /**
+     * @param customerId
+     * @return
+     */
     CreditCard[] findByCustomer(String customerId);
 
+    /**
+     * @param offset
+     * @param limit
+     * @return
+     */
     CreditCard[] findAll(int offset, int limit);
+
+    int size();
 }
