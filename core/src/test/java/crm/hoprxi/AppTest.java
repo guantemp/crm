@@ -80,7 +80,7 @@ public class AppTest {
         System.out.println(Monetary.getCurrency(Locale.US).getNumericCode() + " " + Monetary.getCurrency(Locale.US).getCurrencyCode());
         System.out.println(Monetary.getCurrency(Locale.CHINA).getNumericCode() + " " + Monetary.getCurrency(Locale.CHINA).getCurrencyCode());
 
-        MonetaryAmount amount = Money.of(new BigDecimal("-23423.4536575763474262634657686795745643647678083534654"), "CNY");
+        MonetaryAmount amount = Money.of(new BigDecimal("-5422523423.4536575763474262634657686795745643647678083534654"), "CNY");
         System.out.println("amount.getCurrency().getCurrencyCode():" + amount.getCurrency().getCurrencyCode());
         System.out.println("amount.signum() +-:" + amount.signum());
         System.out.println("amount.plus():" + amount.plus());

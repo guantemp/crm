@@ -39,6 +39,7 @@ import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -60,6 +61,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static Field passwordField;
     private static Constructor<DebitCard> debitCardConstructor;
+
     static {
         try {
             debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, boolean.class, TermOfValidity.class, Balance.class, SmallChange.class, Appearance.class);
@@ -142,7 +144,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 debitCards[i] = rebuild(slices.next());
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Can't rebuild person", e);
+                LOGGER.debug("Can't rebuild debit card.", e);
         }
         return debitCards;
     }
@@ -157,14 +159,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", customerId).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
-        try {
-            while (slices.hasNext())
-                debitCardList.add(rebuild(slices.next()));
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Can't rebuild DebitCard", e);
-        }
-        return debitCardList.toArray(new DebitCard[debitCardList.size()]);
+        return transform(slices);
     }
 
     @Override
@@ -215,20 +210,45 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         //balance
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
-        MonetaryAmount valuable = Money.of(valuableSlice.get("number").getAsBigDecimal(), valuableSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        VPackSlice giveSlice = balanceSlice.get("redPackets");
-        MonetaryAmount redPackets = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        MonetaryAmount valuable = this.toMonetaryAmount(valuableSlice);
+        VPackSlice redPacketsSlice = balanceSlice.get("redPackets");
+        MonetaryAmount redPackets = this.toMonetaryAmount(redPacketsSlice);
         Balance balance = new Balance(valuable, redPackets);
         //smallChange
         VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
         VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
-        MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
 
         DebitCard debitCard = debitCardConstructor.newInstance(issuer, customerId, id, cardFaceNumber, freeze, termOfValidity, balance, smallChange, null);
         passwordField.set(debitCard, password);
         return debitCard;
+    }
+
+    private MonetaryAmount toMonetaryAmount(VPackSlice slice) {
+        String currencyCode = slice.get("currency").get("baseCurrency").get("currencyCode").getAsString();
+        MonetaryAmount amount = FastMoney.zero(Monetary.getCurrency(currencyCode));
+        String className = slice.get("_class").getAsString();
+        if (FastMoney.class.getName().equals(className)) {
+            amount = FastMoney.of(slice.get("number").getAsNumber().doubleValue() / 100000, currencyCode);
+        } else if (Money.class.getName().equals(className)) {
+            amount = Money.of(slice.get("number").getAsBigDecimal(), currencyCode);
+        }
+        return amount;
+    }
+
+    private DebitCard[] transform(ArangoCursor<VPackSlice> slices) {
+        List<DebitCard> debitCardList = new ArrayList<>();
+        while (slices.hasNext()) {
+            try {
+                debitCardList.add(rebuild(slices.next()));
+            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Can't rebuild credit card.", e);
+            }
+        }
+        return debitCardList.toArray(new DebitCard[debitCardList.size()]);
     }
 
     private static class HasEdge {

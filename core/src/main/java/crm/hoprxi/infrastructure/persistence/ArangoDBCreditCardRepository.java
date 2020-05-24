@@ -30,7 +30,7 @@ import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.CreditCard;
 import crm.hoprxi.domain.model.card.CreditCardRepository;
-import crm.hoprxi.domain.model.card.DebitCard;
+import crm.hoprxi.domain.model.card.LineOfCredit;
 import crm.hoprxi.domain.model.card.TermOfValidity;
 import crm.hoprxi.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.FastMoney;
@@ -38,10 +38,13 @@ import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,7 +62,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         try {
             //debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, boolean.class, TermOfValidity.class, Balance.class, SmallChange.class, Appearance.class);
             //debitCardConstructor.setAccessible(true);
-            passwordField = DebitCard.class.getDeclaredField("password");
+            passwordField = CreditCard.class.getDeclaredField("password");
             passwordField.setAccessible(true);
         } catch (NoSuchFieldException e) {
             if (LOGGER.isDebugEnabled())
@@ -108,8 +111,9 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         final String query = "WITH person,credit_card,appearance\n" +
                 "FOR c IN credit_card FILTER c._key == @key\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
-                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+                //"FOR appearance IN 1..1 OUTBOUND c._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         try {
@@ -123,57 +127,127 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         return null;
     }
 
-    private CreditCard rebuild(VPackSlice next) throws IllegalAccessException {
-        if (next == null)
+    private CreditCard rebuild(VPackSlice slice) throws IllegalAccessException {
+        if (slice == null)
             return null;
-        VPackSlice issuerSlice = next.get("issuer");
+        VPackSlice issuerSlice = slice.get("issuer");
         Issuer issuer = new Issuer(issuerSlice.get("id").getAsString(), issuerSlice.get("name").getAsString());
-        String customerId = next.get("customerId").getAsString();
-        String id = next.get("id").getAsString();
-        String password = next.get("password").getAsString();
-        String cardFaceNumber = next.get("cardFaceNumber").getAsString();
-        boolean freeze = next.get("freeze").getAsBoolean();
+        String customerId = slice.get("customerId").getAsString();
+        String id = slice.get("id").getAsString();
+        String password = slice.get("password").getAsString();
+        String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
+        boolean freeze = slice.get("freeze").getAsBoolean();
         //termOfValidity
-        VPackSlice termOfValiditySlice = next.get("termOfValidity");
+        VPackSlice termOfValiditySlice = slice.get("termOfValidity");
         LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);
+        //lineOfCredit
+        VPackSlice lineOfCreditSlice = slice.get("lineOfCredit");
+        VPackSlice quotaSlice = lineOfCreditSlice.get("quota");
+        MonetaryAmount quota = this.toMonetaryAmount(quotaSlice);
+        int billDays = lineOfCreditSlice.get("billDays").getAsInt();
+        LocalDate repaymentDate = LocalDate.parse(lineOfCreditSlice.get("repaymentDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LineOfCredit lineOfCredit = new LineOfCredit(quota, billDays, repaymentDate);
         //balance
-        VPackSlice balanceSlice = next.get("balance");
+        VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
-        MonetaryAmount valuable = Money.of(valuableSlice.get("number").getAsBigDecimal(), valuableSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        VPackSlice giveSlice = balanceSlice.get("redPackets");
-        MonetaryAmount redPackets = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        MonetaryAmount valuable = toMonetaryAmount(valuableSlice);
+        VPackSlice redPacketsSlice = balanceSlice.get("redPackets");
+        MonetaryAmount redPackets = this.toMonetaryAmount(redPacketsSlice);
         Balance balance = new Balance(valuable, redPackets);
         //smallChange
-        VPackSlice smallChangeSlice = next.get("smallChange");
+        VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
         VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
-        MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
 
-        CreditCard creditCard = new CreditCard(issuer, customerId, id, password, cardFaceNumber, freeze, termOfValidity, null, balance, smallChange, null);
+        CreditCard creditCard = new CreditCard(issuer, customerId, id, "", cardFaceNumber, freeze, termOfValidity, lineOfCredit, balance, smallChange, null);
         passwordField.set(creditCard, password);
         return creditCard;
     }
 
+    private MonetaryAmount toMonetaryAmount(VPackSlice slice) {
+        String currencyCode = slice.get("currency").get("baseCurrency").get("currencyCode").getAsString();
+        MonetaryAmount amount = FastMoney.zero(Monetary.getCurrency(currencyCode));
+        String className = slice.get("_class").getAsString();
+        if (FastMoney.class.getName().equals(className)) {
+            amount = FastMoney.of(slice.get("number").getAsNumber().doubleValue() / 100000, currencyCode);
+        } else if (Money.class.getName().equals(className)) {
+            amount = Money.of(slice.get("number").getAsBigDecimal(), currencyCode);
+        }
+        return amount;
+    }
+
     @Override
     public CreditCard[] findByCardFaceNumber(String cardFaceNumber) {
-        return new CreditCard[0];
+        final String query = "WITH person,credit_card,appearance\n" +
+                "FOR c IN credit_card FILTER c.cardFaceNumber =~ @cardFaceNumber\n" +
+                "FOR p in 1..1 INBOUND c._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND c._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
+        final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        return transform(slices);
     }
 
     @Override
     public CreditCard[] findByCustomer(String customerId) {
-        return new CreditCard[0];
+        List<CreditCard> creditCardList = new ArrayList<>();
+        final String query = "WITH person,credit_card,appearance\n" +
+                "FOR p IN person FILTER p._key == @key\n" +
+                "FOR c IN 1..1 OUTBOUND p._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
+        final Map<String, Object> bindVars = new MapBuilder().put("key", customerId).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        return transform(slices);
     }
 
     @Override
     public CreditCard[] findAll(int offset, int limit) {
-        return new CreditCard[0];
+        CreditCard[] creditCards = ArangoDBUtil.calculationCollectionSize(crm, CreditCard.class, offset, limit);
+        final String query = "WITH person,credit_card,appearance\n" +
+                "FOR c IN credit_card LIMIT @offset,@limit\n" +
+                "FOR p in 1..1 INBOUND c._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
+        final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
+        ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
+        try {
+            for (int i = 0; slices.hasNext(); i++)
+                creditCards[i] = rebuild(slices.next());
+        } catch (IllegalAccessException e) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Can't rebuild credit card", e);
+        }
+        return creditCards;
+    }
+
+    private CreditCard[] transform(ArangoCursor<VPackSlice> slices) {
+        List<CreditCard> creditCardList = new ArrayList<>();
+        while (slices.hasNext()) {
+            try {
+                creditCardList.add(rebuild(slices.next()));
+            } catch (IllegalAccessException e) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Can't rebuild credit card.", e);
+            }
+        }
+        return creditCardList.toArray(new CreditCard[creditCardList.size()]);
     }
 
     @Override
     public int size() {
+        final String query = " RETURN LENGTH(credit_card)";
+        final ArangoCursor<VPackSlice> cursor = crm.query(query, null, null, VPackSlice.class);
+        for (; cursor.hasNext(); ) {
+            return cursor.next().getAsInt();
+        }
         return 0;
     }
 

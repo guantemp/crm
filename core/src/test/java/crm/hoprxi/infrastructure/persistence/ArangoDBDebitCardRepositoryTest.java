@@ -51,25 +51,25 @@ public class ArangoDBDebitCardRepositoryTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        PostalAddressBook book = new PostalAddressBook();
+        PostalAddressBook addressBook = new PostalAddressBook();
         PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
-                new Contact("官相焕", "18982455055", "0830-2517218"));
-        book = book.add(address1);
+                new Contact("富含糖分", "18982455055", "0830-2517218"));
+        addressBook = addressBook.add(address1);
         PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "乐山市", "市中区", "消粑粑街道", "大田路22", "664000"),
-                new Contact("库电话", "13679692401", "0833-3217589"));
-        book = book.addAndSetAcquiescence(four);
+                new Contact("符合停机和", "13679692401", "0833-3217589"));
+        addressBook = addressBook.addAndSetAcquiescence(four);
 
-        IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",
-                new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "市中区", "沙湖路22"));
-        Person guan = new Person("18982455056", "hope xi'er", "333222", true, Spss.EMPTY_SPSS, null,
-                book, identityCard, MonthDay.of(6, 4));
+        IdentityCard identityCard = new IdentityCard("510107199803073838", "的习惯如",
+                new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "附加费", "沙湖路22"));
+        Person guan = new Person("18982455055", "hope xi'er", "333222", true, Spss.EMPTY_SPSS, null,
+                addressBook, identityCard, MonthDay.of(6, 4));
         personRepository.save(guan);
 
-        DebitCard card1 = new DebitCard(new Issuer("968974548754158X", "小市店"), "18982455056", "667788", "112233", "888888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card1 = new DebitCard(new Issuer("968974548754158X", "小市店"), "18982455055", "667788", "112233", "888888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card1);
-        DebitCard card2 = new DebitCard(new Issuer("963457MA120486PX", "山岩瑙"), "18982455056", "778899", "123456", "999999", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card2 = new DebitCard(new Issuer("963457MA120486PX", "山岩瑙"), "18982455055", "778899", "123456", "999999", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card2);
-        DebitCard card3 = new DebitCard(new Issuer("98752367MA24158X", "大山平"), "18982455056", "889900", "123456", "618888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
+        DebitCard card3 = new DebitCard(new Issuer("98752367MA24158X", "大山平"), "18982455055", "889900", "123456", "618888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
         repository.save(card3);
     }
 
@@ -112,7 +112,7 @@ public class ArangoDBDebitCardRepositoryTest {
 
     @Test
     public void findBy() {
-        DebitCard[] debitCards = repository.findByCustomer("18982455056");
+        DebitCard[] debitCards = repository.findByCustomer("18982455055");
         Assert.assertEquals(3, debitCards.length);
         DebitCard debitCard = repository.findByCardFaceNumber("999999");
         Assert.assertNotNull(debitCard);
