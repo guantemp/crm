@@ -17,6 +17,7 @@
 package crm.hoprxi.infrastructure.persistence;
 
 import crm.hoprxi.domain.model.balance.Balance;
+import crm.hoprxi.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.domain.model.balance.SmallChange;
 import crm.hoprxi.domain.model.card.CreditCard;
 import crm.hoprxi.domain.model.card.CreditCardRepository;
@@ -79,14 +80,19 @@ public class ArangoDBCreditCardRepositoryTest {
 
     @org.testng.annotations.AfterMethod
     public void tearDown() {
+        //repository.remove("202601402");
+        //repository.remove("202801654");
+        //repository.remove("20281405");
+        //personRepository.remove("18982455066");
     }
 
     @org.testng.annotations.Test
     public void testSave() {
-    }
-
-    @org.testng.annotations.Test
-    public void testRemove() {
+        LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(250, "CNY"), 60);
+        CreditCard card = new CreditCard(new Issuer("968974548754158X", "小市店"), "18982455066", "20281725", "112233", "81725",
+                true, TermOfValidity.PERMANENCE, lineOfCredit, new Balance(Money.of(-79.85, "CNY"), Money.of(15.25, "CNY")),
+                new SmallChange(FastMoney.of(0.64, "CNY"), SmallChangDenominationEnum.ONE), null);
+        repository.save(card);
     }
 
     @org.testng.annotations.Test
@@ -97,6 +103,9 @@ public class ArangoDBCreditCardRepositoryTest {
         Assert.assertNotNull(creditCard);
         creditCard = repository.find("20280154");
         Assert.assertNull(creditCard);
+        creditCard = repository.find("20281725");
+        Assert.assertNotNull(creditCard);
+        System.out.println(creditCard);
     }
 
     @org.testng.annotations.Test
@@ -112,7 +121,7 @@ public class ArangoDBCreditCardRepositoryTest {
     @org.testng.annotations.Test
     public void testFindByCustomer() {
         CreditCard[] creditCards = repository.findByCustomer("18982455066");
-        Assert.assertEquals(3, creditCards.length);
+        Assert.assertEquals(4, creditCards.length);
         creditCards = repository.findByCustomer("18982455065");
         Assert.assertEquals(0, creditCards.length);
     }
@@ -130,6 +139,6 @@ public class ArangoDBCreditCardRepositoryTest {
     @org.testng.annotations.Test
     public void testSize() {
         int size = repository.size();
-        Assert.assertEquals(3, size);
+        Assert.assertEquals(4, size);
     }
 }

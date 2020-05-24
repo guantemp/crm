@@ -40,9 +40,12 @@ import org.javamoney.moneta.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -114,16 +117,17 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     }
 
     @Override
-    public AnonymousCard findByCardFaceNumber(String cardFaceNumber) {
+    public AnonymousCard[] findByCardFaceNumber(String cardFaceNumber) {
+        List<AnonymousCard> anonymousCardList = new ArrayList<>();
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card FILTER c.cardFaceNumber == @cardFaceNumber \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
                 "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
-        if (slices.hasNext())
-            return rebuild(slices.next());
-        return null;
+        while (slices.hasNext())
+            anonymousCardList.add(rebuild(slices.next()));
+        return anonymousCardList.toArray(new AnonymousCard[anonymousCardList.size()]);
     }
 
     @Override
@@ -154,20 +158,32 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         //balance
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
-        MonetaryAmount valuable = Money.of(valuableSlice.get("number").getAsBigDecimal(), valuableSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        VPackSlice giveSlice = balanceSlice.get("redPackets");
-        MonetaryAmount give = Money.of(giveSlice.get("number").getAsBigDecimal(), giveSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
-        Balance balance = new Balance(valuable, give);
+        MonetaryAmount valuable = toMonetaryAmount(valuableSlice);
+        VPackSlice redPacketsSlice = balanceSlice.get("redPackets");
+        MonetaryAmount redPackets = this.toMonetaryAmount(redPacketsSlice);
+        Balance balance = new Balance(valuable, redPackets);
         //smallChange
         VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
         VPackSlice smallChangeAmountSlice = smallChangeSlice.get("amount");
-        MonetaryAmount amount = FastMoney.of(smallChangeAmountSlice.get("number").getAsNumber(), smallChangeAmountSlice.get("currency").get("baseCurrency").get("currencyCode").getAsString());
+        MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
         //bonus
         Bonus bonus = new Bonus(slice.get("bonus").get("value").getAsLong());
 
         return new AnonymousCard(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, bonus, null);
+    }
+
+    private MonetaryAmount toMonetaryAmount(VPackSlice slice) {
+        String currencyCode = slice.get("currency").get("baseCurrency").get("currencyCode").getAsString();
+        MonetaryAmount amount = FastMoney.zero(Monetary.getCurrency(currencyCode));
+        String className = slice.get("_class").getAsString();
+        if (FastMoney.class.getName().equals(className)) {
+            amount = FastMoney.of(slice.get("number").getAsNumber().doubleValue() / 100000, currencyCode);
+        } else if (Money.class.getName().equals(className)) {
+            amount = Money.of(slice.get("number").getAsBigDecimal(), currencyCode);
+        }
+        return amount;
     }
 
 
