@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,36 +36,12 @@ public class Person extends Customer {
     private IdentityCard identityCard;
     private MonthDay birthday;
 
-    private Person(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
+    public Person(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
         super(id, name, freeze, spss, headPortrait);
         this.postalAddressBook = postalAddressBook;
         this.identityCard = identityCard;
         this.birthday = birthday;
     }
-
-    public Person(String id, String name, String paymentPassword) {
-        this(id, name, paymentPassword, true, Spss.EMPTY_SPSS, null, null, null, null);
-    }
-
-    /**
-     * @param id
-     * @param name
-     * @param paymentPassword
-     * @param freeze
-     * @param spss
-     * @param headPortrait
-     * @param postalAddressBook
-     * @param identityCard
-     * @param birthday
-     */
-    public Person(String id, String name, String paymentPassword, boolean freeze, Spss spss, URI headPortrait,
-                  PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
-        super(id, name, paymentPassword, freeze, spss, headPortrait);
-        this.postalAddressBook = postalAddressBook;
-        this.identityCard = identityCard;
-        this.birthday = birthday;
-    }
-
 
     public PostalAddressBook postalAddressBook() {
         return postalAddressBook;
@@ -87,7 +63,7 @@ public class Person extends Customer {
         }
     }
 
-    public void changeAcquiescencePostalAddress(PostalAddress address) {
+    public void resetAcquiescencePostalAddress(PostalAddress address) {
         Objects.requireNonNull(address, "address required");
         PostalAddressBook temp = postalAddressBook.changeAcquiescencePostalAddress(address);
         if (temp != postalAddressBook) {

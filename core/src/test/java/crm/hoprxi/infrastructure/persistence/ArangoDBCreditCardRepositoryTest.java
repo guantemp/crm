@@ -31,6 +31,7 @@ import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
+import crm.hoprxi.domain.model.customer.person.certificates.SimplifyAddress;
 import crm.hoprxi.domain.model.spss.Spss;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -59,9 +60,8 @@ public class ArangoDBCreditCardRepositoryTest {
         book = book.addAndSetAcquiescence(four);
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "杨史蒂夫",
-                new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "临夏直至区", "政和县", "撒旦镇"));
-        Person wang = new Person("18982455066", "不晓得都是富人的干扰", "666666", true, Spss.EMPTY_SPSS, null,
-                book, identityCard, MonthDay.of(4, 20));
+                new SimplifyAddress("四川", "临夏直至区", "政和县", "撒旦镇"));
+        Person wang = new Person("18982455066", "不晓得都是富人的干扰", true, Spss.EMPTY_SPSS, null, book, identityCard, MonthDay.of(4, 20));
         personRepository.save(wang);
 
         LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(1000, "CNY"), 30);
@@ -90,7 +90,7 @@ public class ArangoDBCreditCardRepositoryTest {
     public void testSave() {
         LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(250, "CNY"), 60);
         CreditCard card = new CreditCard(new Issuer("968974548754158X", "小市店"), "18982455066", "20281725", "112233", "81725",
-                true, TermOfValidity.PERMANENCE, lineOfCredit, new Balance(Money.of(-79.85, "CNY"), Money.of(15.25, "CNY")),
+                false, TermOfValidity.PERMANENCE, lineOfCredit, new Balance(Money.of(-79.85, "CNY"), Money.of(15.25, "CNY")),
                 new SmallChange(FastMoney.of(0.64, "CNY"), SmallChangDenominationEnum.ONE), null);
         repository.save(card);
     }

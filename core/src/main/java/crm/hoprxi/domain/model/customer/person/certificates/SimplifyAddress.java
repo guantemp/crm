@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 2019-12-20
  */
-public class Address {
+public class SimplifyAddress {
     //such as luzhou
     private String city;
     //such as sichuan
@@ -32,7 +32,7 @@ public class Address {
     private String county;
     private String details;
 
-    public Address(String province, String city, String county, String details) {
+    public SimplifyAddress(String province, String city, String county, String details) {
         this.city = city;
         this.province = province;
         this.county = county;
@@ -41,7 +41,7 @@ public class Address {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Address.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", SimplifyAddress.class.getSimpleName() + "[", "]")
                 .add("city='" + city + "'")
                 .add("province='" + province + "'")
                 .add("county='" + county + "'")
@@ -54,12 +54,13 @@ public class Address {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Address address = (Address) o;
+        SimplifyAddress simplifyAddress = (SimplifyAddress) o;
 
-        if (city != null ? !city.equals(address.city) : address.city != null) return false;
-        if (province != null ? !province.equals(address.province) : address.province != null) return false;
-        if (county != null ? !county.equals(address.county) : address.county != null) return false;
-        return details != null ? details.equals(address.details) : address.details == null;
+        if (city != null ? !city.equals(simplifyAddress.city) : simplifyAddress.city != null) return false;
+        if (province != null ? !province.equals(simplifyAddress.province) : simplifyAddress.province != null)
+            return false;
+        if (county != null ? !county.equals(simplifyAddress.county) : simplifyAddress.county != null) return false;
+        return details != null ? details.equals(simplifyAddress.details) : simplifyAddress.details == null;
     }
 
     @Override

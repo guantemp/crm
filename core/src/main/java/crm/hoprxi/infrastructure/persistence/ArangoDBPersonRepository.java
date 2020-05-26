@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,19 +25,17 @@ import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import crm.hoprxi.domain.model.collaborator.Address;
 import crm.hoprxi.domain.model.collaborator.Contact;
-import crm.hoprxi.domain.model.customer.Customer;
 import crm.hoprxi.domain.model.customer.PostalAddress;
 import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
+import crm.hoprxi.domain.model.customer.person.certificates.SimplifyAddress;
 import crm.hoprxi.domain.model.spss.Spss;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.time.MonthDay;
 import java.util.*;
@@ -50,23 +48,20 @@ import java.util.*;
 public class ArangoDBPersonRepository implements PersonRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPersonRepository.class);
-    private static Field paymentPasswordField;
     private static Constructor<Person> personConstructor;
-
-    static {
-        try {
-            personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, boolean.class, Spss.class, URI.class,
-                    PostalAddressBook.class, IdentityCard.class, MonthDay.class);
-            personConstructor.setAccessible(true);
-            paymentPasswordField = Customer.class.getDeclaredField("paymentPassword");
-            paymentPasswordField.setAccessible(true);
-        } catch (NoSuchFieldException | NoSuchMethodException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("The Person class cannot find such a field or constructor", e);
+    /*
+        static {
+            try {
+                personConstructor = Person.class.getDeclaredConstructor(String.class, String.class, boolean.class, Spss.class, URI.class,
+                        PostalAddressBook.class, IdentityCard.class, MonthDay.class);
+                personConstructor.setAccessible(true);
+            } catch (NoSuchMethodException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("The Person class cannot find such a field or constructor", e);
+                }
             }
         }
-    }
-
+    */
     private final ArangoDatabase crm;
 
     public ArangoDBPersonRepository(String databaseName) {
@@ -92,22 +87,14 @@ public class ArangoDBPersonRepository implements PersonRepository {
         VPackSlice slice = crm.collection("person").getDocument(id, VPackSlice.class);
         //ArangoGraph graph = crm.graph("core");
         //VPackSlice slice = graph.vertexCollection("person").getVertex(id, VPackSlice.class);
-        try {
-            return rebuild(slice);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Can't rebuild person", e);
-            }
-        }
-        return null;
+        return rebuild(slice);
     }
 
-    private Person rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private Person rebuild(VPackSlice slice) {
         if (slice == null)
             return null;
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         String name = slice.get("name").getAsString();
-        String paymentPassword = slice.get("paymentPassword").getAsString();
         boolean freeze = slice.get("freeze").getAsBoolean();
         Spss spss = Spss.EMPTY_SPSS;
         if (!slice.get("spss").isNone()) {
@@ -146,10 +133,10 @@ public class ArangoDBPersonRepository implements PersonRepository {
             VPackSlice identityCardSlice = slice.get("identityCard");
             String number = identityCardSlice.get("number").getAsString();
             String identityName = identityCardSlice.get("name").getAsString();
-            VPackSlice addressSlice = identityCardSlice.get("address");
-            crm.hoprxi.domain.model.customer.person.certificates.Address address = new crm.hoprxi.domain.model.customer.person.certificates.Address(addressSlice.get("province").getAsString(),
+            VPackSlice addressSlice = identityCardSlice.get("simplifyAddress");
+            SimplifyAddress simplifyAddress = new SimplifyAddress(addressSlice.get("province").getAsString(),
                     addressSlice.get("city").getAsString(), addressSlice.get("county").getAsString(), addressSlice.get("details").getAsString());
-            identityCard = new IdentityCard(number, identityName, address);
+            identityCard = new IdentityCard(number, identityName, simplifyAddress);
         }
 
         MonthDay birthday = null;
@@ -157,8 +144,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             VPackSlice birthdaySlice = slice.get("birthday");
             birthday = MonthDay.of(birthdaySlice.get("month").getAsInt(), birthdaySlice.get("day").getAsInt());
         }
-        Person person = personConstructor.newInstance(id, name, freeze, spss, headPortrait, book, identityCard, birthday);
-        paymentPasswordField.set(person, paymentPassword);
+        Person person = new Person(id, name, freeze, spss, headPortrait, book, identityCard, birthday);
         return person;
     }
 
@@ -171,13 +157,8 @@ public class ArangoDBPersonRepository implements PersonRepository {
         final String query = "FOR p IN person LIMIT @offset,@limit RETURN p";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         final ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
-        try {
             for (int i = 0; slices.hasNext(); i++)
                 people[i] = rebuild(slices.next());
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Can't rebuild person", e);
-        }
         return people;
     }
 

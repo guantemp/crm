@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package crm.hoprxi.domain.model.customer;
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.domain.model.DomainRegistry;
 import crm.hoprxi.domain.model.spss.Spss;
-import mi.hoprxi.crypto.HashService;
 
 import java.net.URI;
 import java.util.Objects;
@@ -29,7 +28,7 @@ import java.util.regex.Pattern;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2019-11-26
+ * @version 0.0.2 builder 2020-05-26
  */
 public abstract class Customer {
     private static final String RESERVED_WORD = "anonymous";
@@ -38,33 +37,22 @@ public abstract class Customer {
     private static final Pattern CHINA_MOBILE_PHONE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
     private static final Pattern CHINA_TELEPHONE_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-z]{2,}$");
-    private static final Pattern TRANSACTION_PASSWORD_PATTERN = Pattern.compile("^\\d{6,6}$");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
     private URI headPortrait;
     private Spss spss;
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, true, Spss.EMPTY_SPSS, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, false, Spss.EMPTY_SPSS, null) {
         @Override
         public void rename(String newName) {
             //do nothing
         }
     };
-    private String paymentPassword;     //transaction password
     private boolean freeze;
 
-    protected Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait) {
+    public Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait) {
         setId(id);
         setName(name);
-        this.freeze = freeze;
-        setSpss(spss);
-        this.headPortrait = headPortrait;
-    }
-
-    public Customer(String id, String name, String paymentPassword, boolean freeze, Spss spss, URI headPortrait) {
-        setId(id);
-        setName(name);
-        setPaymentPassword(paymentPassword);
         this.freeze = freeze;
         setSpss(spss);
         this.headPortrait = headPortrait;
@@ -72,8 +60,10 @@ public abstract class Customer {
 
     private void setId(String id) {
         id = Objects.requireNonNull(id, "id required").trim();
-        if (!id.equals(RESERVED_WORD))//排除保留字anonymous
-            if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesIdRule(id)) //验证手机或者邮箱
+        //Exclude reserved words:anonymous
+        if (!id.equals(RESERVED_WORD))
+            //Verify phone or email
+            if (id.isEmpty() || id.length() > ID_MAX_LENGTH || !isCompliesIdRule(id))
                 throw new IllegalArgumentException("Not a valid cell phone number!");
         this.id = id;
     }
@@ -94,17 +84,6 @@ public abstract class Customer {
         this.name = name;
     }
 
-    private void setPaymentPassword(String paymentPassword) {
-        paymentPassword = Objects.requireNonNull(paymentPassword, "transactionPassword is required").trim();
-        if (!paymentPassword.isEmpty()) {
-            Matcher matcher = TRANSACTION_PASSWORD_PATTERN.matcher(paymentPassword);
-            if (!matcher.matches())
-                throw new IllegalArgumentException("transactionPassword must 6 digit number");
-        }
-        HashService hashService = DomainRegistry.getHashService();
-        this.paymentPassword = hashService.hash(paymentPassword);
-    }
-
     private void setSpss(Spss spss) {
         this.spss = Objects.requireNonNull(spss, "data required");
     }
@@ -119,20 +98,6 @@ public abstract class Customer {
         }
     }
 
-    /**
-     * @param currentPaymentPassword
-     * @param changedPaymentPassword
-     */
-    public void changeTransactionPassword(String currentPaymentPassword, String changedPaymentPassword) {
-        changedPaymentPassword = Objects.requireNonNull(changedPaymentPassword, "changedPaymentPassword required").trim();
-        if (currentPaymentPassword.equals(changedPaymentPassword))
-            throw new IllegalArgumentException("paymentPassword will not change");
-        HashService hashService = DomainRegistry.getHashService();
-        if (hashService.check(currentPaymentPassword, paymentPassword)) {
-            this.paymentPassword = hashService.hash(changedPaymentPassword);
-        }
-    }
-
     public String id() {
         return id;
     }
@@ -141,10 +106,6 @@ public abstract class Customer {
         return headPortrait;
     }
 
-    public boolean authenticatePaymentPassword(String paymentPassword) {
-        HashService hash = DomainRegistry.getHashService();
-        return hash.check(paymentPassword, this.paymentPassword);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -188,7 +149,6 @@ public abstract class Customer {
                 .add("name='" + name + "'")
                 .add("headPortrait=" + headPortrait)
                 .add("spss=" + spss)
-                .add("transactionPassword='" + paymentPassword + "'")
                 .add("freeze=" + freeze)
                 .toString();
     }

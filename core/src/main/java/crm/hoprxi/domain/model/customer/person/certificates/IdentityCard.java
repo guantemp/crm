@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 package crm.hoprxi.domain.model.customer.person.certificates;
-
-
 
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -32,12 +30,12 @@ public class IdentityCard {
     private static final Pattern NUMBER = Pattern.compile("^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$");
     private String number;
     private String name;
-    private Address address;
+    private SimplifyAddress simplifyAddress;
 
-    public IdentityCard(String number, String name, Address address) {
+    public IdentityCard(String number, String name, SimplifyAddress simplifyAddress) {
         this.number = number;
         this.name = name;
-        this.address = address;
+        this.simplifyAddress = simplifyAddress;
     }
 
     public Sex sex() {
@@ -75,7 +73,7 @@ public class IdentityCard {
         return new StringJoiner(", ", IdentityCard.class.getSimpleName() + "[", "]")
                 .add("number='" + number + "'")
                 .add("name='" + name + "'")
-                .add("address=" + address)
+                .add("address=" + simplifyAddress)
                 .toString();
     }
 }

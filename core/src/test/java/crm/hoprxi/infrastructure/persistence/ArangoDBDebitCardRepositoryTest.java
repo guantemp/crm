@@ -30,6 +30,7 @@ import crm.hoprxi.domain.model.customer.person.Person;
 import crm.hoprxi.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.domain.model.customer.person.certificates.IdentityCard;
+import crm.hoprxi.domain.model.customer.person.certificates.SimplifyAddress;
 import crm.hoprxi.domain.model.spss.Spss;
 import org.javamoney.moneta.Money;
 import org.junit.AfterClass;
@@ -60,9 +61,8 @@ public class ArangoDBDebitCardRepositoryTest {
         addressBook = addressBook.addAndSetAcquiescence(four);
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "的习惯如",
-                new crm.hoprxi.domain.model.customer.person.certificates.Address("四川", "乐山市", "附加费", "沙湖路22"));
-        Person guan = new Person("18982455055", "hope xi'er", "333222", true, Spss.EMPTY_SPSS, null,
-                addressBook, identityCard, MonthDay.of(6, 4));
+                new SimplifyAddress("四川", "乐山市", "附加费", "沙湖路22"));
+        Person guan = new Person("18982455055", "hope xi'er", true, Spss.EMPTY_SPSS, null, addressBook, identityCard, MonthDay.of(6, 4));
         personRepository.save(guan);
 
         DebitCard card1 = new DebitCard(new Issuer("968974548754158X", "小市店"), "18982455055", "667788", "112233", "888888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
