@@ -55,7 +55,7 @@ public class ArangoDBPersonRepositoryTest {
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "官相焕",
                 new SimplifyAddress("四川", "乐山市", "市中区", "沙湖路22"));
-        Person guan = new Person("18982455855", "官相焕", true, Spss.EMPTY_SPSS, null,
+        Person guan = new Person("18982455855", "官相焕", false, Spss.EMPTY_SPSS, null,
                 book, identityCard, MonthDay.of(4, 20));
         repository.save(guan);
 
@@ -67,7 +67,7 @@ public class ArangoDBPersonRepositoryTest {
                 null, null, MonthDay.of(11, 12));
         repository.save(du);
 
-        Person yang = new Person("13618514821", "杨安顺", true, Spss.EMPTY_SPSS, null,
+        Person yang = new Person("13618514821", "杨安顺", false, Spss.EMPTY_SPSS, null,
                 new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "贵州", "贵阳市", "南明区", "电视台", "宝山南路208号", "325897"),
                         new Contact("杨安顺", "13618514821", null))), null, MonthDay.of(1, 12));
         repository.save(yang);
@@ -87,6 +87,7 @@ public class ArangoDBPersonRepositoryTest {
     public void find() {
         Person guan = repository.find("18982455855");
         Assert.assertNotNull(guan);
+        System.out.println(guan);
         Person wang = repository.find("18982455866");
         Assert.assertNotNull(wang);
         Person yang = repository.find("13618514821");

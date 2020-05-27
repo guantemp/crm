@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import mi.hoprxi.util.NLS;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-07-25
+ * @version 0.0.1 builder 2020-05-27
  */
 public class Label extends NLS {
-    private static final String BUNDLE_NAME = "cc.foxtail.crm.core.infrastructure.resource.label"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "crm.hoprxi.infrastructure.resource.label"; //$NON-NLS-1$
 
     public static String MantissaProcessing_ROUNDING;
     public static String MantissaProcessing_FLOOR;
@@ -38,6 +38,10 @@ public class Label extends NLS {
     public static String Payment_CmPay;
     public static String Payment_PayPal;
     public static String Payment_Lakala;
+    public static String Payment_Cloud_flash;
+
+    public static String SEX_MAN;
+    public static String SEX_WOMAN;
 
     static {
         NLS.initializeMessages(BUNDLE_NAME, Label.class);
