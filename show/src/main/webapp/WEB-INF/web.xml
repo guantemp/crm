@@ -34,12 +34,12 @@
     </context-param>
 
     <listener>
-        <listener-class>crm.hoprxi.show.servlet.listener.WeChatTokenObtainJobListener</listener-class>
+        <listener-class>crm.hoprxi.core.core.show.servlet.listener.WeChatTokenObtainJobListener</listener-class>
     </listener>
 
     <servlet>
         <servlet-name>wechatplugin</servlet-name>
-        <servlet-class>crm.hoprxi.show.servlet.WeChatDeveloperServlet</servlet-class>
+        <servlet-class>crm.hoprxi.core.core.show.servlet.WeChatDeveloperServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>wechatplugin</servlet-name>
