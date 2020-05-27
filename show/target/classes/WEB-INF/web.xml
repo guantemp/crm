@@ -1,0 +1,49 @@
+<!--
+  ~ Copyright (c) 2020. www.hoprxi.com All Rights Reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <display-name>Archetype Created Web Application</display-name>
+    <context-param>
+        <param-name>url</param-name>
+        <param-value>https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential</param-value>
+    </context-param>
+    <context-param>
+        <param-name>appid</param-name>
+        <param-value>wxefffc0d452239fda</param-value>
+    </context-param>
+    <context-param>
+        <param-name>secret</param-name>
+        <param-value>608d30fd84ddc2db715630fca90a2590</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>crm.hoprxi.core.core.show.servlet.listener.WeChatTokenObtainJobListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>wechatplugin</servlet-name>
+        <servlet-class>crm.hoprxi.core.core.show.servlet.WeChatDeveloperServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>wechatplugin</servlet-name>
+        <url-pattern>wechatplugin</url-pattern>
+    </servlet-mapping>
+
+</web-app>
