@@ -15,6 +15,8 @@
  */
 package crm.hoprxi.core.domain.model.customer.person.certificates;
 
+import crm.hoprxi.core.domain.model.customer.SimplifyAddress;
+
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;

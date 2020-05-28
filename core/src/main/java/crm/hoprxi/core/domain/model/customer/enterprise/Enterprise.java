@@ -16,15 +16,12 @@
 
 package crm.hoprxi.core.domain.model.customer.enterprise;
 
-import crm.hoprxi.core.domain.model.customer.PostalAddress;
-
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-26
+ * @version 0.0.1 2020-05-26
  */
 public class Enterprise {
-    private PostalAddress postalAddress;
     private Register register;
     private PublicAccount publicAccount;
 }

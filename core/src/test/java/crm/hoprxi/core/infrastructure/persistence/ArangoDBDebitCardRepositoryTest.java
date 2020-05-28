@@ -22,15 +22,14 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.DebitCard;
 import crm.hoprxi.core.domain.model.card.DebitCardRepository;
 import crm.hoprxi.core.domain.model.card.TermOfValidity;
-import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
+import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.Person;
 import crm.hoprxi.core.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.core.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.core.domain.model.customer.person.certificates.SimplifyAddress;
 import crm.hoprxi.core.domain.model.spss.Spss;
 import org.javamoney.moneta.Money;
 import org.junit.AfterClass;
@@ -53,15 +52,15 @@ public class ArangoDBDebitCardRepositoryTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         PostalAddressBook addressBook = new PostalAddressBook();
-        PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
+        PostalAddress address1 = new PostalAddress(SimplifyAddress.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
                 new Contact("富含糖分", "18982455055", "0830-2517218"));
         addressBook = addressBook.add(address1);
-        PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "乐山市", "市中区", "消粑粑街道", "大田路22", "664000"),
+        PostalAddress four = new PostalAddress(new SimplifyAddress(Locale.CANADA, "四川", "乐山市", "市中区", "消粑粑街道", "大田路22", "664000"),
                 new Contact("符合停机和", "13679692401", "0833-3217589"));
         addressBook = addressBook.addAndSetAcquiescence(four);
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "的习惯如",
-                new SimplifyAddress("四川", "乐山市", "附加费", "沙湖路22"));
+                new crm.hoprxi.core.domain.model.customer.SimplifyAddress("四川", "乐山市", "附加费", "沙湖路22"));
         Person guan = new Person("18982455055", "hope xi'er", true, Spss.EMPTY_SPSS, null, addressBook, identityCard, MonthDay.of(6, 4));
         personRepository.save(guan);
 

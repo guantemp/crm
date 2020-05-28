@@ -22,9 +22,9 @@ import mi.hoprxi.crypto.HashService;
 import mi.hoprxi.crypto.SM3Hash;
 
 /***
- * @author <a href="mailto:myis1000@gmail.com">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2016-10-24
+ * @version 0.0.1 2019-10-24
  */
 public class DomainRegistry {
     public static DomainEventPublisher domainEventPublisher() {

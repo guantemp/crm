@@ -23,7 +23,7 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2019-07-19
  */
-public final class Address {
+public final class SimplifyAddress {
     // such as Chinese
     private Locale locale;
     //such as luzhou
@@ -38,7 +38,7 @@ public final class Address {
     private String street;
     private String details;
 
-    public Address(Locale locale, String province, String city, String county, String street, String details, String zipCode) {
+    public SimplifyAddress(Locale locale, String province, String city, String county, String street, String details, String zipCode) {
         setLocale(locale);
         setProvince(province);
         setCity(city);
@@ -48,12 +48,12 @@ public final class Address {
         setZipCode(zipCode);
     }
 
-    public Address(String province, String city, String county, String street, String details, String zipCode) {
+    public SimplifyAddress(String province, String city, String county, String street, String details, String zipCode) {
         this(Locale.CHINA, province, city, county, street, details, zipCode);
     }
 
-    public static Address chinaAddress(String province, String city, String county, String street, String details, String zipCode) {
-        return new Address(Locale.CHINA, province, city, county, street, details, zipCode);
+    public static SimplifyAddress chinaAddress(String province, String city, String county, String street, String details, String zipCode) {
+        return new SimplifyAddress(Locale.CHINA, province, city, county, street, details, zipCode);
     }
 
     private void setLocale(Locale locale) {
@@ -126,7 +126,7 @@ public final class Address {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Address address = (Address) o;
+        SimplifyAddress address = (SimplifyAddress) o;
 
         if (locale != null ? !locale.equals(address.locale) : address.locale != null) return false;
         if (city != null ? !city.equals(address.city) : address.city != null) return false;

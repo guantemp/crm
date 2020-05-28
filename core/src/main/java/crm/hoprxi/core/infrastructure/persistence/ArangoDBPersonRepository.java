@@ -23,14 +23,13 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
+import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.Person;
 import crm.hoprxi.core.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.core.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.core.domain.model.customer.person.certificates.SimplifyAddress;
 import crm.hoprxi.core.domain.model.spss.Spss;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +112,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             while (iter.hasNext()) {
                 VPackSlice postalAddress = iter.next();
                 VPackSlice addressSlice = postalAddress.get("address");
-                Address address = new Address(Locale.getDefault(), addressSlice.get("province").getAsString(), addressSlice.get("city").getAsString(), addressSlice.get("county").getAsString(),
+                SimplifyAddress simplifyAddress = new SimplifyAddress(Locale.getDefault(), addressSlice.get("province").getAsString(), addressSlice.get("city").getAsString(), addressSlice.get("county").getAsString(),
                         addressSlice.get("street").getAsString(), addressSlice.get("details").getAsString(), addressSlice.get("zipCode").getAsString());
                 VPackSlice contactSlice = postalAddress.get("contact");
                 String mobilePhone = null;
@@ -123,7 +122,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
                 if (!contactSlice.get("telephone").isNone() && !contactSlice.get("telephone").isNull())
                     telephone = contactSlice.get("telephone").getAsString();
                 Contact contact = new Contact(contactSlice.get("fullName").getAsString(), mobilePhone, telephone);
-                list.add(new PostalAddress(address, contact));
+                list.add(new PostalAddress(simplifyAddress, contact));
             }
             book = new PostalAddressBook(list.toArray(new PostalAddress[list.size()]), acquiescence);
         }
@@ -134,7 +133,7 @@ public class ArangoDBPersonRepository implements PersonRepository {
             String number = identityCardSlice.get("number").getAsString();
             String identityName = identityCardSlice.get("name").getAsString();
             VPackSlice addressSlice = identityCardSlice.get("simplifyAddress");
-            SimplifyAddress simplifyAddress = new SimplifyAddress(addressSlice.get("province").getAsString(),
+            crm.hoprxi.core.domain.model.customer.SimplifyAddress simplifyAddress = new crm.hoprxi.core.domain.model.customer.SimplifyAddress(addressSlice.get("province").getAsString(),
                     addressSlice.get("city").getAsString(), addressSlice.get("county").getAsString(), addressSlice.get("details").getAsString());
             identityCard = new IdentityCard(number, identityName, simplifyAddress);
         }

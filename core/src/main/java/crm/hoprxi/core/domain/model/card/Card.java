@@ -36,7 +36,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-08-12
+ * @version 0.0.1 builder 2020-04-12
  */
 public abstract class Card {
     private static final int ID_MAX_LENGTH = 64;

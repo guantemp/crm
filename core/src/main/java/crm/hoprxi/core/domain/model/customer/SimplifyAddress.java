@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.customer.person.certificates;
+package crm.hoprxi.core.domain.model.customer;
 
 import java.util.StringJoiner;
 

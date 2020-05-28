@@ -17,7 +17,6 @@
 package crm.hoprxi.core.domain.model.customer.person;
 
 import crm.hoprxi.core.domain.model.customer.Customer;
-import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.certificates.IdentityCard;
 import crm.hoprxi.core.domain.model.spss.Spss;
 
@@ -32,43 +31,13 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-11-26
  */
 public class Person extends Customer {
-    private PostalAddressBook postalAddressBook;
     private IdentityCard identityCard;
     private MonthDay birthday;
 
     public Person(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook, IdentityCard identityCard, MonthDay birthday) {
-        super(id, name, freeze, spss, headPortrait);
-        this.postalAddressBook = postalAddressBook;
+        super(id, name, freeze, spss, headPortrait, postalAddressBook);
         this.identityCard = identityCard;
         this.birthday = birthday;
-    }
-
-    public PostalAddressBook postalAddressBook() {
-        return postalAddressBook;
-    }
-
-    public void addPostalAddress(PostalAddress address) {
-        Objects.requireNonNull(address, "address required");
-        PostalAddressBook temp = postalAddressBook.add(address);
-        if (temp != postalAddressBook) {
-            postalAddressBook = temp;
-        }
-    }
-
-    public void removePostalAddress(PostalAddress address) {
-        Objects.requireNonNull(address, "address required");
-        PostalAddressBook temp = postalAddressBook.remove(address);
-        if (temp != postalAddressBook) {
-            postalAddressBook = temp;
-        }
-    }
-
-    public void resetAcquiescencePostalAddress(PostalAddress address) {
-        Objects.requireNonNull(address, "address required");
-        PostalAddressBook temp = postalAddressBook.changeAcquiescencePostalAddress(address);
-        if (temp != postalAddressBook) {
-            postalAddressBook = temp;
-        }
     }
 
     public IdentityCard identityCard() {
@@ -105,7 +74,6 @@ public class Person extends Customer {
     public String toString() {
         return new StringJoiner(", ", Person.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
-                .add("postalAddressBook=" + postalAddressBook)
                 .add("identityCard=" + identityCard)
                 .add("birthday=" + birthday)
                 .toString();

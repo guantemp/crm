@@ -16,8 +16,8 @@
 package crm.hoprxi.core.domain.model.customer;
 
 
-import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
+import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 
 import java.util.Objects;
 
@@ -27,10 +27,10 @@ import java.util.Objects;
  * @version 0.0.1 builder 2019-07-19
  */
 public class PostalAddress {
-    private Address address;
+    private SimplifyAddress address;
     private Contact contact;
 
-    public PostalAddress(Address address, Contact contact) {
+    public PostalAddress(SimplifyAddress address, Contact contact) {
         setAddress(address);
         setContact(contact);
     }
@@ -39,11 +39,11 @@ public class PostalAddress {
         this.contact = Objects.requireNonNull(contact, "contact required");
     }
 
-    private void setAddress(Address address) {
+    private void setAddress(SimplifyAddress address) {
         this.address = Objects.requireNonNull(address, "address required");
     }
 
-    public Address address() {
+    public SimplifyAddress address() {
         return address;
     }
 

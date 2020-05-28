@@ -16,18 +16,18 @@
 
 package crm.hoprxi.core.domain.model.customer.enterprise;
 
-import crm.hoprxi.core.domain.model.collaborator.Address;
+import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 
 import java.time.LocalDate;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-08-26
+ * @version 0.0.1 2020-05-26
  */
 public class Register {
     private String name;
     private String unifiedSocialCreditCode;
-    private Address address;
+    private SimplifyAddress address;
     private LocalDate expired;
 }

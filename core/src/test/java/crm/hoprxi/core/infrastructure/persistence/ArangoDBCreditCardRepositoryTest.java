@@ -23,15 +23,14 @@ import crm.hoprxi.core.domain.model.card.CreditCard;
 import crm.hoprxi.core.domain.model.card.CreditCardRepository;
 import crm.hoprxi.core.domain.model.card.LineOfCredit;
 import crm.hoprxi.core.domain.model.card.TermOfValidity;
-import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
+import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.Person;
 import crm.hoprxi.core.domain.model.customer.person.PersonRepository;
 import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.core.domain.model.customer.person.certificates.IdentityCard;
-import crm.hoprxi.core.domain.model.customer.person.certificates.SimplifyAddress;
 import crm.hoprxi.core.domain.model.spss.Spss;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -52,15 +51,15 @@ public class ArangoDBCreditCardRepositoryTest {
     @org.testng.annotations.BeforeMethod
     public void setUp() {
         PostalAddressBook book = new PostalAddressBook();
-        PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "茜草街道", "碧桂园5栋四单元902", "614000"),
+        PostalAddress address1 = new PostalAddress(SimplifyAddress.chinaAddress("四川省", "泸州市", "龙马潭区", "茜草街道", "碧桂园5栋四单元902", "614000"),
                 new Contact("五人读过", "18982455062", "0830-2581218"));
         book = book.add(address1);
-        PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "甘肃省", "临夏直至区", "政和县", "撒旦镇", "阿萨是发", "515000"),
+        PostalAddress four = new PostalAddress(new SimplifyAddress(Locale.CANADA, "甘肃省", "临夏直至区", "政和县", "撒旦镇", "阿萨是发", "515000"),
                 new Contact("杨的合同", "13679695687", "0852-3217589"));
         book = book.addAndSetAcquiescence(four);
 
         IdentityCard identityCard = new IdentityCard("510107199803073838", "杨史蒂夫",
-                new SimplifyAddress("四川", "临夏直至区", "政和县", "撒旦镇"));
+                new crm.hoprxi.core.domain.model.customer.SimplifyAddress("四川", "临夏直至区", "政和县", "撒旦镇"));
         Person wang = new Person("18982455066", "不晓得都是富人的干扰", true, Spss.EMPTY_SPSS, null, book, identityCard, MonthDay.of(4, 20));
         personRepository.save(wang);
 

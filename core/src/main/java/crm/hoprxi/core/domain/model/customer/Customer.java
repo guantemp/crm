@@ -17,6 +17,7 @@ package crm.hoprxi.core.domain.model.customer;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.DomainRegistry;
+import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
 import crm.hoprxi.core.domain.model.spss.Spss;
 
 import java.net.URI;
@@ -42,20 +43,22 @@ public abstract class Customer {
     private String name;
     private URI headPortrait;
     private Spss spss;
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, false, Spss.EMPTY_SPSS, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, false, Spss.EMPTY_SPSS, null, null) {
         @Override
         public void rename(String newName) {
             //do nothing
         }
     };
+    private PostalAddressBook postalAddressBook;
     private boolean freeze;
 
-    public Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait) {
+    public Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook) {
         setId(id);
         setName(name);
         this.freeze = freeze;
         setSpss(spss);
         this.headPortrait = headPortrait;
+        this.postalAddressBook = postalAddressBook;
     }
 
     private void setId(String id) {
@@ -97,6 +100,35 @@ public abstract class Customer {
             DomainRegistry.domainEventPublisher().publish(new CustomerRenamed(id, newName));
         }
     }
+
+    public PostalAddressBook postalAddressBook() {
+        return postalAddressBook;
+    }
+
+    public void addPostalAddress(PostalAddress address) {
+        Objects.requireNonNull(address, "address required");
+        PostalAddressBook temp = postalAddressBook.add(address);
+        if (temp != postalAddressBook) {
+            postalAddressBook = temp;
+        }
+    }
+
+    public void removePostalAddress(PostalAddress address) {
+        Objects.requireNonNull(address, "address required");
+        PostalAddressBook temp = postalAddressBook.remove(address);
+        if (temp != postalAddressBook) {
+            postalAddressBook = temp;
+        }
+    }
+
+    public void resetAcquiescencePostalAddress(PostalAddress address) {
+        Objects.requireNonNull(address, "address required");
+        PostalAddressBook temp = postalAddressBook.changeAcquiescencePostalAddress(address);
+        if (temp != postalAddressBook) {
+            postalAddressBook = temp;
+        }
+    }
+
 
     public String id() {
         return id;
@@ -150,6 +182,7 @@ public abstract class Customer {
                 .add("headPortrait=" + headPortrait)
                 .add("spss=" + spss)
                 .add("freeze=" + freeze)
+                .add("postalAddressBook=" + postalAddressBook)
                 .toString();
     }
 }
