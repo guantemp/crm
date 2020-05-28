@@ -63,7 +63,7 @@ public class Person extends Customer {
     }
 
     public boolean isTodayBirthday() {
-        return MonthDay.now().compareTo(birthday) == 0 ? true : false;
+        return MonthDay.now().compareTo(birthday) == 0;
     }
 
     public PersonSnapshot toSnapshot() {

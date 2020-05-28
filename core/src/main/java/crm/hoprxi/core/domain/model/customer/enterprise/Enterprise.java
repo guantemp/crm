@@ -16,12 +16,33 @@
 
 package crm.hoprxi.core.domain.model.customer.enterprise;
 
+import crm.hoprxi.core.domain.model.customer.Customer;
+import crm.hoprxi.core.domain.model.customer.Vip;
+import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
+import crm.hoprxi.core.domain.model.spss.Spss;
+
+import java.net.URI;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2020-05-26
  */
-public class Enterprise {
+public class Enterprise extends Customer {
     private Register register;
     private PublicAccount publicAccount;
+
+    public Enterprise(String id, String name, boolean freeze, Vip vip, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook, Register register, PublicAccount publicAccount) {
+        super(id, name, freeze, vip, spss, headPortrait, postalAddressBook);
+        this.register = register;
+        this.publicAccount = publicAccount;
+    }
+
+    @Override
+    public String toString() {
+        return "Enterprise{" +
+                "register=" + register +
+                ", publicAccount=" + publicAccount +
+                "} " + super.toString();
+    }
 }

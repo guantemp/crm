@@ -43,6 +43,7 @@ public abstract class Customer {
     private String name;
     private URI headPortrait;
     private Spss spss;
+    private Vip vip;
     public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, false, Spss.EMPTY_SPSS, null, null) {
         @Override
         public void rename(String newName) {
@@ -53,12 +54,24 @@ public abstract class Customer {
     private boolean freeze;
 
     public Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook) {
+        this(id, name, freeze, Vip.NOT, spss, headPortrait, postalAddressBook);
+    }
+
+    public Customer(String id, String name, boolean freeze, Vip vip, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook) {
         setId(id);
         setName(name);
         this.freeze = freeze;
+        setVip(vip);
         setSpss(spss);
         this.headPortrait = headPortrait;
         this.postalAddressBook = postalAddressBook;
+    }
+
+    private boolean isCompliesIdRule(String id) {
+        Matcher mobile = CHINA_MOBILE_PHONE_PATTERN.matcher(id);
+        Matcher tel = CHINA_TELEPHONE_PATTERN.matcher(id);
+        Matcher email = EMAIL_PATTERN.matcher(id);
+        return mobile.matches() || tel.matches() || email.matches();
     }
 
     private void setId(String id) {
@@ -71,13 +84,10 @@ public abstract class Customer {
         this.id = id;
     }
 
-    private boolean isCompliesIdRule(String id) {
-        Matcher mobile = CHINA_MOBILE_PHONE_PATTERN.matcher(id);
-        Matcher tel = CHINA_TELEPHONE_PATTERN.matcher(id);
-        Matcher email = EMAIL_PATTERN.matcher(id);
-        if (mobile.matches() || tel.matches() || email.matches())
-            return true;
-        return false;
+    public boolean isVip() {
+        if (vip == Vip.NOT)
+            return false;
+        return vip.isWithinThePeriodOfValidity();
     }
 
     private void setName(String name) {
@@ -99,6 +109,10 @@ public abstract class Customer {
             name = newName;
             DomainRegistry.domainEventPublisher().publish(new CustomerRenamed(id, newName));
         }
+    }
+
+    private void setVip(Vip vip) {
+        this.vip = Objects.requireNonNull(vip, "vip required");
     }
 
     public PostalAddressBook postalAddressBook() {
@@ -129,7 +143,6 @@ public abstract class Customer {
         }
     }
 
-
     public String id() {
         return id;
     }
@@ -137,7 +150,6 @@ public abstract class Customer {
     public URI headPortrait() {
         return headPortrait;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -181,8 +193,9 @@ public abstract class Customer {
                 .add("name='" + name + "'")
                 .add("headPortrait=" + headPortrait)
                 .add("spss=" + spss)
-                .add("freeze=" + freeze)
+                .add("vip=" + vip)
                 .add("postalAddressBook=" + postalAddressBook)
+                .add("freeze=" + freeze)
                 .toString();
     }
 }
