@@ -13,43 +13,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.core.domain.model.customer.person;
+
+package crm.hoprxi.core.domain.model.customer.enterprise;
 
 import mi.hoprxi.id.LongId;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-05-20
+ * @version 0.0.1 builder 2020-05-29
  */
-public interface PersonRepository {
+public interface EnterpriseRepository {
+    default String nextIdentity() {
+        return String.valueOf(LongId.generate());
+    }
+
     /**
-     * @param person
+     * @param enterprise
      */
-    void save(Person person);
+    void save(Enterprise enterprise);
 
     /**
      * @param id
      * @return
      */
-    Person find(String id);
+    Enterprise find(String id);
+
+    /**
+     * @param id
+     */
+    void remove(String id);
 
     /**
      * @param offset
      * @param limit
      * @return
      */
-    Person[] findAll(long offset, int limit);
-
-    /**
-     * @return
-     */
-    default String nextIdentity() {
-        return String.valueOf(LongId.generate());
-    }
-
-    /**
-     * @param id
-     */
-    void remove(String id);
+    Enterprise[] findAll(int offset, int limit);
 }

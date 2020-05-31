@@ -35,6 +35,9 @@ import crm.hoprxi.core.domain.model.spss.Spss;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.junit.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.time.MonthDay;
 import java.util.Locale;
@@ -48,7 +51,7 @@ public class ArangoDBCreditCardRepositoryTest {
     private static final CreditCardRepository repository = new ArangoDBCreditCardRepository("crm");
     private static final PersonRepository personRepository = new ArangoDBPersonRepository("crm");
 
-    @org.testng.annotations.BeforeMethod
+    @BeforeMethod
     public void setUp() {
         PostalAddressBook book = new PostalAddressBook();
         PostalAddress address1 = new PostalAddress(SimplifyAddress.chinaAddress("四川省", "泸州市", "龙马潭区", "茜草街道", "碧桂园5栋四单元902", "614000"),
@@ -77,7 +80,7 @@ public class ArangoDBCreditCardRepositoryTest {
         repository.save(card3);
     }
 
-    @org.testng.annotations.AfterMethod
+    @AfterMethod
     public void tearDown() {
         //repository.remove("202601402");
         //repository.remove("202801654");
@@ -85,7 +88,7 @@ public class ArangoDBCreditCardRepositoryTest {
         //personRepository.remove("18982455066");
     }
 
-    @org.testng.annotations.Test
+    @Test(priority = 0)
     public void testSave() {
         LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(250, "CNY"), 60);
         CreditCard card = new CreditCard(new Issuer("968974548754158X", "小市店"), "18982455066", "20281725", "112233", "81725",
@@ -94,7 +97,7 @@ public class ArangoDBCreditCardRepositoryTest {
         repository.save(card);
     }
 
-    @org.testng.annotations.Test
+    @Test(priority = 1)
     public void testFind() {
         CreditCard creditCard = repository.find("202601402");
         Assert.assertNotNull(creditCard);
@@ -107,7 +110,7 @@ public class ArangoDBCreditCardRepositoryTest {
         System.out.println(creditCard);
     }
 
-    @org.testng.annotations.Test
+    @Test(priority = 1)
     public void testFindByCardFaceNumber() {
         CreditCard[] creditCards = repository.findByCardFaceNumber("^801");
         Assert.assertEquals(2, creditCards.length);
@@ -117,7 +120,7 @@ public class ArangoDBCreditCardRepositoryTest {
         Assert.assertEquals(2, creditCards.length);
     }
 
-    @org.testng.annotations.Test
+    @Test(priority = 1)
     public void testFindByCustomer() {
         CreditCard[] creditCards = repository.findByCustomer("18982455066");
         Assert.assertEquals(4, creditCards.length);
@@ -125,7 +128,7 @@ public class ArangoDBCreditCardRepositoryTest {
         Assert.assertEquals(0, creditCards.length);
     }
 
-    @org.testng.annotations.Test
+    @Test(priority = 1)
     public void testFindAll() {
         CreditCard[] creditCards = repository.findAll(0, 3);
         Assert.assertEquals(3, creditCards.length);
@@ -135,7 +138,7 @@ public class ArangoDBCreditCardRepositoryTest {
         Assert.assertEquals(2, creditCards.length);
     }
 
-    @org.testng.annotations.Test
+    @Test(priority = 1)
     public void testSize() {
         int size = repository.size();
         Assert.assertEquals(4, size);
