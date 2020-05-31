@@ -53,10 +53,6 @@ public class Bonus implements Comparable<Bonus> {
         this.value = bd.movePointRight(SCALE).longValue();
     }
 
-    public static int scale() {
-        return SCALE;
-    }
-
     public Bonus add(Bonus bonus) {
         if (bonus == null || bonus == Bonus.ZERO || bonus.value == 0l)
             return this;

@@ -40,16 +40,17 @@ public class BonusTest {
     @Test
     public void addAndSubtract() {
         Bonus b1 = Bonus.ZERO;
-        Bonus b2 = b1.add(Bonus.of(45));
+        Bonus b2 = b1.add(Bonus.of(45.52));
         Assert.assertTrue(b2.compareTo(b1) == 1);
         Assert.assertTrue(b2.value().intValue() == 45);
         Bonus b3 = b2.subtract(new Bonus(25));
         Assert.assertTrue(b3.compareTo(b2) == -1);
         Assert.assertTrue(b3.value().intValue() == 20);
-        Assert.assertTrue(b3.compareTo(Bonus.of(20)) == 0);
+        Assert.assertTrue(b3.compareTo(Bonus.of(20.52)) == 0);
+        System.out.println(b3);
         thrown.expect(BonusDeficiencyException.class);
-        b3.subtract(new Bonus(20.01));
-        thrown.expect(BonusDeficiencyException.class);
-        Bonus.ZERO.subtract(Bonus.of(0.01));
+        b3.subtract(new Bonus(20.53));
+        //thrown.expect(BonusDeficiencyException.class);
+        //Bonus.ZERO.subtract(Bonus.of(0.01));
     }
 }

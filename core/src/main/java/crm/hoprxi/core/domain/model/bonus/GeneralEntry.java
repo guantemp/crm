@@ -61,7 +61,7 @@ public class GeneralEntry implements Entry {
     public Bonus calculation(double consumption, int scale, RoundingMode roundingMode) {
         Number number = ratio.calculation(consumption);
         BigDecimal bd = NumberToBigDecimal.to(number);
-        bd = bd.setScale(Bonus.scale(), roundingMode);
+        bd = bd.setScale(2, roundingMode);
         return new Bonus(bd);
     }
 
