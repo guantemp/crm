@@ -19,34 +19,52 @@ package crm.hoprxi.core.domain.model.bonus;
 import crm.hoprxi.core.domain.model.collaborator.Category;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public class CategoryEntry {
-    private Ratio ratio;
+public class CategoryEntry extends Entry {
     private Category category;
 
-    public CategoryEntry(Category category, Ratio ratio) {
+    public CategoryEntry(Ratio ratio, Category category) {
+        super(ratio);
         setCategory(category);
-        setRatio(ratio);
     }
 
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    private void setRatio(Ratio ratio) {
-        this.ratio = ratio;
-    }
-
-    public Category categoryId() {
+    public Category category() {
         return category;
     }
 
     private void setCategory(Category category) {
-        this.category = Objects.requireNonNull(category, "categoryId required");
+        this.category = Objects.requireNonNull(category, "category required");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CategoryEntry)) return false;
+        if (!super.equals(o)) return false;
+
+        CategoryEntry that = (CategoryEntry) o;
+
+        return category != null ? category.equals(that.category) : that.category == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (category != null ? category.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", CategoryEntry.class.getSimpleName() + "[", "]")
+                .add("category=" + category)
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

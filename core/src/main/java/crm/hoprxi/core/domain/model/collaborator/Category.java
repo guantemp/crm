@@ -19,7 +19,7 @@ package crm.hoprxi.core.domain.model.collaborator;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-07
+ * @version 0.0.1 builder 2020-08-07
  */
 public class Category {
     private String id;
@@ -32,7 +32,7 @@ public class Category {
         setName(name);
     }
 
-    public String identity() {
+    public String id() {
         return id;
     }
 
@@ -48,7 +48,7 @@ public class Category {
         this.name = name;
     }
 
-    public String parentIdentity() {
+    public String parentId() {
         return parentId;
     }
 

@@ -30,6 +30,11 @@ public class Bonus implements Comparable<Bonus> {
     public static final Bonus ZERO = new Bonus(0);
     private long value;
 
+    /**
+     * this is for rebuild
+     *
+     * @param value
+     */
     private Bonus(long value) {
         this.value = value;
     }
@@ -39,6 +44,8 @@ public class Bonus implements Comparable<Bonus> {
     }
 
     public static Bonus of(Number value) {
+        if (value.longValue() == 0l)
+            return ZERO;
         if (value.doubleValue() == 0.0)
             return ZERO;
         return new Bonus(value);
@@ -96,7 +103,7 @@ public class Bonus implements Comparable<Bonus> {
     @Override
     public String toString() {
         return new StringJoiner(", ", Bonus.class.getSimpleName() + "[", "]")
-                .add("value=" + value)
+                .add("value=" + value / Math.pow(10, SCALE))
                 .toString();
     }
 }

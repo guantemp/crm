@@ -19,17 +19,18 @@ package crm.hoprxi.core.domain.model.collaborator;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-06
+ * @version 0.0.1 builder 2020-08-06
  */
 public class Item {
     private String id;
     private String name;
-    private String categoryId;
+    private Category category;
+    private Brand brand;
 
-    public Item(String id, String name, String categoryId) {
+    public Item(String id, String name, Category category) {
         this.id = id;
         this.name = name;
-        this.categoryId = categoryId;
+        this.category = category;
     }
 
     public String id() {
@@ -40,8 +41,8 @@ public class Item {
         return name;
     }
 
-    public String supplierId() {
-        return categoryId;
+    public Category category() {
+        return category;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Item {
         return "Sku{" +
                 "identity='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", supplierId='" + categoryId + '\'' +
+                ", supplierId='" + category + '\'' +
                 '}';
     }
 }

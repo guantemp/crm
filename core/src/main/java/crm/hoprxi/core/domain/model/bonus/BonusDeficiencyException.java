@@ -22,6 +22,11 @@ package crm.hoprxi.core.domain.model.bonus;
  * @version 0.0.1 2019-12-16
  */
 public class BonusDeficiencyException extends RuntimeException {
+    /**
+     * 仅包含message, 没有cause, 不记录栈异常, 性能最高
+     *
+     * @param message
+     */
     public BonusDeficiencyException(String message) {
         super(message, null, false, false);
     }

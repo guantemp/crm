@@ -19,19 +19,19 @@ package crm.hoprxi.core.domain.model.bonus;
 import crm.hoprxi.core.domain.model.collaborator.Item;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public class ItemEntry {
+public class ItemEntry extends Entry {
     private Item item;
-    private Ratio ratio;
 
-    public ItemEntry(Item item, Ratio ratio) {
+    public ItemEntry(Ratio ratio, Item item) {
+        super(ratio);
         setItem(item);
-        setRatio(ratio);
     }
 
     public Item item() {
@@ -39,18 +39,33 @@ public class ItemEntry {
     }
 
     private void setItem(Item item) {
-        Objects.requireNonNull(item, "skuId required");
-        //if (!ByteToHex.isIdentityHexStr(item))
-        //    throw new IllegalArgumentException("illegal skuId characters");
+        Objects.requireNonNull(item, "item required");
         this.item = item;
     }
 
-    public Ratio ratio() {
-        return ratio;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ItemEntry)) return false;
+        if (!super.equals(o)) return false;
+
+        ItemEntry itemEntry = (ItemEntry) o;
+
+        return item != null ? item.equals(itemEntry.item) : itemEntry.item == null;
     }
 
-    private void setRatio(Ratio ratio) {
-        this.ratio = ratio;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (item != null ? item.hashCode() : 0);
+        return result;
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ItemEntry.class.getSimpleName() + "[", "]")
+                .add("item=" + item)
+                .add("ratio=" + ratio)
+                .toString();
+    }
 }

@@ -16,13 +16,58 @@
 
 package crm.hoprxi.core.domain.model.bonus;
 
+import mi.hoprxi.to.NumberToBigDecimal;
+
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-16
+ * @version 0.0.1 2020-05-16
  */
-public interface Entry {
-    Bonus calculation(double consumption, int scale, RoundingMode roundingMode);
+public abstract class Entry {
+    protected Ratio ratio;
+
+    public Entry(Ratio ratio) {
+        this.ratio = Objects.requireNonNull(ratio, "ratio required");
+    }
+
+    public Bonus calculation(double consumption, int scale, RoundingMode roundingMode) {
+        Number number = ratio.calculation(consumption);
+        BigDecimal bd = NumberToBigDecimal.to(number);
+        bd = bd.setScale(scale, roundingMode);
+        return new Bonus(bd);
+    }
+
+    ;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Entry)) return false;
+
+        Entry entry = (Entry) o;
+
+        return ratio != null ? ratio.equals(entry.ratio) : entry.ratio == null;
+    }
+
+    //public abstract changeRation(Ratio newRatio);
+    @Override
+    public int hashCode() {
+        return ratio != null ? ratio.hashCode() : 0;
+    }
+
+    public Ratio ratio() {
+        return ratio;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Entry.class.getSimpleName() + "[", "]")
+                .add("ratio=" + ratio)
+                .toString();
+    }
 }

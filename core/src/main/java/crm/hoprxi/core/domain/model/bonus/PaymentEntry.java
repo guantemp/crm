@@ -20,19 +20,19 @@ package crm.hoprxi.core.domain.model.bonus;
 import crm.hoprxi.core.domain.model.collaborator.Payment;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public final class PaymentEntry {
+public class PaymentEntry extends Entry {
     private Payment payment;
-    private Ratio ratio;
 
-    public PaymentEntry(Payment payment, Ratio ratio) {
+    public PaymentEntry(Ratio ratio, Payment payment) {
+        super(ratio);
         setPayment(payment);
-        setRatio(ratio);
     }
 
     public Payment payment() {
@@ -44,39 +44,29 @@ public final class PaymentEntry {
         this.payment = payment;
     }
 
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    private void setRatio(Ratio ratio) {
-        if (ratio == null)
-            ratio = Ratio.ONE_TO_ONE;
-        this.ratio = ratio;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof PaymentEntry)) return false;
+        if (!super.equals(o)) return false;
 
         PaymentEntry that = (PaymentEntry) o;
 
-        if (payment != that.payment) return false;
-        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
+        return payment == that.payment;
     }
 
     @Override
     public int hashCode() {
-        int result = payment != null ? payment.hashCode() : 0;
-        result = 31 * result + (ratio != null ? ratio.hashCode() : 0);
+        int result = super.hashCode();
+        result = 31 * result + (payment != null ? payment.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "PaymentEntry{" +
-                "payment=" + payment +
-                ", ratio=" + ratio +
-                '}';
+        return new StringJoiner(", ", PaymentEntry.class.getSimpleName() + "[", "]")
+                .add("payment=" + payment)
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

@@ -16,75 +16,60 @@
 
 package crm.hoprxi.core.domain.model.bonus;
 
+import crm.hoprxi.core.domain.model.collaborator.Brand;
+
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public class BrandEntry {
-    private String brandId;
-    private Ratio ratio;
+public class BrandEntry extends Entry {
+    private Brand brand;
 
-    /**
-     * @param brandId
-     * @param ratio
-     */
-    public BrandEntry(String brandId, Ratio ratio) {
-        setBrandId(brandId);
-        setRatio(ratio);
+    public BrandEntry(Ratio ratio, Brand brand) {
+        super(ratio);
+        setBrand(brand);
     }
 
-    public final static BrandEntry createOneToOneBrandEntry(String brandId) {
-        return new BrandEntry(brandId, Ratio.ONE_TO_ONE);
+    public final static BrandEntry createOneToOneBrandEntry(Brand brand) {
+        return new BrandEntry(Ratio.ONE_TO_ONE, brand);
     }
 
-    public String brandId() {
-        return brandId;
+    public Brand brand() {
+        return brand;
     }
 
-    private void setBrandId(String brandId) {
-        Objects.requireNonNull(brandId, "brandId required");
-        this.brandId = brandId;
-    }
-
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    private void setRatio(Ratio ratio) {
-        Objects.requireNonNull(ratio, "ratio require");
-        this.ratio = ratio;
-    }
-
-    public boolean isIncluded(String itemId) {
-        return true;
+    private void setBrand(Brand brand) {
+        Objects.requireNonNull(brand, "brand required");
+        this.brand = brand;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof BrandEntry)) return false;
+        if (!super.equals(o)) return false;
 
         BrandEntry that = (BrandEntry) o;
 
-        if (brandId != null ? !brandId.equals(that.brandId) : that.brandId != null) return false;
-        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
+        return brand != null ? brand.equals(that.brand) : that.brand == null;
     }
 
     @Override
     public int hashCode() {
-        int result = brandId != null ? brandId.hashCode() : 0;
-        result = 31 * result + (ratio != null ? ratio.hashCode() : 0);
+        int result = super.hashCode();
+        result = 31 * result + (brand != null ? brand.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "BrandEntry{" +
-                "brandId=" + brandId +
-                ", ratio=" + ratio +
-                '}';
+        return new StringJoiner(", ", BrandEntry.class.getSimpleName() + "[", "]")
+                .add("brand=" + brand)
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

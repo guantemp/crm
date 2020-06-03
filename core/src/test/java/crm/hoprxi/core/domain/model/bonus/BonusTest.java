@@ -24,7 +24,7 @@ import org.junit.rules.ExpectedException;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-17
+ * @version 0.0.1 2020-05-17
  */
 public class BonusTest {
     @Rule
@@ -42,11 +42,11 @@ public class BonusTest {
         Bonus b1 = Bonus.ZERO;
         Bonus b2 = b1.add(Bonus.of(45.52));
         Assert.assertTrue(b2.compareTo(b1) == 1);
-        Assert.assertTrue(b2.value().intValue() == 45);
-        Bonus b3 = b2.subtract(new Bonus(25));
+        Assert.assertTrue(b2.value().doubleValue() == 45.52);
+        Bonus b3 = b2.subtract(new Bonus(25.07));
         Assert.assertTrue(b3.compareTo(b2) == -1);
-        Assert.assertTrue(b3.value().intValue() == 20);
-        Assert.assertTrue(b3.compareTo(Bonus.of(20.52)) == 0);
+        Assert.assertTrue(b3.value().doubleValue() == 20.45);
+        Assert.assertTrue(b3.compareTo(Bonus.of(20.45)) == 0);
         System.out.println(b3);
         thrown.expect(BonusDeficiencyException.class);
         b3.subtract(new Bonus(20.53));

@@ -22,13 +22,13 @@ import crm.hoprxi.core.domain.model.collaborator.Referee;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public class CommissionEntry {
+public class ShareEntry {
     private Referee referee;
     private Ratio ratio;
 
-    public CommissionEntry(Referee referee, Ratio ratio) {
+    public ShareEntry(Referee referee, Ratio ratio) {
         setReferee(referee);
         setRatio(ratio);
     }

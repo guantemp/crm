@@ -18,19 +18,19 @@ package crm.hoprxi.core.domain.model.bonus;
 
 import java.util.Currency;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public final class CurrencyEntry {
+public class CurrencyEntry extends Entry {
     private Currency currency;
-    private Ratio ratio;
 
-    public CurrencyEntry(Currency currency, Ratio ratio) {
+    public CurrencyEntry(Ratio ratio, Currency currency) {
+        super(ratio);
         setCurrency(currency);
-        setRatio(ratio);
     }
 
     public Currency currency() {
@@ -42,31 +42,29 @@ public final class CurrencyEntry {
         this.currency = currency;
     }
 
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    private void setRatio(Ratio ratio) {
-        if (ratio == null)
-            ratio = Ratio.ONE_TO_ONE;
-        this.ratio = ratio;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof CurrencyEntry)) return false;
+        if (!super.equals(o)) return false;
 
         CurrencyEntry that = (CurrencyEntry) o;
 
-        if (currency != null ? !currency.equals(that.currency) : that.currency != null) return false;
-        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
+        return currency != null ? currency.equals(that.currency) : that.currency == null;
     }
 
     @Override
     public int hashCode() {
-        int result = currency != null ? currency.hashCode() : 0;
-        result = 31 * result + (ratio != null ? ratio.hashCode() : 0);
+        int result = super.hashCode();
+        result = 31 * result + (currency != null ? currency.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", CurrencyEntry.class.getSimpleName() + "[", "]")
+                .add("currency=" + currency)
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

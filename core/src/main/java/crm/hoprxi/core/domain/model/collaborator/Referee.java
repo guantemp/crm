@@ -19,8 +19,8 @@ package crm.hoprxi.core.domain.model.collaborator;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-09-06
+ * @version 0.0.1 builder 2020-09-06
  */
 public enum Referee {
-    ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN
+    ONE, TWO, THREE
 }

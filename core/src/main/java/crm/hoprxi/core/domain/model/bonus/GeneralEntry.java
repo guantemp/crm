@@ -16,38 +16,25 @@
 
 package crm.hoprxi.core.domain.model.bonus;
 
-import mi.hoprxi.to.NumberToBigDecimal;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-12-17
+ * @version 0.0.2 builder 2020-05-31
  */
-public class GeneralEntry implements Entry {
+public class GeneralEntry extends Entry {
     public static final GeneralEntry ONE_TO_ONE = new GeneralEntry(Ratio.ONE_TO_ONE);
-    private Ratio ratio;
 
     public GeneralEntry(Ratio ratio) {
-        setRatio(ratio);
+        super(ratio);
     }
 
     public GeneralEntry of(Ratio ratio) {
         if (ratio == Ratio.ONE_TO_ONE)
             return ONE_TO_ONE;
         return new GeneralEntry(ratio);
-    }
-
-    private void setRatio(Ratio ratio) {
-        Objects.requireNonNull(ratio, "ratio required");
-        this.ratio = ratio;
-    }
-
-    public Ratio ratio() {
-        return ratio;
     }
 
     public GeneralEntry changeRatio(Ratio newRatio) {
@@ -58,32 +45,9 @@ public class GeneralEntry implements Entry {
     }
 
     @Override
-    public Bonus calculation(double consumption, int scale, RoundingMode roundingMode) {
-        Number number = ratio.calculation(consumption);
-        BigDecimal bd = NumberToBigDecimal.to(number);
-        bd = bd.setScale(2, roundingMode);
-        return new Bonus(bd);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        GeneralEntry that = (GeneralEntry) o;
-
-        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return ratio != null ? ratio.hashCode() : 0;
-    }
-
-    @Override
     public String toString() {
-        return "GeneralEntry{" +
-                "ratio=" + ratio +
-                '}';
+        return new StringJoiner(", ", GeneralEntry.class.getSimpleName() + "[", "]")
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

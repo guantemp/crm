@@ -22,15 +22,14 @@ import java.util.Objects;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-08-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public class ConsumptionIntervalEntry {
-    private Ratio ratio;
+public class ConsumptionIntervalEntry extends Entry {
     private MonetaryAmount lowerLimit;
 
     public ConsumptionIntervalEntry(Ratio ratio, MonetaryAmount lowerLimit) {
+        super(ratio);
         setLowerLimit(lowerLimit);
-        setRatio(ratio);
     }
 
     public Ratio ratio() {

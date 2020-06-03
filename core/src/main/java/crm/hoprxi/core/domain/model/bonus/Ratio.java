@@ -20,7 +20,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2019-12-17
+ * @version 0.0.2 builder 2020-05-31
  */
 public class Ratio {
     public static final Ratio ONE_TO_ONE = new Ratio(1, 1);
