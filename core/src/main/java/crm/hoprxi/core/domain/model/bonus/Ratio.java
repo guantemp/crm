@@ -24,7 +24,7 @@ import java.util.StringJoiner;
  */
 public class Ratio {
     public static final Ratio ONE_TO_ONE = new Ratio(1, 1);
-    public static final Ratio ZERO = new Ratio(1, 0);
+    public static final Ratio ZERO = new Ratio(0, 0);
     private int costAmount = 1;
     private int increase = 1;
 
@@ -43,17 +43,19 @@ public class Ratio {
 
     private void setIncrease(int increase) {
         if (increase < 0)
-            throw new IllegalArgumentException("numerator must positive or zero");
+            throw new IllegalArgumentException("increase cannot be negative");
         this.increase = increase;
     }
 
     private void setCostAmount(int costAmount) {
-        if (costAmount <= 0)
-            throw new IllegalArgumentException("denominator must greater than zero");
+        if (costAmount < 0)
+            throw new IllegalArgumentException("costAmount cannot be negative");
         this.costAmount = costAmount;
     }
 
     public Number calculation(double consumptionAmount) {
+        if (Double.compare(consumptionAmount, 0.0) == -1)
+            return 0.0;
         return consumptionAmount * increase / costAmount;
     }
 

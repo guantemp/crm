@@ -19,41 +19,49 @@ package crm.hoprxi.core.domain.model.bonus;
 
 import crm.hoprxi.core.domain.model.collaborator.Referee;
 
+import java.util.Objects;
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ShareEntry {
+public class ShareEntry extends BasicsEntry {
     private Referee referee;
-    private Ratio ratio;
 
-    public ShareEntry(Referee referee, Ratio ratio) {
-        setReferee(referee);
-        setRatio(ratio);
+    public ShareEntry(Ratio ratio, Referee referee) {
+        super(ratio);
+        this.referee = Objects.requireNonNull(referee, "");
     }
 
     public Referee referee() {
         return referee;
     }
 
-    private void setReferee(Referee referee) {
-        this.referee = referee;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ShareEntry)) return false;
+        if (!super.equals(o)) return false;
+
+        ShareEntry that = (ShareEntry) o;
+
+        return referee == that.referee;
     }
 
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    private void setRatio(Ratio ratio) {
-        this.ratio = ratio;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (referee != null ? referee.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "CommissionEntry{" +
-                "referee=" + referee +
-                ", ratio=" + ratio +
-                '}';
+        return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
+                .add("referee=" + referee)
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

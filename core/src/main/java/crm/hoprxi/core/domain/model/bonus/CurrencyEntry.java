@@ -25,7 +25,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class CurrencyEntry extends Entry {
+public class CurrencyEntry extends SuperpositionEntry {
     private Currency currency;
 
     public CurrencyEntry(Ratio ratio, Currency currency) {

@@ -24,7 +24,7 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ConsumptionIntervalEntry extends Entry {
+public class ConsumptionIntervalEntry extends SuperpositionEntry {
     private MonetaryAmount lowerLimit;
 
     public ConsumptionIntervalEntry(Ratio ratio, MonetaryAmount lowerLimit) {

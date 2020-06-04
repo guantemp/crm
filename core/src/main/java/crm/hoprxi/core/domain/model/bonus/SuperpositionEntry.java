@@ -21,17 +21,16 @@ import mi.hoprxi.to.NumberToBigDecimal;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2020-05-16
+ * @version 0.0.1 builder 2020-06-03
  */
-public abstract class Entry {
+public abstract class SuperpositionEntry {
     protected Ratio ratio;
 
-    public Entry(Ratio ratio) {
+    public SuperpositionEntry(Ratio ratio) {
         this.ratio = Objects.requireNonNull(ratio, "ratio required");
     }
 
@@ -42,32 +41,18 @@ public abstract class Entry {
         return new Bonus(bd);
     }
 
-    ;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Entry)) return false;
+        if (!(o instanceof SuperpositionEntry)) return false;
 
-        Entry entry = (Entry) o;
+        SuperpositionEntry that = (SuperpositionEntry) o;
 
-        return ratio != null ? ratio.equals(entry.ratio) : entry.ratio == null;
+        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
     }
 
-    //public abstract changeRation(Ratio newRatio);
     @Override
     public int hashCode() {
         return ratio != null ? ratio.hashCode() : 0;
-    }
-
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Entry.class.getSimpleName() + "[", "]")
-                .add("ratio=" + ratio)
-                .toString();
     }
 }

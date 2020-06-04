@@ -24,7 +24,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.2 builder 2020-05-31
  */
-public class GeneralEntry extends Entry {
+public class GeneralEntry extends BasicsEntry {
     public static final GeneralEntry ONE_TO_ONE = new GeneralEntry(Ratio.ONE_TO_ONE);
 
     public GeneralEntry(Ratio ratio) {

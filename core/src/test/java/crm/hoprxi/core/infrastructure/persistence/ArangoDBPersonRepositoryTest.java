@@ -16,8 +16,8 @@
 
 package crm.hoprxi.core.infrastructure.persistence;
 
+import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
-import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.Person;
 import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
@@ -42,13 +42,13 @@ public class ArangoDBPersonRepositoryTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         PostalAddressBook book = new PostalAddressBook();
-        PostalAddress address1 = new PostalAddress(SimplifyAddress.chinaAddress("四川省", "泸州市", "龙马潭区", "抵抗力", "还得快", "614000"),
+        PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "抵抗力", "还得快", "614000"),
                 Contact.withMobilePhone("官相焕", "18982455855"));
         book = book.add(address1);
-        PostalAddress address2 = new PostalAddress(SimplifyAddress.chinaAddress("四川省", "泸州市", "龙马潭区", "到黄昏", "规划局", "614000"),
+        PostalAddress address2 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "到黄昏", "规划局", "614000"),
                 Contact.withTelephone("官相焕", "0830-2588210"));
         book = book.add(address2);
-        PostalAddress four = new PostalAddress(new SimplifyAddress(Locale.CANADA, "四川", "泸州", "龙马潭区", "鱼塘街道", "沙湖路22", "614000"),
+        PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "泸州", "龙马潭区", "鱼塘街道", "沙湖路22", "614000"),
                 new Contact("库电话", "13679692481", "0830-3217888"));
         book = book.addAndSetAcquiescence(four);
 
@@ -59,7 +59,7 @@ public class ArangoDBPersonRepositoryTest {
         repository.save(guan);
 
         Person wang = new Person("18982455866", "王浩", true, Spss.EMPTY_SPSS, null,
-                new PostalAddressBook(new PostalAddress(new SimplifyAddress(Locale.getDefault(), "四川省", "泸州市", "江阳区", "喝咖啡", "酒谷大道3段3号", "614000"),
+                new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "四川省", "泸州市", "江阳区", "喝咖啡", "酒谷大道3段3号", "614000"),
                         new Contact("王浩", "18982455866", null))), null, MonthDay.of(6, 5));
         repository.save(wang);
         Person du = new Person("18982435835", "杜红桃", false, Spss.EMPTY_SPSS, null,
@@ -67,7 +67,7 @@ public class ArangoDBPersonRepositoryTest {
         repository.save(du);
 
         Person yang = new Person("13618514821", "杨安顺", false, Spss.EMPTY_SPSS, null,
-                new PostalAddressBook(new PostalAddress(new SimplifyAddress(Locale.getDefault(), "贵州", "贵阳市", "南明区", "电视台", "宝山南路208号", "325897"),
+                new PostalAddressBook(new PostalAddress(new Address(Locale.getDefault(), "贵州", "贵阳市", "南明区", "电视台", "宝山南路208号", "325897"),
                         new Contact("杨安顺", "13618514821", null))), null, MonthDay.of(1, 12));
         repository.save(yang);
     }

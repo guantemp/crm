@@ -21,12 +21,11 @@ import java.util.Set;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-06-05
+ * @version 0.0.1 builder 2020-09-05
  */
 public class Schema {
-    private String identity;
+    private String id;
     private String name;
-    //Highest priority
-    private Set<ItemEntry> itemEntries;
-    private GeneralEntry generalEntry = GeneralEntry.ONE_TO_ONE;
+    private Set<BasicsEntry> basicsEntries;
+    private Set<SuperpositionEntry> superpositionEntries;
 }

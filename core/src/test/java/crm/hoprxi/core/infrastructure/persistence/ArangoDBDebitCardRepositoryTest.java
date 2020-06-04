@@ -22,9 +22,9 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.DebitCard;
 import crm.hoprxi.core.domain.model.card.DebitCardRepository;
 import crm.hoprxi.core.domain.model.card.TermOfValidity;
+import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
-import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.Person;
 import crm.hoprxi.core.domain.model.customer.person.PersonRepository;
@@ -52,10 +52,10 @@ public class ArangoDBDebitCardRepositoryTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         PostalAddressBook addressBook = new PostalAddressBook();
-        PostalAddress address1 = new PostalAddress(SimplifyAddress.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
+        PostalAddress address1 = new PostalAddress(Address.chinaAddress("四川省", "泸州市", "龙马潭区", "小市街道", "双井沟38号", "614000"),
                 new Contact("富含糖分", "18982455055", "0830-2517218"));
         addressBook = addressBook.add(address1);
-        PostalAddress four = new PostalAddress(new SimplifyAddress(Locale.CANADA, "四川", "乐山市", "市中区", "消粑粑街道", "大田路22", "664000"),
+        PostalAddress four = new PostalAddress(new Address(Locale.CANADA, "四川", "乐山市", "市中区", "消粑粑街道", "大田路22", "664000"),
                 new Contact("符合停机和", "13679692401", "0833-3217589"));
         addressBook = addressBook.addAndSetAcquiescence(four);
 

@@ -26,16 +26,12 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class BrandEntry extends Entry {
+public class BrandEntry extends BasicsEntry {
     private Brand brand;
 
     public BrandEntry(Ratio ratio, Brand brand) {
         super(ratio);
         setBrand(brand);
-    }
-
-    public final static BrandEntry createOneToOneBrandEntry(Brand brand) {
-        return new BrandEntry(Ratio.ONE_TO_ONE, brand);
     }
 
     public Brand brand() {

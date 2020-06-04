@@ -16,7 +16,7 @@
 
 package crm.hoprxi.core.domain.model.customer.enterprise;
 
-import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
+import crm.hoprxi.core.domain.model.customer.SimplifyAddress;
 
 import java.time.LocalDate;
 

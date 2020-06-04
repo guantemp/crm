@@ -27,7 +27,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class PaymentEntry extends Entry {
+public class PaymentEntry extends SuperpositionEntry {
     private Payment payment;
 
     public PaymentEntry(Ratio ratio, Payment payment) {

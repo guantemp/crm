@@ -16,8 +16,8 @@
 
 package crm.hoprxi.core.customer;
 
+import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
-import crm.hoprxi.core.domain.model.collaborator.SimplifyAddress;
 import crm.hoprxi.core.domain.model.customer.PostalAddress;
 import crm.hoprxi.core.domain.model.customer.person.PostalAddressBook;
 import org.junit.Assert;
@@ -31,13 +31,13 @@ import java.util.Locale;
  * @version 0.0.1 2019-07-15
  */
 public class PostalAddressBookTest {
-    private PostalAddress one = new PostalAddress(new SimplifyAddress(Locale.getDefault(), "四川", "泸州", "龙马潭区", "小时接到", "中大街38号", "614000"),
+    private PostalAddress one = new PostalAddress(new Address(Locale.getDefault(), "四川", "泸州", "龙马潭区", "小时接到", "中大街38号", "614000"),
             new Contact("挎包里", "18982466056", null));
-    private PostalAddress two = new PostalAddress(new SimplifyAddress(Locale.getDefault(), "四川", "泸州", "龙马潭区", "喝咖啡", "愚公街", "614000"),
+    private PostalAddress two = new PostalAddress(new Address(Locale.getDefault(), "四川", "泸州", "龙马潭区", "喝咖啡", "愚公街", "614000"),
             new Contact("格式化", "18982466062", null));
-    private PostalAddress three = new PostalAddress(new SimplifyAddress(Locale.getDefault(), "四川", "泸州", "龙马潭区", "度佳节", "惯性源", "614000"),
+    private PostalAddress three = new PostalAddress(new Address(Locale.getDefault(), "四川", "泸州", "龙马潭区", "度佳节", "惯性源", "614000"),
             new Contact("规格", null, "0830-2518210"));
-    private PostalAddress four = new PostalAddress(new SimplifyAddress(Locale.getDefault(), "四川", "泸州", "龙马潭区", "鱼塘街道", "沙湖路22", "614000"),
+    private PostalAddress four = new PostalAddress(new Address(Locale.getDefault(), "四川", "泸州", "龙马潭区", "鱼塘街道", "沙湖路22", "614000"),
             new Contact("库电话", "13679692401", null));
 
     @Test
