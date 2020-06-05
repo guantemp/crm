@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 public class PaymentEntry extends SuperpositionEntry {
     private Payment payment;
 
-    public PaymentEntry(Ratio ratio, Payment payment) {
+    public PaymentEntry(double ratio, Payment payment) {
         super(ratio);
         setPayment(payment);
     }
@@ -66,7 +66,7 @@ public class PaymentEntry extends SuperpositionEntry {
     public String toString() {
         return new StringJoiner(", ", PaymentEntry.class.getSimpleName() + "[", "]")
                 .add("payment=" + payment)
-                .add("ratio=" + ratio)
+                .add("ratio=" + rate)
                 .toString();
     }
 }

@@ -26,7 +26,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class CategoryEntry extends BasicsEntry {
+public class CategoryEntry extends Entry {
     private Category category;
 
     public CategoryEntry(Ratio ratio, Category category) {

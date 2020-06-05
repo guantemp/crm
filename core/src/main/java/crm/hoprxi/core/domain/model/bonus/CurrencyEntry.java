@@ -28,7 +28,7 @@ import java.util.StringJoiner;
 public class CurrencyEntry extends SuperpositionEntry {
     private Currency currency;
 
-    public CurrencyEntry(Ratio ratio, Currency currency) {
+    public CurrencyEntry(double ratio, Currency currency) {
         super(ratio);
         setCurrency(currency);
     }
@@ -64,7 +64,7 @@ public class CurrencyEntry extends SuperpositionEntry {
     public String toString() {
         return new StringJoiner(", ", CurrencyEntry.class.getSimpleName() + "[", "]")
                 .add("currency=" + currency)
-                .add("ratio=" + ratio)
+                .add("ratio=" + rate)
                 .toString();
     }
 }

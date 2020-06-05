@@ -27,10 +27,10 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-06-03
  */
-public abstract class BasicsEntry {
+public abstract class Entry {
     protected Ratio ratio;
 
-    public BasicsEntry(Ratio ratio) {
+    public Entry(Ratio ratio) {
         this.ratio = Objects.requireNonNull(ratio, "ratio required");
     }
 
@@ -48,9 +48,9 @@ public abstract class BasicsEntry {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BasicsEntry)) return false;
+        if (!(o instanceof Entry)) return false;
 
-        BasicsEntry that = (BasicsEntry) o;
+        Entry that = (Entry) o;
 
         return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
     }

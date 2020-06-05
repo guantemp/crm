@@ -27,7 +27,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ShareEntry extends BasicsEntry {
+public class ShareEntry extends Entry {
     private Referee referee;
 
     public ShareEntry(Ratio ratio, Referee referee) {

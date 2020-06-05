@@ -20,7 +20,6 @@ import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -28,15 +27,16 @@ import java.util.Objects;
  * @version 0.0.1 builder 2020-06-03
  */
 public abstract class SuperpositionEntry {
-    protected Ratio ratio;
+    protected double rate;
 
-    public SuperpositionEntry(Ratio ratio) {
-        this.ratio = Objects.requireNonNull(ratio, "ratio required");
+    public SuperpositionEntry(double rate) {
+        if (Double.compare(rate, 0.0) <= 0)
+            throw new IllegalArgumentException("");
+        this.rate = rate;
     }
 
-    public Bonus calculation(double consumption, int scale, RoundingMode roundingMode) {
-        Number number = ratio.calculation(consumption);
-        BigDecimal bd = NumberToBigDecimal.to(number);
+    public Bonus calculation(Bonus bonus, int scale, RoundingMode roundingMode) {
+        BigDecimal bd = NumberToBigDecimal.to(bonus.value().doubleValue() * rate);
         bd = bd.setScale(scale, roundingMode);
         return new Bonus(bd);
     }
@@ -48,11 +48,12 @@ public abstract class SuperpositionEntry {
 
         SuperpositionEntry that = (SuperpositionEntry) o;
 
-        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
+        return Double.compare(that.rate, rate) == 0;
     }
 
     @Override
     public int hashCode() {
-        return ratio != null ? ratio.hashCode() : 0;
+        long temp = Double.doubleToLongBits(rate);
+        return (int) (temp ^ (temp >>> 32));
     }
 }

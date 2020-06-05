@@ -27,18 +27,18 @@ import java.util.Objects;
 public class ConsumptionIntervalEntry extends SuperpositionEntry {
     private MonetaryAmount lowerLimit;
 
-    public ConsumptionIntervalEntry(Ratio ratio, MonetaryAmount lowerLimit) {
+    public ConsumptionIntervalEntry(double ratio, MonetaryAmount lowerLimit) {
         super(ratio);
         setLowerLimit(lowerLimit);
     }
 
-    public Ratio ratio() {
-        return ratio;
+    public double ratio() {
+        return rate;
     }
 
-    private void setRatio(Ratio ratio) {
+    private void setRatio(double ratio) {
         Objects.requireNonNull(ratio, "ratio required");
-        this.ratio = ratio;
+        this.rate = ratio;
     }
 
     public MonetaryAmount lowerLimit() {
@@ -59,13 +59,13 @@ public class ConsumptionIntervalEntry extends SuperpositionEntry {
 
         ConsumptionIntervalEntry that = (ConsumptionIntervalEntry) o;
 
-        if (ratio != null ? !ratio.equals(that.ratio) : that.ratio != null) return false;
+        if (rate != null ? !rate.equals(that.rate) : that.rate != null) return false;
         return lowerLimit != null ? lowerLimit.equals(that.lowerLimit) : that.lowerLimit == null;
     }
 
     @Override
     public int hashCode() {
-        int result = ratio != null ? ratio.hashCode() : 0;
+        int result = rate != null ? rate.hashCode() : 0;
         result = 31 * result + (lowerLimit != null ? lowerLimit.hashCode() : 0);
         return result;
     }
@@ -73,7 +73,7 @@ public class ConsumptionIntervalEntry extends SuperpositionEntry {
     @Override
     public String toString() {
         return "ConsumptionIntervalEntry{" +
-                "ratio=" + ratio +
+                "ratio=" + rate +
                 ", lowerLimit=" + lowerLimit +
                 '}';
     }
