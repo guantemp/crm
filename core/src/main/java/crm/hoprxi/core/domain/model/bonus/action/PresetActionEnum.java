@@ -14,21 +14,13 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
-
-import java.math.RoundingMode;
-import java.util.EnumSet;
-import java.util.Set;
+package crm.hoprxi.core.domain.model.bonus.action;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-09-05
+ * @version 0.0.1 builder 2020-06-09
  */
-public class Schema {
-    private String name;
-    private int scale;
-    private RoundingMode roundingMode;
-    private Set<Entry> basicsEntries;
-    private EnumSet<BonusSign> bonusSigns;
+public enum PresetActionEnum implements Action {
+    REGISTER, SIGN_IN
 }

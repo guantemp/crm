@@ -16,6 +16,7 @@
 
 package crm.hoprxi.core.domain.model.bonus;
 
+import crm.hoprxi.core.domain.model.bonus.consumption.Ratio;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

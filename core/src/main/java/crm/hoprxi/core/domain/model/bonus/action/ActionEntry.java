@@ -14,24 +14,14 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.action;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-16
+ * @version 0.0.1 builder 2020-06-09
  */
-public class BonusDeficiencyException extends RuntimeException {
-    /**
-     * 仅包含message, 没有cause, 不记录栈异常, 性能最高
-     *
-     * @param message
-     */
-    public BonusDeficiencyException(String message) {
-        super(message, null, false, false);
-    }
-
-    public BonusDeficiencyException(String message, Throwable cause) {
-        super(message, cause, false, true);
-    }
+public class ActionEntry {
+    private Action action;
+    private int value;
 }

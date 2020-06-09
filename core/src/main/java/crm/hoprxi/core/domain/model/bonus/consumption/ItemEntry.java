@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.collaborator.Brand;
+import crm.hoprxi.core.domain.model.collaborator.Item;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -26,45 +26,45 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class BrandEntry extends Entry {
-    private Brand brand;
+public class ItemEntry extends Entry {
+    private Item item;
 
-    public BrandEntry(Ratio ratio, Brand brand) {
+    public ItemEntry(Ratio ratio, Item item) {
         super(ratio);
-        setBrand(brand);
+        setItem(item);
     }
 
-    public Brand brand() {
-        return brand;
+    public Item item() {
+        return item;
     }
 
-    private void setBrand(Brand brand) {
-        Objects.requireNonNull(brand, "brand required");
-        this.brand = brand;
+    private void setItem(Item item) {
+        Objects.requireNonNull(item, "item required");
+        this.item = item;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BrandEntry)) return false;
+        if (!(o instanceof ItemEntry)) return false;
         if (!super.equals(o)) return false;
 
-        BrandEntry that = (BrandEntry) o;
+        ItemEntry itemEntry = (ItemEntry) o;
 
-        return brand != null ? brand.equals(that.brand) : that.brand == null;
+        return item != null ? item.equals(itemEntry.item) : itemEntry.item == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (brand != null ? brand.hashCode() : 0);
+        result = 31 * result + (item != null ? item.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", BrandEntry.class.getSimpleName() + "[", "]")
-                .add("brand=" + brand)
+        return new StringJoiner(", ", ItemEntry.class.getSimpleName() + "[", "]")
+                .add("item=" + item)
                 .add("ratio=" + ratio)
                 .toString();
     }

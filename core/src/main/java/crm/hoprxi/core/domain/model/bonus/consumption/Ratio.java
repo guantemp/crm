@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
 import java.util.StringJoiner;
 

@@ -14,10 +14,9 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
-
-import crm.hoprxi.core.domain.model.collaborator.Referee;
+import crm.hoprxi.core.domain.model.collaborator.Brand;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -27,40 +26,45 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ShareEntry extends Entry {
-    private Referee referee;
+public class BrandEntry extends Entry {
+    private Brand brand;
 
-    public ShareEntry(Ratio ratio, Referee referee) {
+    public BrandEntry(Ratio ratio, Brand brand) {
         super(ratio);
-        this.referee = Objects.requireNonNull(referee, "");
+        setBrand(brand);
     }
 
-    public Referee referee() {
-        return referee;
+    public Brand brand() {
+        return brand;
+    }
+
+    private void setBrand(Brand brand) {
+        Objects.requireNonNull(brand, "brand required");
+        this.brand = brand;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ShareEntry)) return false;
+        if (!(o instanceof BrandEntry)) return false;
         if (!super.equals(o)) return false;
 
-        ShareEntry that = (ShareEntry) o;
+        BrandEntry that = (BrandEntry) o;
 
-        return referee == that.referee;
+        return brand != null ? brand.equals(that.brand) : that.brand == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (referee != null ? referee.hashCode() : 0);
+        result = 31 * result + (brand != null ? brand.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
-                .add("referee=" + referee)
+        return new StringJoiner(", ", BrandEntry.class.getSimpleName() + "[", "]")
+                .add("brand=" + brand)
                 .add("ratio=" + ratio)
                 .toString();
     }

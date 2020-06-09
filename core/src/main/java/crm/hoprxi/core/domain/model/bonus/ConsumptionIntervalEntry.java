@@ -52,29 +52,5 @@ public class ConsumptionIntervalEntry extends SuperpositionEntry {
         this.lowerLimit = lowerLimit;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        ConsumptionIntervalEntry that = (ConsumptionIntervalEntry) o;
-
-        if (rate != null ? !rate.equals(that.rate) : that.rate != null) return false;
-        return lowerLimit != null ? lowerLimit.equals(that.lowerLimit) : that.lowerLimit == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = rate != null ? rate.hashCode() : 0;
-        result = 31 * result + (lowerLimit != null ? lowerLimit.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ConsumptionIntervalEntry{" +
-                "ratio=" + rate +
-                ", lowerLimit=" + lowerLimit +
-                '}';
-    }
 }

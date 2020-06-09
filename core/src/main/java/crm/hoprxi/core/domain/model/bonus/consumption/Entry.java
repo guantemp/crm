@@ -14,8 +14,9 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import crm.hoprxi.core.domain.model.bonus.Bonus;
 import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;

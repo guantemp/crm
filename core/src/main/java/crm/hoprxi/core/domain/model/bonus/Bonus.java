@@ -18,6 +18,7 @@ package crm.hoprxi.core.domain.model.bonus;
 import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.StringJoiner;
 
 /***
@@ -27,6 +28,7 @@ import java.util.StringJoiner;
  */
 public class Bonus implements Comparable<Bonus> {
     private static final int SCALE = 2;
+    private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
     public static final Bonus ZERO = new Bonus(0);
     private long value;
 
@@ -53,10 +55,7 @@ public class Bonus implements Comparable<Bonus> {
 
     private void setValue(Number value) {
         BigDecimal bd = NumberToBigDecimal.to(value);
-        if (bd.scale() > SCALE)
-            throw new IllegalArgumentException(value + " can not be represented by this class, scale > " + SCALE);
-        if (bd.compareTo(BigDecimal.ZERO) == -1)
-            throw new IllegalArgumentException("value required positive");
+        bd.setScale(SCALE, ROUNDING_MODE);
         this.value = bd.movePointRight(SCALE).longValue();
     }
 
@@ -71,12 +70,19 @@ public class Bonus implements Comparable<Bonus> {
             return this;
         if (bonus.value == value)
             return ZERO;
-        if (bonus.value > value)
-            throw new BonusDeficiencyException("bonus deficiency");
         return new Bonus(value - bonus.value);
     }
 
-    public Number value() {
+    public Bonus multiply(Number multiplicand) {
+        if (multiplicand.doubleValue() == 0.0)
+            return ZERO;
+        BigDecimal bd = NumberToBigDecimal.to(multiplicand);
+        if (bd.scale() == 0 && bd.longValueExact() == 1L)
+            return this;
+        return new Bonus(NumberToBigDecimal.to(value / Math.pow(10, SCALE)).multiply(bd));
+    }
+
+    public Number toNumber() {
         return value / Math.pow(10, SCALE);
     }
 

@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.collaborator.Item;
+import crm.hoprxi.core.domain.model.collaborator.Category;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -26,45 +26,44 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ItemEntry extends Entry {
-    private Item item;
+public class CategoryEntry extends Entry {
+    private Category category;
 
-    public ItemEntry(Ratio ratio, Item item) {
+    public CategoryEntry(Ratio ratio, Category category) {
         super(ratio);
-        setItem(item);
+        setCategory(category);
     }
 
-    public Item item() {
-        return item;
+    public Category category() {
+        return category;
     }
 
-    private void setItem(Item item) {
-        Objects.requireNonNull(item, "item required");
-        this.item = item;
+    private void setCategory(Category category) {
+        this.category = Objects.requireNonNull(category, "category required");
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ItemEntry)) return false;
+        if (!(o instanceof CategoryEntry)) return false;
         if (!super.equals(o)) return false;
 
-        ItemEntry itemEntry = (ItemEntry) o;
+        CategoryEntry that = (CategoryEntry) o;
 
-        return item != null ? item.equals(itemEntry.item) : itemEntry.item == null;
+        return category != null ? category.equals(that.category) : that.category == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (item != null ? item.hashCode() : 0);
+        result = 31 * result + (category != null ? category.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ItemEntry.class.getSimpleName() + "[", "]")
-                .add("item=" + item)
+        return new StringJoiner(", ", CategoryEntry.class.getSimpleName() + "[", "]")
+                .add("category=" + category)
                 .add("ratio=" + ratio)
                 .toString();
     }

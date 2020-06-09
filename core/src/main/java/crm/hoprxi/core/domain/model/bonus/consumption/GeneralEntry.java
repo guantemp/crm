@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
 import java.util.Objects;
 import java.util.StringJoiner;

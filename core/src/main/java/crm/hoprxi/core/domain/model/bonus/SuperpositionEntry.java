@@ -36,7 +36,7 @@ public abstract class SuperpositionEntry {
     }
 
     public Bonus calculation(Bonus bonus, int scale, RoundingMode roundingMode) {
-        BigDecimal bd = NumberToBigDecimal.to(bonus.value().doubleValue() * rate);
+        BigDecimal bd = NumberToBigDecimal.to(bonus.toNumber().doubleValue() * rate);
         bd = bd.setScale(scale, roundingMode);
         return new Bonus(bd);
     }

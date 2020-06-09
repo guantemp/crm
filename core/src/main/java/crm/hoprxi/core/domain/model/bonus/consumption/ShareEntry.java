@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.collaborator.Category;
+
+import crm.hoprxi.core.domain.model.collaborator.Referee;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -26,44 +27,40 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class CategoryEntry extends Entry {
-    private Category category;
+public class ShareEntry extends Entry {
+    private Referee referee;
 
-    public CategoryEntry(Ratio ratio, Category category) {
+    public ShareEntry(Ratio ratio, Referee referee) {
         super(ratio);
-        setCategory(category);
+        this.referee = Objects.requireNonNull(referee, "");
     }
 
-    public Category category() {
-        return category;
-    }
-
-    private void setCategory(Category category) {
-        this.category = Objects.requireNonNull(category, "category required");
+    public Referee referee() {
+        return referee;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CategoryEntry)) return false;
+        if (!(o instanceof ShareEntry)) return false;
         if (!super.equals(o)) return false;
 
-        CategoryEntry that = (CategoryEntry) o;
+        ShareEntry that = (ShareEntry) o;
 
-        return category != null ? category.equals(that.category) : that.category == null;
+        return referee == that.referee;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (category != null ? category.hashCode() : 0);
+        result = 31 * result + (referee != null ? referee.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", CategoryEntry.class.getSimpleName() + "[", "]")
-                .add("category=" + category)
+        return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
+                .add("referee=" + referee)
                 .add("ratio=" + ratio)
                 .toString();
     }

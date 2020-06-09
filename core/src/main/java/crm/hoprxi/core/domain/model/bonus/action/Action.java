@@ -14,13 +14,12 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.action;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-06-05
+ * @version 0.0.1 builder 2020-06-09
  */
-public enum BonusSign {
-    SPECIAL_OFFER
+public interface Action {
 }
