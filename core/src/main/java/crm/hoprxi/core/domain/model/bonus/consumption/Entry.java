@@ -16,6 +16,7 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
 import mi.hoprxi.to.NumberToBigDecimal;
 
@@ -29,6 +30,8 @@ import java.util.Objects;
  * @version 0.0.1 builder 2020-06-03
  */
 public abstract class Entry {
+    @DocumentField(DocumentField.Type.KEY)
+    private String id;
     protected Ratio ratio;
 
     public Entry(Ratio ratio) {

@@ -45,7 +45,7 @@ public class DebitCardTest {
     MonetaryAmount one_hundred = Money.of(100, Monetary.getCurrency(locale));
 
     @Test
-    public void all() {
+    public void transaction() {
         DebitCard card = new DebitCard(new Issuer("600256", "宜宾总店"), "327885095", "123456", "2002123456");
         card.credit(three_hundred);
         Assert.assertTrue(three_hundred.isEqualTo(card.balance().total()));

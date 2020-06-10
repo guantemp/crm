@@ -28,7 +28,6 @@ import java.util.StringJoiner;
  */
 public class Bonus implements Comparable<Bonus> {
     private static final int SCALE = 2;
-    private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
     public static final Bonus ZERO = new Bonus(0);
     private long value;
 
@@ -42,6 +41,10 @@ public class Bonus implements Comparable<Bonus> {
     }
 
     public Bonus(Number value) {
+        this(NumberToBigDecimal.to(value));
+    }
+
+    public Bonus(BigDecimal value) {
         setValue(value);
     }
 
@@ -53,10 +56,9 @@ public class Bonus implements Comparable<Bonus> {
         return new Bonus(value);
     }
 
-    private void setValue(Number value) {
-        BigDecimal bd = NumberToBigDecimal.to(value);
-        bd.setScale(SCALE, ROUNDING_MODE);
-        this.value = bd.movePointRight(SCALE).longValue();
+    private void setValue(BigDecimal value) {
+        value.setScale(SCALE, RoundingMode.HALF_EVEN);
+        this.value = value.movePointRight(SCALE).longValue();
     }
 
     public Bonus add(Bonus bonus) {

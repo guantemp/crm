@@ -127,7 +127,7 @@ public class CreditCard extends Card {
         Balance temp = balance.overdraw(amount);
         if (temp.redPackets().isZero() && temp.valuable().isNegative())
             temp = new Balance(temp.valuable().add(smallChange.amount()), temp.redPackets());
-        if (temp.valuable().isGreaterThan(lineOfCredit.quota()))
+        if (temp.valuable().abs().isGreaterThan(lineOfCredit.quota()))
             throw new ExceedQuotaException("The credit card limit exceeded");
         balance = temp;
     }
@@ -158,10 +158,12 @@ public class CreditCard extends Card {
                 }
             }
         */
+
     @Override
     public String toString() {
         return new StringJoiner(", ", CreditCard.class.getSimpleName() + "[", "]")
                 .add("customerId='" + customerId + "'")
+                .add("password='" + password + "'")
                 .add("freeze=" + freeze)
                 .add("lineOfCredit=" + lineOfCredit)
                 .add("termOfValidity=" + termOfValidity)

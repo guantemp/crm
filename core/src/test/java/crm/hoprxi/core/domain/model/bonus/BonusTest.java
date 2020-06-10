@@ -40,8 +40,7 @@ public class BonusTest {
     @Test
     public void addAndSubtract() {
         Bonus b1 = Bonus.ZERO;
-        Bonus b2 = Bonus.of(45.2);
-        b2 = b1.add(Bonus.of(45.52));
+        Bonus b2 = b1.add(Bonus.of(45.526));
         Assert.assertTrue(b2.compareTo(b1) == 1);
         Assert.assertTrue(b2.toNumber().doubleValue() == 45.52);
         Bonus b3 = b2.subtract(new Bonus(25.07));
@@ -51,13 +50,14 @@ public class BonusTest {
         b3 = b3.subtract(new Bonus(20.53));
         Assert.assertTrue(b3.compareTo(Bonus.ZERO) == -1);
 
-        Bonus b4 = Bonus.of(67.87);
+        Bonus b4 = Bonus.of(Double.valueOf("67.87"));
+        System.out.println(b4);
         b4 = b4.multiply(1.2);
         Assert.assertTrue(b4.compareTo(Bonus.of(81.44)) == 0);
-        System.out.println(b4);
         b4 = b4.multiply(0.65);
-        System.out.println(b4);
         Assert.assertTrue(b4.compareTo(Bonus.of(52.93)) == 0);
+
+
         //thrown.expect(BonusDeficiencyException.class);
         //Bonus.ZERO.subtract(Bonus.of(0.01));
     }
