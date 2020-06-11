@@ -27,16 +27,18 @@ import org.testng.annotations.Test;
  */
 public class RatioTest {
 
-    @Test
+    @Test(invocationCount = 100, threadPoolSize = 4)
     public void testCalculation() {
         Ratio ratio = Ratio.ONE_TO_ONE;
-        Assert.assertEquals(ratio.calculation(1).intValue(), 1);
+        Assert.assertEquals(ratio.calculation(1), 1.0);
         Assert.assertEquals(ratio.calculation(0.001), 0.001);
+        Assert.assertEquals(ratio.calculation(-977436534), 0.0);
 
         ratio = Ratio.ZERO;
-        Assert.assertEquals(ratio.calculation(1).intValue(), 0);
-        Assert.assertEquals(ratio.calculation(1000).intValue(), 0);
-        Assert.assertEquals(ratio.calculation(41.25680).intValue(), 0);
+        Assert.assertEquals(ratio.calculation(1), 0.0);
+        Assert.assertEquals(ratio.calculation(-1000), 0.0);
+        Assert.assertEquals(ratio.calculation(41.25680), 0.0);
+
         ratio = new Ratio(5, 2);
         Assert.assertEquals(ratio.calculation(10), 4.0);
         Assert.assertEquals(ratio.calculation(8), 3.2);
@@ -44,6 +46,8 @@ public class RatioTest {
 
         ratio = new Ratio(3, 2);
         Assert.assertEquals(ratio.calculation(10), 6.666666666666667);
+        Assert.assertEquals(ratio.calculation(10).intValue(), 6);
+        Assert.assertEquals(ratio.calculation(9).intValue(), 6);
         Assert.assertEquals(ratio.calculation(-0.00025), 0.0);
         Assert.assertEquals(ratio.calculation(-0.0), 0.0);
     }

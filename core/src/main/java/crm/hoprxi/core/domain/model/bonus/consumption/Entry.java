@@ -18,11 +18,6 @@ package crm.hoprxi.core.domain.model.bonus.consumption;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
-import mi.hoprxi.to.NumberToBigDecimal;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -31,22 +26,32 @@ import java.util.Objects;
  */
 public abstract class Entry {
     @DocumentField(DocumentField.Type.KEY)
-    private String id;
+    protected String id;
     protected Ratio ratio;
 
     public Entry(Ratio ratio) {
-        this.ratio = Objects.requireNonNull(ratio, "ratio required");
+        setRatio(ratio);
+    }
+
+    private void setRatio(Ratio ratio) {
+        if (ratio == null)
+            ratio = Ratio.ZERO;
+        this.ratio = ratio;
+    }
+
+    public String id() {
+        return id;
     }
 
     public Ratio ratio() {
         return ratio;
     }
 
-    public Bonus calculation(double consumption, int scale, RoundingMode roundingMode) {
+    public abstract Entry changeRatio(Ratio newRatio);
+
+    public Bonus calculation(Number consumption) {
         Number number = ratio.calculation(consumption);
-        BigDecimal bd = NumberToBigDecimal.to(number);
-        bd = bd.setScale(scale, roundingMode);
-        return new Bonus(bd);
+        return new Bonus(number);
     }
 
     @Override

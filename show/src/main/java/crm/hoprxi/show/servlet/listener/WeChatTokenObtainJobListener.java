@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.core.show.servlet.listener;
+package crm.hoprxi.show.servlet.listener;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

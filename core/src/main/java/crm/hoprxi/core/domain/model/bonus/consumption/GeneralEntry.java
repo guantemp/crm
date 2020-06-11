@@ -25,18 +25,12 @@ import java.util.StringJoiner;
  * @version 0.0.2 builder 2020-05-31
  */
 public class GeneralEntry extends Entry {
-    public static final GeneralEntry ONE_TO_ONE = new GeneralEntry(Ratio.ONE_TO_ONE);
-
     public GeneralEntry(Ratio ratio) {
         super(ratio);
+        this.id = "General";
     }
 
-    public GeneralEntry of(Ratio ratio) {
-        if (ratio == Ratio.ONE_TO_ONE)
-            return ONE_TO_ONE;
-        return new GeneralEntry(ratio);
-    }
-
+    @Override
     public GeneralEntry changeRatio(Ratio newRatio) {
         Objects.requireNonNull(newRatio, "newRatio required");
         if (ratio.equals(newRatio))

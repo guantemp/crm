@@ -24,7 +24,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-08-22
+ * @version 0.0.1 builder 2020-06-10
  */
 public class CategoryEntry extends Entry {
     private Category category;
@@ -32,10 +32,16 @@ public class CategoryEntry extends Entry {
     public CategoryEntry(Ratio ratio, Category category) {
         super(ratio);
         setCategory(category);
+        id = "category_" + category.id();
     }
 
     public Category category() {
         return category;
+    }
+
+    @Override
+    public Entry changeRatio(Ratio newRatio) {
+        return null;
     }
 
     private void setCategory(Category category) {

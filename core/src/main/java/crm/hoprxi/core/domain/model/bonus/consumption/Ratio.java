@@ -53,10 +53,14 @@ public class Ratio {
         this.costAmount = costAmount;
     }
 
-    public Number calculation(double consumptionAmount) {
-        if (Double.compare(consumptionAmount, 0.0) == -1)
+    public Number calculation(Number consumptionAmount) {
+        if (increase == 0)
             return 0.0;
-        return consumptionAmount * increase / costAmount;
+        if (consumptionAmount.doubleValue() == 0.0)
+            return 0.0;
+        if (Double.compare(consumptionAmount.doubleValue(), 0.0) == -1)
+            return 0.0;
+        return consumptionAmount.doubleValue() * increase / costAmount;
     }
 
     @Override

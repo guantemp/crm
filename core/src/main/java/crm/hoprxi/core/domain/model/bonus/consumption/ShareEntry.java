@@ -40,6 +40,11 @@ public class ShareEntry extends Entry {
     }
 
     @Override
+    public Entry changeRatio(Ratio newRatio) {
+        return null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ShareEntry)) return false;

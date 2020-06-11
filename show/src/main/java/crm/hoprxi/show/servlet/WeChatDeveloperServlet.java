@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.core.show.servlet;
+package crm.hoprxi.show.servlet;
 
 import mi.hoprxi.to.ByteToHex;
 

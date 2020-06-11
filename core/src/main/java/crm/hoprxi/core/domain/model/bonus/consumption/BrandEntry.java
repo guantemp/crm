@@ -16,6 +16,7 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import crm.hoprxi.core.domain.model.bonus.Bonus;
 import crm.hoprxi.core.domain.model.collaborator.Brand;
 
 import java.util.Objects;
@@ -32,6 +33,16 @@ public class BrandEntry extends Entry {
     public BrandEntry(Ratio ratio, Brand brand) {
         super(ratio);
         setBrand(brand);
+    }
+
+    @Override
+    public Entry changeRatio(Ratio newRatio) {
+        return null;
+    }
+
+    @Override
+    public Bonus calculation(Number consumption) {
+        return super.calculation(consumption);
     }
 
     public Brand brand() {
