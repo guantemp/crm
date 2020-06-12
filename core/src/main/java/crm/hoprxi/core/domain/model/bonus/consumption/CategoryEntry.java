@@ -39,10 +39,6 @@ public class CategoryEntry extends Entry {
         return category;
     }
 
-    @Override
-    public Entry changeRatio(Ratio newRatio) {
-        return null;
-    }
 
     private void setCategory(Category category) {
         this.category = Objects.requireNonNull(category, "category required");

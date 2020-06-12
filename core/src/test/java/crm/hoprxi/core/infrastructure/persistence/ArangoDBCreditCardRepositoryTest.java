@@ -75,7 +75,7 @@ public class ArangoDBCreditCardRepositoryTest {
                 true, TermOfValidity.PERMANENCE, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card2);
         lineOfCredit = new LineOfCredit(FastMoney.of(368547.05, "CNY"), 60);
-        CreditCard card3 = new CreditCard(new Issuer("98752367MA24158X", "大山平"), "18982455066", "202601402", "123456", "801402",
+        CreditCard card3 = new CreditCard(new Issuer("98752367MA24158X", "大山平"), "18982455066", "202601402", "415879", "801402",
                 true, TermOfValidity.PERMANENCE, lineOfCredit, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
         repository.save(card3);
     }
@@ -85,7 +85,7 @@ public class ArangoDBCreditCardRepositoryTest {
         //repository.remove("202601402");
         //repository.remove("202801654");
         //repository.remove("20281405");
-        //personRepository.remove("18982455066");
+        personRepository.remove("18982455066");
     }
 
     @Test(priority = 0)

@@ -27,10 +27,16 @@ public class Ratio {
     public static final Ratio ZERO = new Ratio(0, 0);
     private int costAmount = 1;
     private int increase = 1;
+    private boolean fixed = false;
 
     public Ratio(int costAmount, int increase) {
+        this(costAmount, increase, false);
+    }
+
+    public Ratio(int costAmount, int increase, boolean fixed) {
         setCostAmount(costAmount);
         setIncrease(increase);
+        this.fixed = fixed;
     }
 
     public static Ratio of(int costAmount, int increase) {
@@ -60,6 +66,8 @@ public class Ratio {
             return 0.0;
         if (Double.compare(consumptionAmount.doubleValue(), 0.0) == -1)
             return 0.0;
+        if (fixed)
+            return (double) increase;
         return consumptionAmount.doubleValue() * increase / costAmount;
     }
 

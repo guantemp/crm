@@ -29,10 +29,10 @@ import java.util.StringJoiner;
 public class ItemEntry extends Entry {
     private Item item;
 
-    public ItemEntry(Ratio ratio, Item item) {
+    public ItemEntry(Item item, Ratio ratio) {
         super(ratio);
+        setItem(item);
         this.id = "item_" + item.id();
-        this.item = item;
     }
 
     public Item item() {
@@ -40,16 +40,7 @@ public class ItemEntry extends Entry {
     }
 
     private void setItem(Item item) {
-        Objects.requireNonNull(item, "item required");
-        this.item = item;
-    }
-
-    @Override
-    public Entry changeRatio(Ratio newRatio) {
-        Objects.requireNonNull(newRatio, "newRatio required");
-        if (ratio.equals(newRatio))
-            return this;
-        return new ItemEntry(newRatio, item);
+        this.item = Objects.requireNonNull(item, "item required");
     }
 
     @Override

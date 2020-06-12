@@ -16,12 +16,15 @@
 
 package crm.hoprxi.core.domain.model.collaborator;
 
+import crm.hoprxi.core.infrastructure.resource.Label;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-07
  */
 public class Category {
+    public static final Category UNDEFINED = new Category("undefined", "undefined", Label.category_undefined);
     private String id;
     private String name;
     private String parentId;

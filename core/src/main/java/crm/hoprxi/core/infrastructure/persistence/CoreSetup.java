@@ -46,8 +46,8 @@ public class CoreSetup {
         }
         arangoDB.createDatabase(databaseName);
         //vertex
-        for (String s : new String[]{"person", "enterprise", "debit_card", "anonymous_card", "credit_card", "appearance", "memberRole", "integral_history", "balance_history",
-                "change_history"}) {
+        for (String s : new String[]{"person", "enterprise", "debit_card", "anonymous_card", "credit_card", "appearance", "memberRole", "bonus_history", "balance_history",
+                "change_history", "bonus_entry"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);

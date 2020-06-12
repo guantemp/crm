@@ -33,6 +33,13 @@ public class Item {
         this.category = category;
     }
 
+    public Item(String id, String name, Category category, Brand brand) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.brand = brand;
+    }
+
     public String id() {
         return id;
     }

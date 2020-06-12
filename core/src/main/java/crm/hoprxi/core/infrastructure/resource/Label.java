@@ -30,7 +30,6 @@ public class Label extends NLS {
     public static String MantissaProcessing_ROUNDING;
     public static String MantissaProcessing_FLOOR;
     public static String MantissaProcessing_CEILING;
-    public static String MantissaProcessing_RETAIN;
 
     public static String Payment_WeChatPay;
     public static String Payment_Alipay;
@@ -38,10 +37,13 @@ public class Label extends NLS {
     public static String Payment_CmPay;
     public static String Payment_PayPal;
     public static String Payment_Lakala;
-    public static String Payment_Cloud_flash;
+    public static String Payment_Cloud_Flash;
 
-    public static String SEX_MAN;
-    public static String SEX_WOMAN;
+    public static String sex_man;
+    public static String sex_woman;
+
+    public static String category_undefined;
+    public static String brand_undefined;
 
     static {
         NLS.initializeMessages(BUNDLE_NAME, Label.class);

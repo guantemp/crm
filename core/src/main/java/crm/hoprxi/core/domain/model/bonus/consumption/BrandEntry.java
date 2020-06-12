@@ -30,14 +30,10 @@ import java.util.StringJoiner;
 public class BrandEntry extends Entry {
     private Brand brand;
 
-    public BrandEntry(Ratio ratio, Brand brand) {
+    public BrandEntry(Brand brand, Ratio ratio) {
         super(ratio);
         setBrand(brand);
-    }
-
-    @Override
-    public Entry changeRatio(Ratio newRatio) {
-        return null;
+        id = "brand_" + brand.id();
     }
 
     @Override
@@ -50,8 +46,7 @@ public class BrandEntry extends Entry {
     }
 
     private void setBrand(Brand brand) {
-        Objects.requireNonNull(brand, "brand required");
-        this.brand = brand;
+        this.brand = Objects.requireNonNull(brand, "brand required");
     }
 
     @Override

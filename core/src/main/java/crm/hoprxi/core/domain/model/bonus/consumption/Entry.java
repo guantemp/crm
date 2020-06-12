@@ -19,6 +19,8 @@ package crm.hoprxi.core.domain.model.bonus.consumption;
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
 
+import java.util.Objects;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
@@ -47,7 +49,11 @@ public abstract class Entry {
         return ratio;
     }
 
-    public abstract Entry changeRatio(Ratio newRatio);
+    public void changeRatio(Ratio newRatio) {
+        Objects.requireNonNull(newRatio, "newRatio required");
+        if (!ratio.equals(newRatio))
+            ratio = newRatio;
+    }
 
     public Bonus calculation(Number consumption) {
         Number number = ratio.calculation(consumption);
@@ -59,13 +65,13 @@ public abstract class Entry {
         if (this == o) return true;
         if (!(o instanceof Entry)) return false;
 
-        Entry that = (Entry) o;
+        Entry entry = (Entry) o;
 
-        return ratio != null ? ratio.equals(that.ratio) : that.ratio == null;
+        return id != null ? id.equals(entry.id) : entry.id == null;
     }
 
     @Override
     public int hashCode() {
-        return ratio != null ? ratio.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

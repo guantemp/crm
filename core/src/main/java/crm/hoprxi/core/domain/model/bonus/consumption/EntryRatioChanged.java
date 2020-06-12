@@ -16,23 +16,10 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import java.util.StringJoiner;
-
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-06-11
+ * @version 0.0.1 builder 2020-06-11
  */
-public class GeneralEntry extends Entry {
-    public GeneralEntry(Ratio ratio) {
-        super(ratio);
-        id = "general";
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", GeneralEntry.class.getSimpleName() + "[", "]")
-                .add("ratio=" + ratio)
-                .toString();
-    }
+public class EntryRatioChanged {
 }
