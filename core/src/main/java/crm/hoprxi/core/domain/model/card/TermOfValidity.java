@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-03-27
+ * @version 0.0.2 builder 2020-06-13
  */
 public class TermOfValidity {
     private static final LocalDate DAY_OF_INFAMY = LocalDate.of(2015, 3, 26);
