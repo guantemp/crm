@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.multiplying;
 
 
 import crm.hoprxi.core.domain.model.collaborator.Payment;
@@ -27,13 +27,14 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class PaymentEntry extends SuperpositionEntry {
+public class PaymentEntry extends MultiplyingEntry {
     private Payment payment;
 
     public PaymentEntry(double ratio, Payment payment) {
         super(ratio);
         setPayment(payment);
     }
+
 
     public Payment payment() {
         return payment;

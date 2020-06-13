@@ -14,46 +14,57 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.multiplying;
 
+import com.arangodb.entity.DocumentField;
+import crm.hoprxi.core.domain.model.bonus.Bonus;
+import crm.hoprxi.core.domain.model.card.TermOfValidity;
 import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 builder 2020-06-03
  */
-public abstract class SuperpositionEntry {
-    protected double rate;
+public abstract class MultiplyingEntry {
+    @DocumentField(DocumentField.Type.KEY)
+    protected String id;
+    protected Number rate;
+    protected TermOfValidity termOfValidity;
 
-    public SuperpositionEntry(double rate) {
-        if (Double.compare(rate, 0.0) <= 0)
+    public MultiplyingEntry(Number rate) {
+        if (Double.compare(rate.doubleValue(), 0.0) <= 0)
             throw new IllegalArgumentException("");
         this.rate = rate;
     }
 
-    public Bonus calculation(Bonus bonus, int scale, RoundingMode roundingMode) {
-        BigDecimal bd = NumberToBigDecimal.to(bonus.toNumber().doubleValue() * rate);
-        bd = bd.setScale(scale, roundingMode);
+    public String id() {
+        return id;
+    }
+
+    public Number rate() {
+        return rate;
+    }
+
+    public Bonus calculation(Bonus bonus) {
+        BigDecimal bd = NumberToBigDecimal.to(bonus.toNumber().doubleValue() * rate.doubleValue());
         return new Bonus(bd);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SuperpositionEntry)) return false;
+        if (!(o instanceof MultiplyingEntry)) return false;
 
-        SuperpositionEntry that = (SuperpositionEntry) o;
+        MultiplyingEntry that = (MultiplyingEntry) o;
 
-        return Double.compare(that.rate, rate) == 0;
+        return rate != null ? rate.equals(that.rate) : that.rate == null;
     }
 
     @Override
     public int hashCode() {
-        long temp = Double.doubleToLongBits(rate);
-        return (int) (temp ^ (temp >>> 32));
+        return rate != null ? rate.hashCode() : 0;
     }
 }

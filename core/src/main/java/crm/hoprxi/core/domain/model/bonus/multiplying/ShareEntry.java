@@ -14,9 +14,12 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus.consumption;
+package crm.hoprxi.core.domain.model.bonus.multiplying;
 
-import crm.hoprxi.core.domain.model.collaborator.Item;
+
+import crm.hoprxi.core.domain.model.bonus.consumption.Entry;
+import crm.hoprxi.core.domain.model.bonus.consumption.Ratio;
+import crm.hoprxi.core.domain.model.collaborator.Referee;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -24,47 +27,42 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-05-22
+ * @version 0.0.1 builder 2020-08-22
  */
-public class ItemEntry extends Entry {
-    private Item item;
+public class ShareEntry extends Entry {
+    private Referee referee;
 
-    public ItemEntry(Item item, Ratio ratio) {
+    public ShareEntry(Ratio ratio, Referee referee) {
         super(ratio);
-        setItem(item);
-        this.id = "item_" + item.id();
+        this.referee = Objects.requireNonNull(referee, "");
     }
 
-    public Item item() {
-        return item;
-    }
-
-    private void setItem(Item item) {
-        this.item = Objects.requireNonNull(item, "item required");
+    public Referee referee() {
+        return referee;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ItemEntry)) return false;
+        if (!(o instanceof ShareEntry)) return false;
         if (!super.equals(o)) return false;
 
-        ItemEntry itemEntry = (ItemEntry) o;
+        ShareEntry that = (ShareEntry) o;
 
-        return item != null ? item.equals(itemEntry.item) : itemEntry.item == null;
+        return referee == that.referee;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (item != null ? item.hashCode() : 0);
+        result = 31 * result + (referee != null ? referee.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ItemEntry.class.getSimpleName() + "[", "]")
-                .add("item=" + item)
+        return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
+                .add("referee=" + referee)
                 .add("ratio=" + ratio)
                 .toString();
     }

@@ -37,9 +37,9 @@ public class TermOfValidityTest {
     public void test() {
         TermOfValidity permanent = TermOfValidity.PERMANENCE;
         Assert.assertTrue(permanent.isValidityPeriod());
-        TermOfValidity permanent1 = permanent.broughtForwardTo(LocalDate.now().plusDays(2));
+        TermOfValidity permanent1 = permanent.broughtForwardExpiryDate(LocalDate.now().plusDays(2));
         Assert.assertTrue(permanent1 == permanent);
-        permanent1 = permanent.postponeTo(LocalDate.now().plusDays(20));
+        permanent1 = permanent.postponeExpiryDate(LocalDate.now().plusDays(20));
         Assert.assertTrue(permanent1 == permanent);
 
         TermOfValidity termOfValidity = new TermOfValidity(LocalDate.now(), LocalDate.now());
@@ -48,17 +48,24 @@ public class TermOfValidityTest {
         termOfValidity = new TermOfValidity(LocalDate.now(), LocalDate.now().plusDays(30));
         Assert.assertTrue(termOfValidity.isValidityPeriod());
 
-        termOfValidity = termOfValidity.postponeTo(LocalDate.now().plusDays(60));
-        System.out.println(termOfValidity);
+        termOfValidity = termOfValidity.postponeExpiryDate(LocalDate.now().plusDays(60));
         Assert.assertTrue(termOfValidity.isValidityPeriod());
+        Assert.assertEquals(termOfValidity.expiryDate(), LocalDate.now().plusDays(60));
 
-        termOfValidity = termOfValidity.broughtForwardTo(LocalDate.now().plusDays(45));
-        System.out.println(termOfValidity);
+        termOfValidity = termOfValidity.broughtForwardExpiryDate(LocalDate.now().plusDays(45));
         Assert.assertTrue(termOfValidity.isValidityPeriod());
+        Assert.assertEquals(termOfValidity.expiryDate(), LocalDate.now().plusDays(45));
 
-        termOfValidity = new TermOfValidity(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 4));
-        System.out.println(termOfValidity);
+        termOfValidity = termOfValidity.postponeStartDate(LocalDate.now().plusDays(30));
         Assert.assertFalse(termOfValidity.isValidityPeriod());
+        Assert.assertEquals(termOfValidity.startDate(), LocalDate.now().plusDays(30));
+
+        termOfValidity = termOfValidity.broughtForwardStartDate(LocalDate.now().plusDays(5));
+        Assert.assertFalse(termOfValidity.isValidityPeriod());
+        Assert.assertEquals(termOfValidity.startDate(), LocalDate.now().plusDays(5));
+
+        termOfValidity = TermOfValidity.getInstance(LocalDate.of(2015, 3, 26), LocalDate.of(2015, 3, 26));
+        Assert.assertTrue(termOfValidity == TermOfValidity.PERMANENCE);
 
         thrown.expect(IllegalArgumentException.class);
         new TermOfValidity(LocalDate.now(), LocalDate.now().minusDays(1));

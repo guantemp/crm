@@ -14,7 +14,9 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
+
+import crm.hoprxi.core.domain.model.bonus.multiplying.MultiplyingEntry;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;
@@ -24,7 +26,7 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ConsumptionIntervalEntry extends SuperpositionEntry {
+public class ConsumptionIntervalEntry extends MultiplyingEntry {
     private MonetaryAmount lowerLimit;
 
     public ConsumptionIntervalEntry(double ratio, MonetaryAmount lowerLimit) {
@@ -32,7 +34,7 @@ public class ConsumptionIntervalEntry extends SuperpositionEntry {
         setLowerLimit(lowerLimit);
     }
 
-    public double ratio() {
+    public Number ratio() {
         return rate;
     }
 

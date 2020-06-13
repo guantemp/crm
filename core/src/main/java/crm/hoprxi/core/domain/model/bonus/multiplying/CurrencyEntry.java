@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.multiplying;
 
 import java.util.Currency;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class CurrencyEntry extends SuperpositionEntry {
+public class CurrencyEntry extends MultiplyingEntry {
     private Currency currency;
 
     public CurrencyEntry(double ratio, Currency currency) {

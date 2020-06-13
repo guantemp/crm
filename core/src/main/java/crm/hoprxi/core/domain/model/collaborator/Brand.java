@@ -16,14 +16,17 @@
 
 package crm.hoprxi.core.domain.model.collaborator;
 
+import crm.hoprxi.core.infrastructure.resource.Label;
+
 import java.util.Objects;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-08-23
+ * @version 0.0.1 builder 2020-05-23
  */
 public class Brand {
+    public static final Brand UNDEFINED = new Brand("undefined", Label.brand_undefined);
     private String id;
     private String name;
 
@@ -37,8 +40,7 @@ public class Brand {
     }
 
     private void setId(String id) {
-        Objects.requireNonNull(id, "id required");
-        this.id = id;
+        this.id = Objects.requireNonNull(id, "id required");
     }
 
     public String name() {

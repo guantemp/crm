@@ -16,51 +16,24 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-
-import crm.hoprxi.core.domain.model.collaborator.Referee;
-
-import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-08-22
+ * @version 0.0.2 builder 2020-06-11
  */
-public class ShareEntry extends Entry {
-    private Referee referee;
+public class CommonEntry extends Entry {
+    public static final CommonEntry ONE_TO_ONE = new CommonEntry(Ratio.ONE_TO_ONE);
 
-    public ShareEntry(Ratio ratio, Referee referee) {
+    public CommonEntry(Ratio ratio) {
         super(ratio);
-        this.referee = Objects.requireNonNull(referee, "");
-    }
-
-    public Referee referee() {
-        return referee;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ShareEntry)) return false;
-        if (!super.equals(o)) return false;
-
-        ShareEntry that = (ShareEntry) o;
-
-        return referee == that.referee;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (referee != null ? referee.hashCode() : 0);
-        return result;
+        id = "common";
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
-                .add("referee=" + referee)
+        return new StringJoiner(", ", CommonEntry.class.getSimpleName() + "[", "]")
                 .add("ratio=" + ratio)
                 .toString();
     }

@@ -33,12 +33,12 @@ public class TermOfValidity {
         }
 
         @Override
-        public TermOfValidity postponeTo(LocalDate newExpiryDate) {
+        public TermOfValidity postponeExpiryDate(LocalDate newExpiryDate) {
             return this;
         }
 
         @Override
-        public TermOfValidity broughtForwardTo(LocalDate newExpiryDate) {
+        public TermOfValidity broughtForwardExpiryDate(LocalDate newExpiryDate) {
             return this;
         }
 
@@ -70,32 +70,51 @@ public class TermOfValidity {
         setExpiryDate(expiryDate);
     }
 
+    public TermOfValidity(LocalDate expiryDate) {
+        this(LocalDate.now(), expiryDate);
+    }
+
     private void setExpiryDate(LocalDate expiryDate) {
         Objects.requireNonNull(expiryDate, "expiryDate required");
         if (expiryDate.isBefore(startDate))
             throw new IllegalArgumentException(
-                    "startDate must be consistent with expiryDate or before the expiryDate.");
+                    "startDate must be consistent with expiryDate or before the expiryDate,now is:[" + startDate + " -> " + expiryDate + "]");
         this.expiryDate = expiryDate;
     }
 
     private void setStartDate(LocalDate startDate) {
-        this.startDate = Objects.requireNonNull(startDate, "startDate required");
+        Objects.requireNonNull(startDate, "startDate required");
+        if (startDate.isBefore(LocalDate.now()) && !startDate.isEqual(DAY_OF_INFAMY))
+            throw new IllegalArgumentException("startDate need to be today or later");
+        this.startDate = startDate;
     }
 
     public LocalDate expiryDate() {
         return expiryDate;
     }
 
-    public TermOfValidity postponeTo(LocalDate newExpiryDate) {
+    public TermOfValidity postponeExpiryDate(LocalDate newExpiryDate) {
         if (newExpiryDate.isBefore(expiryDate))
             return this;
         return new TermOfValidity(startDate, newExpiryDate);
     }
 
-    public TermOfValidity broughtForwardTo(LocalDate newExpiryDate) {
-        if (newExpiryDate.isAfter(expiryDate))
+    public TermOfValidity postponeStartDate(LocalDate newStartDate) {
+        if (newStartDate.isBefore(startDate) || newStartDate.isAfter(expiryDate))
+            return this;
+        return new TermOfValidity(newStartDate, expiryDate);
+    }
+
+    public TermOfValidity broughtForwardExpiryDate(LocalDate newExpiryDate) {
+        if (newExpiryDate.isAfter(expiryDate) || newExpiryDate.isBefore(startDate))
             return this;
         return new TermOfValidity(startDate, newExpiryDate);
+    }
+
+    public TermOfValidity broughtForwardStartDate(LocalDate newStartDate) {
+        if (newStartDate.isBefore(LocalDate.now()) || newStartDate.isAfter(startDate))
+            return this;
+        return new TermOfValidity(newStartDate, expiryDate);
     }
 
     public boolean isValidityPeriod() {

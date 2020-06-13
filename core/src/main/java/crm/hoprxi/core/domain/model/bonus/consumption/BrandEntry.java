@@ -16,7 +16,6 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.bonus.Bonus;
 import crm.hoprxi.core.domain.model.collaborator.Brand;
 
 import java.util.Objects;
@@ -25,7 +24,7 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-08-22
+ * @version 0.0.1 builder 2020-05-22
  */
 public class BrandEntry extends Entry {
     private Brand brand;
@@ -34,11 +33,6 @@ public class BrandEntry extends Entry {
         super(ratio);
         setBrand(brand);
         id = "brand_" + brand.id();
-    }
-
-    @Override
-    public Bonus calculation(Number consumption) {
-        return super.calculation(consumption);
     }
 
     public Brand brand() {

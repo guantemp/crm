@@ -14,25 +14,17 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus.consumption;
+package crm.hoprxi.core.domain.model.bonus;
 
-import java.util.StringJoiner;
+import crm.hoprxi.core.domain.model.collaborator.Item;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-06-11
+ * @version 0.0.1 builder 2020-06-13
  */
-public class GeneralEntry extends Entry {
-    public GeneralEntry(Ratio ratio) {
-        super(ratio);
-        id = "general";
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", GeneralEntry.class.getSimpleName() + "[", "]")
-                .add("ratio=" + ratio)
-                .toString();
+public class BonusServices {
+    public Bonus calculation(Item item, Number consumption) {
+        return Bonus.ZERO;
     }
 }

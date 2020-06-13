@@ -29,7 +29,7 @@ import java.util.StringJoiner;
 public class CategoryEntry extends Entry {
     private Category category;
 
-    public CategoryEntry(Ratio ratio, Category category) {
+    public CategoryEntry(Category category, Ratio ratio) {
         super(ratio);
         setCategory(category);
         id = "category_" + category.id();
@@ -38,7 +38,6 @@ public class CategoryEntry extends Entry {
     public Category category() {
         return category;
     }
-
 
     private void setCategory(Category category) {
         this.category = Objects.requireNonNull(category, "category required");

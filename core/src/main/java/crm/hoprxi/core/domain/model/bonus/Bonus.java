@@ -88,6 +88,10 @@ public class Bonus implements Comparable<Bonus> {
         return value / Math.pow(10, SCALE);
     }
 
+    public BigDecimal toBigDecimal() {
+        return BigDecimal.valueOf(value / Math.pow(10, SCALE));
+    }
+
     @Override
     public int compareTo(Bonus o) {
         return value == o.value ? 0 : value > o.value ? 1 : -1;
