@@ -26,7 +26,7 @@ import java.time.LocalDate;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-05
+ * @version 0.0.2 2020-06-13
  */
 public class TermOfValidityTest {
 
@@ -51,15 +51,18 @@ public class TermOfValidityTest {
         termOfValidity = termOfValidity.postponeExpiryDate(LocalDate.now().plusDays(60));
         Assert.assertTrue(termOfValidity.isValidityPeriod());
         Assert.assertEquals(termOfValidity.expiryDate(), LocalDate.now().plusDays(60));
+        //do nothing
+        Assert.assertTrue(termOfValidity == termOfValidity.postponeExpiryDate(LocalDate.now().plusDays(50)));
 
         termOfValidity = termOfValidity.broughtForwardExpiryDate(LocalDate.now().plusDays(45));
         Assert.assertTrue(termOfValidity.isValidityPeriod());
         Assert.assertEquals(termOfValidity.expiryDate(), LocalDate.now().plusDays(45));
+        //do nothing
+        Assert.assertTrue(termOfValidity == termOfValidity.broughtForwardExpiryDate(LocalDate.now().plusDays(50)));
 
         termOfValidity = termOfValidity.postponeStartDate(LocalDate.now().plusDays(30));
         Assert.assertFalse(termOfValidity.isValidityPeriod());
         Assert.assertEquals(termOfValidity.startDate(), LocalDate.now().plusDays(30));
-
         termOfValidity = termOfValidity.broughtForwardStartDate(LocalDate.now().plusDays(5));
         Assert.assertFalse(termOfValidity.isValidityPeriod());
         Assert.assertEquals(termOfValidity.startDate(), LocalDate.now().plusDays(5));
