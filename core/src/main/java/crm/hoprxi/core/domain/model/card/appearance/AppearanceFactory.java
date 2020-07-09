@@ -21,7 +21,7 @@ import java.util.Map;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2019-07-20
+ * @version 0.0.1 builder 2019-09-20
  */
 public class AppearanceFactory {
     private final static Map<String, Appearance> cache = new Hashtable<String, Appearance>();
@@ -44,6 +44,6 @@ public class AppearanceFactory {
     }
 
     public static Appearance getDefault() {
-        return null;
+        return get("default");
     }
 }

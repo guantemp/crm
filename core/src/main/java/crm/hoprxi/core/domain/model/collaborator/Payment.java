@@ -25,35 +25,41 @@ import crm.hoprxi.core.infrastructure.resource.Label;
  * @version 0.0.1 builder 2018-08-07
  */
 public enum Payment {
-    WeChatPay {
+    WECHAT_PAY {
         @Override
         public String toString() {
-            return Label.Payment_WeChatPay;
+            return Label.Payment_WeChat_Pay;
         }
-    }, Alipay {
+    }, ALIPAY {
         @Override
         public String toString() {
             return Label.Payment_Alipay;
         }
-    }, BestPay {
+    }, BESTPAY {
         @Override
         public String toString() {
             return Label.Payment_BestPay;
         }
-    }, CmPay {
+    }, CMPAY {
         @Override
         public String toString() {
             return Label.Payment_CmPay;
         }
-    }, Lakala {
-        @Override
-        public String toString() {
-            return Label.Payment_Lakala;
-        }
-    }, PayPal {
+    },
+    PAYPAL {
         @Override
         public String toString() {
             return Label.Payment_PayPal;
+        }
+    }, APPLE_PAY {
+        @Override
+        public String toString() {
+            return Label.Payment_Apple_Pay;
+        }
+    }, JDPAY {
+        @Override
+        public String toString() {
+            return Label.Payment_Apple_Pay;
         }
     }
 }

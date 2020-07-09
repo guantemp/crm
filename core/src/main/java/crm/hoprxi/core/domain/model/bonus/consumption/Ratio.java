@@ -62,13 +62,15 @@ public class Ratio {
     public Number calculation(Number consumptionAmount) {
         if (increase == 0)
             return 0.0;
-        if (consumptionAmount.doubleValue() == 0.0)
-            return 0.0;
-        if (Double.compare(consumptionAmount.doubleValue(), 0.0) == -1)
+        if (consumptionAmount.doubleValue() <= 0.0)
             return 0.0;
         if (fixed)
             return (double) increase;
         return consumptionAmount.doubleValue() * increase / costAmount;
+    }
+
+    public boolean isFixed() {
+        return fixed;
     }
 
     @Override

@@ -32,13 +32,16 @@ public class Show {
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 600;
     private URL background;
+    private Style style;
 
     /**
      * @param background
      * @throws IllegalArgumentException if background is null
      */
     public Show(URL background) {
-        this.background = Objects.requireNonNull(background, "background is required");
+        Objects.requireNonNull(background, "background is required");
+        if (checkBackgroundSize())
+            this.background = background;
     }
 
     public URL background() {
@@ -49,19 +52,18 @@ public class Show {
      * @return
      * @throws BackgroundImageNotFoundException
      */
-    public boolean checkBackgroundSize() {
+    private boolean checkBackgroundSize() {
         try {
             BufferedImage image = ImageIO.read(background);
             if (image.getWidth() > WIDTH || image.getHeight() > HEIGHT)
                 return false;
         } catch (IOException e) {
-            throw new BackgroundImageNotFoundException("Not found background image");
+            throw new BackgroundImageNotFoundException("Not found background image" + background.toString());
         }
         return true;
     }
 
-
-    public BufferedImage paint(String content, Style style) {
-        return null;
+    public BufferedImage paint(int x, int y, String content) {
+        return style.paint(content);
     }
 }

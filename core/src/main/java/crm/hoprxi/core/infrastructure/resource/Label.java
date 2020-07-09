@@ -27,17 +27,13 @@ import mi.hoprxi.util.NLS;
 public class Label extends NLS {
     private static final String BUNDLE_NAME = "crm.hoprxi.core.infrastructure.resource.label"; //$NON-NLS-1$
 
-    public static String MantissaProcessing_ROUNDING;
-    public static String MantissaProcessing_FLOOR;
-    public static String MantissaProcessing_CEILING;
-
-    public static String Payment_WeChatPay;
+    public static String Payment_WeChat_Pay;
     public static String Payment_Alipay;
     public static String Payment_BestPay;
     public static String Payment_CmPay;
     public static String Payment_PayPal;
-    public static String Payment_Lakala;
-    public static String Payment_Cloud_Flash;
+    public static String Payment_Apple_Pay;
+    public static String Payment_Jd_Pay;
 
     public static String sex_man;
     public static String sex_woman;

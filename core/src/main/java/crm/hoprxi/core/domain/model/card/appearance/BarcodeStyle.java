@@ -15,7 +15,6 @@
  */
 package crm.hoprxi.core.domain.model.card.appearance;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /***
@@ -26,13 +25,11 @@ import java.awt.image.BufferedImage;
 public class BarcodeStyle extends Style {
     private boolean readability = true;
     private double wideRatio;
-    private Font font;
 
-    public BarcodeStyle(int width, int height, double wideRatio, Font font, boolean readability) {
+    public BarcodeStyle(int width, int height, double wideRatio, boolean readability) {
         super(width, height);
         this.readability = readability;
         this.wideRatio = wideRatio;
-        this.font = font;
     }
 
     public boolean isReadability() {
@@ -46,9 +43,5 @@ public class BarcodeStyle extends Style {
 
     public double ratio() {
         return wideRatio;
-    }
-
-    public Font font() {
-        return font;
     }
 }
