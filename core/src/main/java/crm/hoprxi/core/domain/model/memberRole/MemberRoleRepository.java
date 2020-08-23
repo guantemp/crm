@@ -22,7 +22,7 @@ import java.util.Collection;
  * @since JDK8.0
  * @version 0.0.2 builder 20170303
  */
-public interface MemberRepository {
+public interface MemberRoleRepository {
 
     /**
      * @return

@@ -112,7 +112,9 @@ public abstract class Customer {
     }
 
     private void setVip(Vip vip) {
-        this.vip = Objects.requireNonNull(vip, "vip required");
+        if (vip == null)
+            vip = Vip.NOT;
+        this.vip = vip;
     }
 
     public PostalAddressBook postalAddressBook() {

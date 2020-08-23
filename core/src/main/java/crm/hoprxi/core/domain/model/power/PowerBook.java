@@ -24,7 +24,7 @@ import java.util.Set;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2018-10-20
+ * @version 0.0.1 builder 2020-08-14
  */
 public class PowerBook {
     public static PowerBook NO_EQUITY = new PowerBook(new HashSet<>(0));

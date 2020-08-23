@@ -25,7 +25,7 @@ import java.util.Objects;
  * @version 0.0.1 builder 2020-05-28
  */
 public class Vip {
-    public static Vip NOT = new Vip(LocalDate.now()) {
+    public static Vip NOT = new Vip(LocalDate.MIN) {
         @Override
         public boolean isWithinThePeriodOfValidity() {
             return false;
@@ -39,7 +39,10 @@ public class Vip {
     private LocalDate validUntil;
 
     public Vip(LocalDate validUntil) {
-        this.validUntil = Objects.requireNonNull(validUntil, "validUntil required.");
+        Objects.requireNonNull(validUntil, "validUntil required.");
+        if (validUntil.isBefore(LocalDate.now()))
+            throw new IllegalArgumentException("Valid for at least 1 day");
+        this.validUntil = validUntil;
     }
 
     public LocalDate validUntil() {

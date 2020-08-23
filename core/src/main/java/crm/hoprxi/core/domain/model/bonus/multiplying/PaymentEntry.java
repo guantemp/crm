@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 public class PaymentEntry extends MultiplyingEntry {
     private Payment payment;
 
-    public PaymentEntry(double ratio, Payment payment) {
+    public PaymentEntry(Number ratio, Payment payment) {
         super(ratio);
         setPayment(payment);
     }

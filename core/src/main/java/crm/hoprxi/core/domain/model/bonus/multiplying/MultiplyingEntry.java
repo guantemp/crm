@@ -36,7 +36,7 @@ public abstract class MultiplyingEntry {
 
     public MultiplyingEntry(Number rate) {
         if (Double.compare(rate.doubleValue(), 0.0) <= 0)
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("rate lager zero");
         this.rate = rate;
     }
 

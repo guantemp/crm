@@ -28,7 +28,7 @@ import java.util.StringJoiner;
 public class CurrencyEntry extends MultiplyingEntry {
     private Currency currency;
 
-    public CurrencyEntry(double ratio, Currency currency) {
+    public CurrencyEntry(Number ratio, Currency currency) {
         super(ratio);
         setCurrency(currency);
     }
@@ -50,7 +50,7 @@ public class CurrencyEntry extends MultiplyingEntry {
 
         CurrencyEntry that = (CurrencyEntry) o;
 
-        return currency != null ? currency.equals(that.currency) : that.currency == null;
+        return Objects.equals(currency, that.currency);
     }
 
     @Override
