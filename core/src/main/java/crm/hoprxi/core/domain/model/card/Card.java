@@ -185,8 +185,10 @@ public abstract class Card {
 
     public void changeSmallChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
         SmallChange newSmallChange = smallChange.changeSmallChangDenominationEnum(newSmallChangDenominationEnum);
-        if (smallChange != newSmallChange)
+        if (smallChange != newSmallChange) {
             this.smallChange = newSmallChange;
+            DomainRegistry.domainEventPublisher().publish(new CardSmallChangDenominationEnumChanged(id, newSmallChangDenominationEnum));
+        }
     }
 
     public void withdrawalCash(MonetaryAmount amount) {

@@ -30,6 +30,12 @@ public class AnonymousCardUpgradedToDebitCard implements DomainEvent {
     private int version;
     private String id;
 
+    public AnonymousCardUpgradedToDebitCard(String id) {
+        this.id = id;
+        occurredOn = LocalDateTime.now();
+        version = 1;
+    }
+
     @Override
     public LocalDateTime occurredOn() {
         return occurredOn;
