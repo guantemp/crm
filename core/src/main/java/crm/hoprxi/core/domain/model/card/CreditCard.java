@@ -125,8 +125,8 @@ public class CreditCard extends Card {
         if (amount.isZero())
             return;
         Balance temp = balance.overdraw(amount);
-        if (temp.redPackets().isZero() && temp.valuable().isNegative())
-            temp = new Balance(temp.valuable().add(smallChange.amount()), temp.redPackets());
+        if (temp.redEnvelope().isZero() && temp.valuable().isNegative())
+            temp = new Balance(temp.valuable().add(smallChange.amount()), temp.redEnvelope());
         if (temp.valuable().abs().isGreaterThan(lineOfCredit.quota()))
             throw new ExceedQuotaException("The credit card limit exceeded");
         balance = temp;

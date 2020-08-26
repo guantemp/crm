@@ -66,7 +66,7 @@ public class ArangoDBAnonymousCardRepositoryTest {
         AnonymousCard a = repository.find("a2");
         Assert.assertNotNull(a);
         a.credit(Money.of(200, "CNY"));
-        a.giveRedPackets(Money.of(20, "CNY"));
+        a.awardRedEnvelope(Money.of(20, "CNY"));
         repository.save(a);
         a = repository.find("a2");
         a.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);

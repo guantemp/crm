@@ -16,10 +16,27 @@
 
 package crm.hoprxi.core.domain.model.card;
 
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2020-05-19
+ * @version 0.0.1 builder 2020-08-26
  */
-public class CardCashWithdrew {
+public class AnonymousCardUpgradedToDebitCard implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return version;
+    }
 }

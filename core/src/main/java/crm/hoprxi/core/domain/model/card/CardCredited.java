@@ -16,10 +16,44 @@
 
 package crm.hoprxi.core.domain.model.card;
 
+import event.hoprxi.domain.model.DomainEvent;
+
+import javax.money.MonetaryAmount;
+import java.time.LocalDateTime;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 builder 2020-05-19
  */
-public class CardCredited {
+public class CardCredited implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+    private MonetaryAmount amount;
+
+    public CardCredited(String id, MonetaryAmount amount) {
+        this.id = id;
+        this.amount = amount;
+        occurredOn = LocalDateTime.now();
+        version = 1;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public MonetaryAmount amount() {
+        return amount;
+    }
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return version;
+    }
 }

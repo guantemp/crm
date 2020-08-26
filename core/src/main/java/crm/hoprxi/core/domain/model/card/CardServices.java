@@ -26,11 +26,20 @@ import javax.money.MonetaryAmount;
  * @version 0.0.1 builder 2020-08-26
  */
 public class CardServices {
+    private AnonymousCardRepository anonymousCardRepository;
+    private DebitCardRepository debitCardRepository;
+
     public Rounded smallChangCalculation(MonetaryAmount receivables, Card card) {
         return null;
     }
 
-    public void anonymousCardUpgradeToDebitCard(String cardId) {
-
+    public void anonymousCardUpgradeToDebitCard(String cardId, String customerId, String password) {
+        AnonymousCard anonymousCard = anonymousCardRepository.find(cardId);
+        if (anonymousCard == null)
+            return;
+        DebitCard debitCard = new DebitCard(anonymousCard.issuer(), customerId, anonymousCard.id(), password, anonymousCard.cardFaceNumber(), false,
+                anonymousCard.termOfValidity(), anonymousCard.balance(), anonymousCard.smallChange(), anonymousCard.appearance());
+        debitCardRepository.save(debitCard);
+        anonymousCardRepository.remove(cardId);
     }
 }

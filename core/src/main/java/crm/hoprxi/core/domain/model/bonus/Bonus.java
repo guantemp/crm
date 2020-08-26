@@ -27,7 +27,7 @@ import java.util.StringJoiner;
  * @version 0.0.1 builder 2020-05-17
  */
 public class Bonus implements Comparable<Bonus> {
-    private static final int SCALE = 2;
+    private static final int SCALE = 4;
     public static final Bonus ZERO = new Bonus(0);
     private long value;
 

@@ -89,7 +89,7 @@ public class ArangoDBDebitCardRepositoryTest {
         debitCard = repository.find("667788");
         Assert.assertEquals("777777", debitCard.cardFaceNumber());
         debitCard.credit(Money.of(200, "CNY"));
-        debitCard.giveRedPackets(Money.of(20, "CNY"));
+        debitCard.awardRedEnvelope(Money.of(20, "CNY"));
         debitCard.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
         debitCard.debit(Money.of(62.75, "CNY"));
         repository.save(debitCard);

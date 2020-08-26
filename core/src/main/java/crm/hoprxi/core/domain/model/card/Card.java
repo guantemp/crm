@@ -156,23 +156,26 @@ public abstract class Card {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
         balance = balance.deposit(amount);
+        DomainRegistry.domainEventPublisher().publish(new CardCredited(id, amount));
     }
 
-    public void giveRedPackets(MonetaryAmount redPackets) {
+    public void awardRedEnvelope(MonetaryAmount redEnvelope) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        balance = balance.giveRedPackets(redPackets);
+        balance = balance.awardRedEnvelope(redEnvelope);
+        DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeAwarded(id, redEnvelope));
     }
 
     /**
      * Fallback for red packet operation error
      *
-     * @param redPackets
+     * @param redEnvelope
      */
-    public void revokeRedPackets(MonetaryAmount redPackets) {
+    public void revokeRedEnvelope(MonetaryAmount redEnvelope) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        balance = balance.revokeRedPackets(redPackets);
+        balance = balance.revokeRedEnvelope(redEnvelope);
+        DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeRevoked(id, redEnvelope));
     }
 
     /**
@@ -193,11 +196,12 @@ public abstract class Card {
             throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
             balance = balance.withdrawalCash(amount);
-            return;
+        } else {
+            MonetaryAmount temp = amount.subtract(balance.valuable());
+            balance = new Balance(Money.zero(balance.valuable().getCurrency()), balance.redEnvelope());
+            smallChange = smallChange.pay(temp);
         }
-        MonetaryAmount temp = amount.subtract(balance.valuable());
-        balance = new Balance(Money.zero(balance.valuable().getCurrency()), balance.redPackets());
-        smallChange = smallChange.pay(temp);
+        DomainRegistry.domainEventPublisher().publish(new CardWithdrewCash(id, amount));
     }
 
     public void withdrawalAllCash() {
@@ -206,8 +210,10 @@ public abstract class Card {
         CurrencyUnit unit = balance.valuable().getCurrency();
         if (balance.valuable().add(smallChange.amount()).isLessThan(Money.zero(unit)))
             throw new InsufficientBalanceException("Insufficient balance");
-        balance = new Balance(Money.zero(unit), balance.redPackets());
+        Balance snapshot = balance;
+        balance = new Balance(Money.zero(unit), snapshot.redEnvelope());
         smallChange = SmallChange.zero(unit);
+        DomainRegistry.domainEventPublisher().publish(new CardWithdrewCash(id, snapshot.valuable()));
     }
 
     public void cancel() {

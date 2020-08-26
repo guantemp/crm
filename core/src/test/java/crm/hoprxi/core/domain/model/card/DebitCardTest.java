@@ -50,33 +50,33 @@ public class DebitCardTest {
         card.credit(three_hundred);
         Assert.assertTrue(three_hundred.isEqualTo(card.balance().total()));
         card.credit(three_hundred);
-        card.giveRedPackets(thirty);
-        Assert.assertTrue(thirty.isEqualTo(card.balance().redPackets()));
+        card.awardRedEnvelope(thirty);
+        Assert.assertTrue(thirty.isEqualTo(card.balance().redEnvelope()));
 
         card.withdrawalCash(one_hundred);
         Assert.assertTrue(Money.of(530, "CNY").isEqualTo(card.balance().total()));
         Assert.assertTrue(Money.of(500, "CNY").isEqualTo(card.balance().valuable()));
-        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redEnvelope()));
 
         card.withdrawalCash(two_hundred);
         Assert.assertTrue(Money.of(330, "CNY").isEqualTo(card.balance.total()));
         Assert.assertTrue(Money.of(300, "CNY").isEqualTo(card.balance.valuable()));
-        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance.redPackets()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance.redEnvelope()));
 
         card.debit(one_hundred);
         Assert.assertTrue(Money.of(230, "CNY").isEqualTo(card.balance().total()));
         Assert.assertTrue(Money.of(200, "CNY").isEqualTo(card.balance().valuable()));
-        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redEnvelope()));
 
         card.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
         card.debit(Money.of(99.5, Monetary.getCurrency(locale)));
         Assert.assertTrue(Money.of(100.5, "CNY").isEqualTo(card.balance().valuable()));
-        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redEnvelope()));
         Assert.assertTrue(Money.of(0.0, "CNY").isEqualTo(card.smallChange().amount()));
 
         card.debit(Money.of(10.6, Monetary.getCurrency(locale)));
         Assert.assertTrue(Money.of(89.9, "CNY").isEqualTo(card.balance().valuable()));
-        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
+        Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redEnvelope()));
         card.smallChange = card.smallChange.deposit(Money.of(0.9, "CNY"));
         Assert.assertTrue(Money.of(0.9, "CNY").isEqualTo(card.smallChange().amount()));
         card.debit(Money.of(120.35, Monetary.getCurrency(locale)));
@@ -85,7 +85,7 @@ public class DebitCardTest {
     @Test
     public void testException() {
         DebitCard card = new DebitCard(new Issuer("600156", "泸州看画城"), "52275427", "123465", "2002123456");
-        card.giveRedPackets(Money.of(0.45, Monetary.getCurrency(locale)));
+        card.awardRedEnvelope(Money.of(0.45, Monetary.getCurrency(locale)));
         thrown.expect(InsufficientBalanceException.class);
         card.debit(Money.of(0.4501, Monetary.getCurrency(locale)));
     }

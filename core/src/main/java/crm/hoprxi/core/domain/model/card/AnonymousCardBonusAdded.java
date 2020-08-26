@@ -34,6 +34,16 @@ public class AnonymousCardBonusAdded implements DomainEvent {
     public AnonymousCardBonusAdded(String id, Number bonus) {
         this.id = id;
         this.bonus = bonus;
+        occurredOn = LocalDateTime.now();
+        version = 1;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public Number bonus() {
+        return bonus;
     }
 
     @Override

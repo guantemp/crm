@@ -16,32 +16,25 @@
 
 package crm.hoprxi.core.domain.model.card;
 
-import crm.hoprxi.core.domain.model.card.appearance.Appearance;
-import crm.hoprxi.core.domain.model.collaborator.Issuer;
 import event.hoprxi.domain.model.DomainEvent;
 
+import javax.money.MonetaryAmount;
 import java.time.LocalDateTime;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2020-08-26
+ * @version 0.0.1 2020-05-19
  */
-public class AnonymousCardIssued implements DomainEvent {
+public class CardWithdrewCash implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
-    private String cardFaceNumber;
-    private Issuer issuer;
-    private TermOfValidity termOfValidity;
-    private Appearance appearance;
+    private MonetaryAmount amount;
 
-    public AnonymousCardIssued(String id, String cardFaceNumber, Issuer issuer, TermOfValidity termOfValidity, Appearance appearance) {
+    public CardWithdrewCash(String id, MonetaryAmount amount) {
         this.id = id;
-        this.cardFaceNumber = cardFaceNumber;
-        this.issuer = issuer;
-        this.termOfValidity = termOfValidity;
-        this.appearance = appearance;
+        this.amount = amount;
         occurredOn = LocalDateTime.now();
         version = 1;
     }
@@ -50,20 +43,8 @@ public class AnonymousCardIssued implements DomainEvent {
         return id;
     }
 
-    public String cardFaceNumber() {
-        return cardFaceNumber;
-    }
-
-    public Issuer issuer() {
-        return issuer;
-    }
-
-    public TermOfValidity termOfValidity() {
-        return termOfValidity;
-    }
-
-    public Appearance appearance() {
-        return appearance;
+    public MonetaryAmount amount() {
+        return amount;
     }
 
     @Override
