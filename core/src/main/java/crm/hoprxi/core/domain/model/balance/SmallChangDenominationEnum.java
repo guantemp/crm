@@ -36,7 +36,7 @@ public enum SmallChangDenominationEnum {
         }
     },
 
-    ONE(1), FIVE(5);
+    ONE(1), FIVE(5), TEN(10);
 
     private int factor;
 

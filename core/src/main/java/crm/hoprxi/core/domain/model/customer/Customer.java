@@ -44,14 +44,35 @@ public abstract class Customer {
     private URI headPortrait;
     private Spss spss;
     private Vip vip;
-    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, false, Spss.EMPTY_SPSS, null, null) {
+    public static final Customer ANONYMOUS = new Customer(RESERVED_WORD, RESERVED_WORD, false, Vip.NOT, Spss.EMPTY_SPSS, null, null) {
         @Override
         public void rename(String newName) {
             //do nothing
         }
+
+        @Override
+        public void addPostalAddress(PostalAddress address) {
+        }
+
+        @Override
+        public void removePostalAddress(PostalAddress address) {
+        }
+
+        @Override
+        public void resetAcquiescencePostalAddress(PostalAddress address) {
+        }
+
+        @Override
+        public void freeze() {
+        }
+
+        @Override
+        public void unfreeze() {
+        }
     };
     private PostalAddressBook postalAddressBook;
     private boolean freeze;
+
 
     public Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook) {
         this(id, name, freeze, Vip.NOT, spss, headPortrait, postalAddressBook);

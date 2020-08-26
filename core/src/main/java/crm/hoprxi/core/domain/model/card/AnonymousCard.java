@@ -92,6 +92,10 @@ public class AnonymousCard extends Card {
 */
     }
 
+    public AnonymousCardSnapshot toSnapshot() {
+        return new AnonymousCardSnapshot(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, bonus, appearance);
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")

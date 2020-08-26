@@ -140,7 +140,7 @@ public class Balance {
      * @param redPackets
      * @return
      */
-    public Balance withdrawRedPackets(MonetaryAmount redPackets) {
+    public Balance revokeRedPackets(MonetaryAmount redPackets) {
         if (redPackets == null)
             return this;
         CurrencyUnit currencyUnit = this.valuable.getCurrency();
@@ -199,12 +199,12 @@ public class Balance {
     }
 
     /**
-     * Red packet amount cannot be cashed out
+     * red packet amount cannot be cashed out
      *
      * @param amount
      * @return
      */
-    public Balance cashWithdrawal(MonetaryAmount amount) {
+    public Balance withdrawalCash(MonetaryAmount amount) {
         if (amount == null)
             return this;
         CurrencyUnit currencyUnit = this.valuable.getCurrency();

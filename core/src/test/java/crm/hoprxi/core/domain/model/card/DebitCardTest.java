@@ -53,12 +53,12 @@ public class DebitCardTest {
         card.giveRedPackets(thirty);
         Assert.assertTrue(thirty.isEqualTo(card.balance().redPackets()));
 
-        card.cashWithdrawal(one_hundred);
+        card.withdrawalCash(one_hundred);
         Assert.assertTrue(Money.of(530, "CNY").isEqualTo(card.balance().total()));
         Assert.assertTrue(Money.of(500, "CNY").isEqualTo(card.balance().valuable()));
         Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance().redPackets()));
 
-        card.cashWithdrawal(two_hundred);
+        card.withdrawalCash(two_hundred);
         Assert.assertTrue(Money.of(330, "CNY").isEqualTo(card.balance.total()));
         Assert.assertTrue(Money.of(300, "CNY").isEqualTo(card.balance.valuable()));
         Assert.assertTrue(Money.of(30, "CNY").isEqualTo(card.balance.redPackets()));

@@ -108,7 +108,7 @@ public class SmallChange {
     public SmallChange pay(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegative())
-            throw new IllegalArgumentException("Amount must is positive");
+            throw new IllegalArgumentException("amount must is positive");
         if (!this.amount.getCurrency().equals(amount.getCurrency()))
             throw new IllegalArgumentException("amount currency must is:" + this.amount.getCurrency());
         if (this.amount.isLessThan(amount))
@@ -127,7 +127,7 @@ public class SmallChange {
     public SmallChange deposit(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "amount required");
         if (amount.isNegative())
-            throw new IllegalArgumentException("Amount must is positive");
+            throw new IllegalArgumentException("amount must is positive");
         if (amount.isZero())
             return this;
         return new SmallChange(this.amount.add(amount), smallChangDenominationEnum);

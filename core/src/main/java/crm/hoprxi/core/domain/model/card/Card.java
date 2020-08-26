@@ -41,10 +41,10 @@ import java.util.StringJoiner;
 public abstract class Card {
     private static final int ID_MAX_LENGTH = 64;
     @DocumentField(DocumentField.Type.KEY)
-    private String id;
-    private Issuer issuer;
+    protected String id;
+    protected Issuer issuer;
     protected TermOfValidity termOfValidity;
-    private Appearance appearance;
+    protected Appearance appearance;
     protected String cardFaceNumber;
     protected Balance balance;
     protected SmallChange smallChange;
@@ -164,10 +164,15 @@ public abstract class Card {
         balance = balance.giveRedPackets(redPackets);
     }
 
-    public void withdrawRedPackets(MonetaryAmount redPackets) {
+    /**
+     * Fallback for red packet operation error
+     *
+     * @param redPackets
+     */
+    public void revokeRedPackets(MonetaryAmount redPackets) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
-        balance = balance.withdrawRedPackets(redPackets);
+        balance = balance.revokeRedPackets(redPackets);
     }
 
     /**
@@ -181,13 +186,13 @@ public abstract class Card {
             this.smallChange = newSmallChange;
     }
 
-    public void cashWithdrawal(MonetaryAmount amount) {
+    public void withdrawalCash(MonetaryAmount amount) {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
         if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
             throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
-            balance = balance.cashWithdrawal(amount);
+            balance = balance.withdrawalCash(amount);
             return;
         }
         MonetaryAmount temp = amount.subtract(balance.valuable());
@@ -195,7 +200,7 @@ public abstract class Card {
         smallChange = smallChange.pay(temp);
     }
 
-    public void cashWithdrawalAll() {
+    public void withdrawalAllCash() {
         if (!termOfValidity.isValidityPeriod())
             throw new BeOverdueException("Card failed");
         CurrencyUnit unit = balance.valuable().getCurrency();
@@ -203,6 +208,10 @@ public abstract class Card {
             throw new InsufficientBalanceException("Insufficient balance");
         balance = new Balance(Money.zero(unit), balance.redPackets());
         smallChange = SmallChange.zero(unit);
+    }
+
+    public void cancel() {
+
     }
 
     @Override

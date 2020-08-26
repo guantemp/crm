@@ -19,7 +19,7 @@ package crm.hoprxi.core.domain.model.card;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-05-19
+ * @version 0.0.1 builder 2020-08-26
  */
-public class AnonymousCardUpgradeToDebitCardService {
+public class CardCancelled {
 }
