@@ -43,29 +43,29 @@ public class DebitCard extends Card {
     @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
-    private boolean freeze;
+    private boolean available;
 
-    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
+    public DebitCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean available,
                      Balance balance, SmallChange smallChange, Appearance appearance) {
-        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+        super(issuer, id, cardFaceNumber, balance, smallChange, appearance);
         setCustomerId(customerId);
         setPassword(password);
-        this.freeze = freeze;
+        this.available = available;
     }
 
     public DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber) {
-        this(issuer, customerId, id, "", cardFaceNumber, false, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()),
+        this(issuer, customerId, id, "", cardFaceNumber, false, Balance.zero(Locale.getDefault()),
                 SmallChange.zero(Locale.getDefault()), null);
     }
 
     /**
      * for rebuild
      */
-    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity, Balance balance,
+    private DebitCard(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean available, Balance balance,
                       SmallChange smallChange, Appearance appearance) {
-        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+        super(issuer, id, cardFaceNumber, balance, smallChange, appearance);
         setCustomerId(customerId);
-        this.freeze = freeze;
+        this.available = available;
     }
 
     private void setPassword(String password) {
@@ -118,8 +118,8 @@ public class DebitCard extends Card {
         return hash.check(password, this.password);
     }
 
-    public boolean isFreeze() {
-        return freeze;
+    public boolean isAvailable() {
+        return available;
     }
 
     public String customerId() {
@@ -128,8 +128,6 @@ public class DebitCard extends Card {
 
     @Override
     public void debit(MonetaryAmount amount) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
         if (amount.isNegative())
             throw new IllegalArgumentException("Amount must is positive");
         CurrencyUnit currencyUnit = balance.currencyUnit();
@@ -151,19 +149,18 @@ public class DebitCard extends Card {
     }
 
     public void freeze() {
-        freeze = true;
+        available = true;
     }
 
     public void unfreeze() {
-        freeze = false;
+        available = false;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
                 .add("customerId='" + customerId + "'")
-                .add("freeze=" + freeze)
-                .add("termOfValidity=" + termOfValidity)
+                .add("freeze=" + available)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)

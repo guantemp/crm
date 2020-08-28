@@ -28,7 +28,7 @@ import crm.hoprxi.core.domain.model.collaborator.Issuer;
  * @version 0.0.1 builder 2020-08-26
  */
 public class AnonymousCardSnapshot {
-    protected TermOfValidity termOfValidity;
+    protected ValidityPeriod validityPeriod;
     protected String cardFaceNumber;
     protected Balance balance;
     protected SmallChange smallChange;
@@ -37,8 +37,8 @@ public class AnonymousCardSnapshot {
     private Appearance appearance;
     private Bonus bonus;
 
-    public AnonymousCardSnapshot(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
-        this.termOfValidity = termOfValidity;
+    public AnonymousCardSnapshot(Issuer issuer, String id, String cardFaceNumber, ValidityPeriod validityPeriod, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
+        this.validityPeriod = validityPeriod;
         this.cardFaceNumber = cardFaceNumber;
         this.balance = balance;
         this.smallChange = smallChange;
@@ -48,8 +48,8 @@ public class AnonymousCardSnapshot {
         this.bonus = bonus;
     }
 
-    public TermOfValidity termOfValidity() {
-        return termOfValidity;
+    public ValidityPeriod termOfValidity() {
+        return validityPeriod;
     }
 
     public String cardFaceNumber() {

@@ -33,14 +33,14 @@ public class AnonymousCardIssued implements DomainEvent {
     private String id;
     private String cardFaceNumber;
     private Issuer issuer;
-    private TermOfValidity termOfValidity;
+    private ValidityPeriod validityPeriod;
     private Appearance appearance;
 
-    public AnonymousCardIssued(String id, String cardFaceNumber, Issuer issuer, TermOfValidity termOfValidity, Appearance appearance) {
+    public AnonymousCardIssued(String id, String cardFaceNumber, Issuer issuer, ValidityPeriod validityPeriod, Appearance appearance) {
         this.id = id;
         this.cardFaceNumber = cardFaceNumber;
         this.issuer = issuer;
-        this.termOfValidity = termOfValidity;
+        this.validityPeriod = validityPeriod;
         this.appearance = appearance;
         occurredOn = LocalDateTime.now();
         version = 1;
@@ -58,8 +58,8 @@ public class AnonymousCardIssued implements DomainEvent {
         return issuer;
     }
 
-    public TermOfValidity termOfValidity() {
-        return termOfValidity;
+    public ValidityPeriod termOfValidity() {
+        return validityPeriod;
     }
 
     public Appearance appearance() {

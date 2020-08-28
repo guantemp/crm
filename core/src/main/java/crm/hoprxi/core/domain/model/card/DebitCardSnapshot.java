@@ -27,7 +27,7 @@ import crm.hoprxi.core.domain.model.collaborator.Issuer;
  * @version 0.0.1 builder 2020-05-19
  */
 public class DebitCardSnapshot {
-    protected TermOfValidity termOfValidity;
+    protected ValidityPeriod validityPeriod;
     protected String cardFaceNumber;
     protected Balance balance;
     protected SmallChange smallChange;

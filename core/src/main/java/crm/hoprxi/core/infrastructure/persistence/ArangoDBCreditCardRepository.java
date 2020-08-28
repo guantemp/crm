@@ -31,7 +31,6 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.CreditCard;
 import crm.hoprxi.core.domain.model.card.CreditCardRepository;
 import crm.hoprxi.core.domain.model.card.LineOfCredit;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
@@ -137,11 +136,6 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         String password = slice.get("password").getAsString();
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
         boolean freeze = slice.get("freeze").getAsBoolean();
-        //termOfValidity
-        VPackSlice termOfValiditySlice = slice.get("termOfValidity");
-        LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);
         //lineOfCredit
         VPackSlice lineOfCreditSlice = slice.get("lineOfCredit");
         VPackSlice quotaSlice = lineOfCreditSlice.get("quota");
@@ -163,7 +157,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
 
-        CreditCard creditCard = new CreditCard(issuer, customerId, id, "", cardFaceNumber, freeze, termOfValidity, lineOfCredit, balance, smallChange, null);
+        CreditCard creditCard = new CreditCard(issuer, customerId, id, "", cardFaceNumber, freeze, lineOfCredit, balance, smallChange, null);
         passwordField.set(creditCard, password);
         return creditCard;
     }

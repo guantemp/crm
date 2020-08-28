@@ -24,21 +24,21 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.2 builder 2020-06-13
  */
-public class TermOfValidity {
+public class ValidityPeriod {
     private static final LocalDate DAY_OF_INFAMY = LocalDate.of(2015, 3, 26);
-    public static final TermOfValidity PERMANENCE = new TermOfValidity(DAY_OF_INFAMY,
+    public static final ValidityPeriod PERMANENCE = new ValidityPeriod(DAY_OF_INFAMY,
             DAY_OF_INFAMY) {
         public boolean isValidityPeriod() {
             return true;
         }
 
         @Override
-        public TermOfValidity postponeExpiryDate(LocalDate newExpiryDate) {
+        public ValidityPeriod postponeExpiryDate(LocalDate newExpiryDate) {
             return this;
         }
 
         @Override
-        public TermOfValidity broughtForwardExpiryDate(LocalDate newExpiryDate) {
+        public ValidityPeriod broughtForwardExpiryDate(LocalDate newExpiryDate) {
             return this;
         }
 
@@ -53,25 +53,29 @@ public class TermOfValidity {
     /**
      * @param startDate
      * @param expiryDate
-     * @return
      */
-    public static TermOfValidity getInstance(LocalDate startDate, LocalDate expiryDate) {
-        if (startDate.isEqual(DAY_OF_INFAMY) && expiryDate.isEqual(DAY_OF_INFAMY))
-            return PERMANENCE;
-        return new TermOfValidity(startDate, expiryDate);
+    public ValidityPeriod(LocalDate startDate, LocalDate expiryDate) {
+        setStartDate(startDate);
+        setExpiryDate(expiryDate);
+    }
+
+    public ValidityPeriod(LocalDate expiryDate) {
+        this(LocalDate.now(), expiryDate);
     }
 
     /**
      * @param startDate
      * @param expiryDate
+     * @return
      */
-    public TermOfValidity(LocalDate startDate, LocalDate expiryDate) {
-        setStartDate(startDate);
-        setExpiryDate(expiryDate);
+    public static ValidityPeriod getInstance(LocalDate startDate, LocalDate expiryDate) {
+        if (startDate.isEqual(DAY_OF_INFAMY) && expiryDate.isEqual(DAY_OF_INFAMY))
+            return PERMANENCE;
+        return new ValidityPeriod(startDate, expiryDate);
     }
 
-    public TermOfValidity(LocalDate expiryDate) {
-        this(LocalDate.now(), expiryDate);
+    public static ValidityPeriod threeYears() {
+        return new ValidityPeriod(LocalDate.now(), LocalDate.now().plusYears(3));
     }
 
     private void setExpiryDate(LocalDate expiryDate) {
@@ -93,28 +97,28 @@ public class TermOfValidity {
         return expiryDate;
     }
 
-    public TermOfValidity postponeExpiryDate(LocalDate newExpiryDate) {
+    public ValidityPeriod postponeExpiryDate(LocalDate newExpiryDate) {
         if (newExpiryDate.isBefore(expiryDate))
             return this;
-        return new TermOfValidity(startDate, newExpiryDate);
+        return new ValidityPeriod(startDate, newExpiryDate);
     }
 
-    public TermOfValidity postponeStartDate(LocalDate newStartDate) {
+    public ValidityPeriod postponeStartDate(LocalDate newStartDate) {
         if (newStartDate.isBefore(startDate) || newStartDate.isAfter(expiryDate))
             return this;
-        return new TermOfValidity(newStartDate, expiryDate);
+        return new ValidityPeriod(newStartDate, expiryDate);
     }
 
-    public TermOfValidity broughtForwardExpiryDate(LocalDate newExpiryDate) {
+    public ValidityPeriod broughtForwardExpiryDate(LocalDate newExpiryDate) {
         if (newExpiryDate.isAfter(expiryDate) || newExpiryDate.isBefore(startDate))
             return this;
-        return new TermOfValidity(startDate, newExpiryDate);
+        return new ValidityPeriod(startDate, newExpiryDate);
     }
 
-    public TermOfValidity broughtForwardStartDate(LocalDate newStartDate) {
+    public ValidityPeriod broughtForwardStartDate(LocalDate newStartDate) {
         if (newStartDate.isBefore(LocalDate.now()) || newStartDate.isAfter(startDate))
             return this;
-        return new TermOfValidity(newStartDate, expiryDate);
+        return new ValidityPeriod(newStartDate, expiryDate);
     }
 
     public boolean isValidityPeriod() {
@@ -130,7 +134,7 @@ public class TermOfValidity {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", TermOfValidity.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", ValidityPeriod.class.getSimpleName() + "[", "]")
                 .add("startDate=" + startDate)
                 .add("expiryDate=" + expiryDate)
                 .toString();
@@ -141,7 +145,7 @@ public class TermOfValidity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TermOfValidity that = (TermOfValidity) o;
+        ValidityPeriod that = (ValidityPeriod) o;
 
         if (expiryDate != null ? !expiryDate.equals(that.expiryDate) : that.expiryDate != null) return false;
         return startDate != null ? startDate.equals(that.startDate) : that.startDate == null;

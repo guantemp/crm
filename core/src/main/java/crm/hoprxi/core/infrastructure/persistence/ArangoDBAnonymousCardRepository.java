@@ -32,7 +32,7 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
 import crm.hoprxi.core.domain.model.card.AnonymousCard;
 import crm.hoprxi.core.domain.model.card.AnonymousCardRepository;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
+import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import crm.hoprxi.core.domain.model.card.appearance.Appearance;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.FastMoney;
@@ -154,7 +154,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         VPackSlice termOfValiditySlice = slice.get("termOfValidity");
         LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);
+        ValidityPeriod validityPeriod = ValidityPeriod.getInstance(startDate, expiryDate);
         //balance
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
@@ -171,7 +171,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         //bonus
         Bonus bonus = new Bonus(slice.get("bonus").get("value").getAsLong());
 
-        return new AnonymousCard(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, bonus, null);
+        return new AnonymousCard(issuer, id, cardFaceNumber, validityPeriod, balance, smallChange, bonus, null);
     }
 
     private MonetaryAmount toMonetaryAmount(VPackSlice slice) {

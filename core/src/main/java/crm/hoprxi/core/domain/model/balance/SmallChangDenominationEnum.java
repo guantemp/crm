@@ -44,7 +44,7 @@ public enum SmallChangDenominationEnum {
         this.factor = factor;
     }
 
-    public Rounded round(MonetaryAmount receivables, MonetaryAmount smallChang) {
+    protected Rounded round(MonetaryAmount receivables, MonetaryAmount smallChang) {
         Objects.requireNonNull(receivables, "receivables required");
         CurrencyUnit currencyUnit = smallChang.getCurrency();
         if (!currencyUnit.equals(receivables.getCurrency()))

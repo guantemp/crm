@@ -45,9 +45,9 @@ public class CreditCard extends Card {
     private boolean freeze;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze, TermOfValidity termOfValidity,
+    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze,
                       LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
-        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+        super(issuer, id, cardFaceNumber, balance, smallChange, appearance);
         setCustomerId(customerId);
         setPassword(password);
         setLineOfCredit(lineOfCredit);
@@ -115,8 +115,6 @@ public class CreditCard extends Card {
 
     @Override
     public void debit(MonetaryAmount amount) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
         if (amount.isNegative())
             throw new IllegalArgumentException("Amount must is positive");
         CurrencyUnit currencyUnit = balance.currencyUnit();
@@ -166,7 +164,6 @@ public class CreditCard extends Card {
                 .add("password='" + password + "'")
                 .add("freeze=" + freeze)
                 .add("lineOfCredit=" + lineOfCredit)
-                .add("termOfValidity=" + termOfValidity)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)

@@ -18,7 +18,7 @@ package crm.hoprxi.core.domain.model.bonus.multiplying;
 
 import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
+import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;
@@ -32,7 +32,7 @@ public abstract class MultiplyingEntry {
     @DocumentField(DocumentField.Type.KEY)
     protected String id;
     protected Number rate;
-    protected TermOfValidity termOfValidity;
+    protected ValidityPeriod validityPeriod;
 
     public MultiplyingEntry(Number rate) {
         if (Double.compare(rate.doubleValue(), 0.0) <= 0)

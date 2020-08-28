@@ -22,7 +22,7 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
 import crm.hoprxi.core.domain.model.card.AnonymousCard;
 import crm.hoprxi.core.domain.model.card.AnonymousCardRepository;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
+import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.Money;
 import org.testng.Assert;
@@ -44,12 +44,12 @@ public class ArangoDBAnonymousCardRepositoryTest {
     @BeforeClass
     public void setUpBeforeClass() {
         Issuer issuer = new Issuer("9678512046PX", "总公司");
-        AnonymousCard a1 = new AnonymousCard(issuer, "a1", "22156789", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
+        AnonymousCard a1 = new AnonymousCard(issuer, "a1", "22156789", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a1);
-        AnonymousCard a2 = new AnonymousCard(issuer, "a2", "22156790", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
+        AnonymousCard a2 = new AnonymousCard(issuer, "a2", "22156790", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a2);
         issuer = new Issuer("9678512046PX", "self");
-        AnonymousCard a3 = new AnonymousCard(issuer, "a3", "22156791", TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
+        AnonymousCard a3 = new AnonymousCard(issuer, "a3", "22156791", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a3);
     }
 

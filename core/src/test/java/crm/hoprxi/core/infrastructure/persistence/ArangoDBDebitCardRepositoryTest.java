@@ -21,7 +21,6 @@ import crm.hoprxi.core.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.DebitCard;
 import crm.hoprxi.core.domain.model.card.DebitCardRepository;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
 import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
@@ -64,11 +63,11 @@ public class ArangoDBDebitCardRepositoryTest {
         Person guan = new Person("18982455055", "hope xi'er", true, Spss.EMPTY_SPSS, null, addressBook, identityCard, MonthDay.of(6, 4));
         personRepository.save(guan);
 
-        DebitCard card1 = new DebitCard(new Issuer("968974548754158X", "小市店"), "18982455055", "667788", "112233", "888888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card1 = new DebitCard(new Issuer("968974548754158X", "小市店"), "18982455055", "667788", "112233", "888888", true, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card1);
-        DebitCard card2 = new DebitCard(new Issuer("963457MA120486PX", "山岩瑙"), "18982455055", "778899", "123456", "999999", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+        DebitCard card2 = new DebitCard(new Issuer("963457MA120486PX", "山岩瑙"), "18982455055", "778899", "123456", "999999", true, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card2);
-        DebitCard card3 = new DebitCard(new Issuer("98752367MA24158X", "大山平"), "18982455055", "889900", "123456", "618888", true, TermOfValidity.PERMANENCE, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
+        DebitCard card3 = new DebitCard(new Issuer("98752367MA24158X", "大山平"), "18982455055", "889900", "123456", "618888", true, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
         repository.save(card3);
     }
 

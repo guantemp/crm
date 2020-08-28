@@ -22,7 +22,6 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.CreditCard;
 import crm.hoprxi.core.domain.model.card.CreditCardRepository;
 import crm.hoprxi.core.domain.model.card.LineOfCredit;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
 import crm.hoprxi.core.domain.model.collaborator.Address;
 import crm.hoprxi.core.domain.model.collaborator.Contact;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
@@ -68,15 +67,15 @@ public class ArangoDBCreditCardRepositoryTest {
 
         LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(1000, "CNY"), 30);
         CreditCard card1 = new CreditCard(new Issuer("968974548754158X", "小市店"), "18982455066", "20281405", "112233", "81405",
-                true, TermOfValidity.PERMANENCE, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+                true, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card1);
         lineOfCredit = new LineOfCredit(Money.of(997853544515180.565574579, "CNY"), 7);
         CreditCard card2 = new CreditCard(new Issuer("963457MA120486PX", "山岩瑙"), "18982455066", "202801654", "123456", "801654",
-                true, TermOfValidity.PERMANENCE, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+                true, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
         repository.save(card2);
         lineOfCredit = new LineOfCredit(FastMoney.of(368547.05, "CNY"), 60);
         CreditCard card3 = new CreditCard(new Issuer("98752367MA24158X", "大山平"), "18982455066", "202601402", "415879", "801402",
-                true, TermOfValidity.PERMANENCE, lineOfCredit, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
+                true, lineOfCredit, Balance.zero(Locale.US), SmallChange.zero(Locale.US), null);
         repository.save(card3);
     }
 
@@ -92,7 +91,7 @@ public class ArangoDBCreditCardRepositoryTest {
     public void testSave() {
         LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(250, "CNY"), 60);
         CreditCard card = new CreditCard(new Issuer("968974548754158X", "小市店"), "18982455066", "20281725", "112233", "81725",
-                false, TermOfValidity.PERMANENCE, lineOfCredit, new Balance(Money.of(-79.85, "CNY"), Money.of(15.25, "CNY")),
+                false, lineOfCredit, new Balance(Money.of(-79.85, "CNY"), Money.of(15.25, "CNY")),
                 new SmallChange(FastMoney.of(0.64, "CNY"), SmallChangDenominationEnum.ONE), null);
         repository.save(card);
     }

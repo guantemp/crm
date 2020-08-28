@@ -38,7 +38,7 @@ public class CardServices {
         if (anonymousCard == null)
             return;
         DebitCard debitCard = new DebitCard(anonymousCard.issuer(), customerId, anonymousCard.id(), password, anonymousCard.cardFaceNumber(), false,
-                anonymousCard.termOfValidity(), anonymousCard.balance(), anonymousCard.smallChange(), anonymousCard.appearance());
+                anonymousCard.balance(), anonymousCard.smallChange(), anonymousCard.appearance());
         debitCardRepository.save(debitCard);
         anonymousCardRepository.remove(cardId);
     }

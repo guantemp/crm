@@ -33,15 +33,64 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-11-14
  */
 public class AnonymousCard extends Card {
+    private ValidityPeriod validityPeriod;
     private Bonus bonus;
 
-    public AnonymousCard(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
-        super(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, appearance);
+    public AnonymousCard(Issuer issuer, String id, String cardFaceNumber, ValidityPeriod validityPeriod, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
+        super(issuer, id, cardFaceNumber, balance, smallChange, appearance);
+        setValidityPeriod(validityPeriod);
         this.bonus = bonus;
+    }
+
+    private void setValidityPeriod(ValidityPeriod validityPeriod) {
+        if (validityPeriod == null)
+            validityPeriod = ValidityPeriod.PERMANENCE;
+        if ((validityPeriod != ValidityPeriod.PERMANENCE) && (validityPeriod.expiryDate().getYear() - validityPeriod.startDate().getYear() < 3))
+            throw new IllegalArgumentException("Valid for at least three years ");
+        this.validityPeriod = validityPeriod;
     }
 
     public Bonus bonus() {
         return bonus;
+    }
+
+    public ValidityPeriod termOfValidity() {
+        return validityPeriod;
+    }
+
+    @Override
+    public void credit(MonetaryAmount amount) {
+        if (!validityPeriod.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        super.credit(amount);
+    }
+
+    @Override
+    public void awardRedEnvelope(MonetaryAmount redEnvelope) {
+        if (!validityPeriod.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        super.awardRedEnvelope(redEnvelope);
+    }
+
+    @Override
+    public void revokeRedEnvelope(MonetaryAmount redEnvelope) {
+        if (!validityPeriod.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        super.revokeRedEnvelope(redEnvelope);
+    }
+
+    @Override
+    public void withdrawalCash(MonetaryAmount amount) {
+        if (!validityPeriod.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        super.withdrawalCash(amount);
+    }
+
+    @Override
+    public void withdrawalAllCash() {
+        if (!validityPeriod.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
+        super.withdrawalAllCash();
     }
 
     public void addBonus(Bonus bonus) {
@@ -62,7 +111,7 @@ public class AnonymousCard extends Card {
 
     @Override
     public void debit(MonetaryAmount amount) {
-        if (!termOfValidity.isValidityPeriod())
+        if (!validityPeriod.isValidityPeriod())
             throw new BeOverdueException("Card be overdue");
         if (amount.isNegative())
             throw new IllegalArgumentException("Amount must is positive");
@@ -93,14 +142,14 @@ public class AnonymousCard extends Card {
     }
 
     public AnonymousCardSnapshot toSnapshot() {
-        return new AnonymousCardSnapshot(issuer, id, cardFaceNumber, termOfValidity, balance, smallChange, bonus, appearance);
+        return new AnonymousCardSnapshot(issuer, id, cardFaceNumber, validityPeriod, balance, smallChange, bonus, appearance);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
                 .add("bonus=" + bonus)
-                .add("termOfValidity=" + termOfValidity)
+                .add("termOfValidity=" + validityPeriod)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)

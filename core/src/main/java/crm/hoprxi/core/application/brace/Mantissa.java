@@ -28,5 +28,4 @@ public final class Mantissa {
     public enum Round {
         HALF_UP
     }
-
 }

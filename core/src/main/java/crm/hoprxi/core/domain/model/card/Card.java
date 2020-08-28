@@ -43,7 +43,6 @@ public abstract class Card {
     @DocumentField(DocumentField.Type.KEY)
     protected String id;
     protected Issuer issuer;
-    protected TermOfValidity termOfValidity;
     protected Appearance appearance;
     protected String cardFaceNumber;
     protected Balance balance;
@@ -53,25 +52,23 @@ public abstract class Card {
      * @param id
      * @param issuer
      * @param cardFaceNumber
-     * @param termOfValidity
      * @param balance
      * @param smallChange
      * @param appearance
      * @throws IllegalArgumentException if id is null or empty
      * @throws IllegalArgumentException if issuer does not exist
      */
-    public Card(Issuer issuer, String id, String cardFaceNumber, TermOfValidity termOfValidity, Balance balance, SmallChange smallChange, Appearance appearance) {
+    public Card(Issuer issuer, String id, String cardFaceNumber, Balance balance, SmallChange smallChange, Appearance appearance) {
         setIssuer(issuer);
         setId(id);
         setCardFaceNumber(cardFaceNumber);
-        setTermOfValidity(termOfValidity);
         setBalance(balance);
         setSmallChange(smallChange);
         setAppearance(appearance);
     }
 
     public Card(Issuer issuer, String id) {
-        this(issuer, id, id, TermOfValidity.PERMANENCE, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
+        this(issuer, id, id, Balance.zero(Locale.getDefault()), SmallChange.zero(Locale.getDefault()), AppearanceFactory.getDefault());
     }
 
     private void setId(String id) {
@@ -92,12 +89,6 @@ public abstract class Card {
         if (cardFaceNumber == null)
             cardFaceNumber = id;
         this.cardFaceNumber = cardFaceNumber.trim();
-    }
-
-    private void setTermOfValidity(TermOfValidity termOfValidity) {
-        if (termOfValidity == null)
-            termOfValidity = TermOfValidity.PERMANENCE;
-        this.termOfValidity = termOfValidity;
     }
 
     private void setSmallChange(SmallChange smallChange) {
@@ -132,10 +123,6 @@ public abstract class Card {
         return id;
     }
 
-    public TermOfValidity termOfValidity() {
-        return termOfValidity;
-    }
-
     public Appearance appearance() {
         return appearance;
     }
@@ -153,15 +140,11 @@ public abstract class Card {
     }
 
     public void credit(MonetaryAmount amount) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
         balance = balance.deposit(amount);
         DomainRegistry.domainEventPublisher().publish(new CardCredited(id, amount));
     }
 
     public void awardRedEnvelope(MonetaryAmount redEnvelope) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
         balance = balance.awardRedEnvelope(redEnvelope);
         DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeAwarded(id, redEnvelope));
     }
@@ -172,8 +155,6 @@ public abstract class Card {
      * @param redEnvelope
      */
     public void revokeRedEnvelope(MonetaryAmount redEnvelope) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
         balance = balance.revokeRedEnvelope(redEnvelope);
         DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeRevoked(id, redEnvelope));
     }
@@ -192,8 +173,6 @@ public abstract class Card {
     }
 
     public void withdrawalCash(MonetaryAmount amount) {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
         if (balance.valuable().add(smallChange.amount()).isLessThan(amount))
             throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
@@ -207,8 +186,6 @@ public abstract class Card {
     }
 
     public void withdrawalAllCash() {
-        if (!termOfValidity.isValidityPeriod())
-            throw new BeOverdueException("Card failed");
         CurrencyUnit unit = balance.valuable().getCurrency();
         if (balance.valuable().add(smallChange.amount()).isLessThan(Money.zero(unit)))
             throw new InsufficientBalanceException("Insufficient balance");
@@ -242,7 +219,6 @@ public abstract class Card {
         return new StringJoiner(", ", Card.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
                 .add("issuer=" + issuer)
-                .add("termOfValidity=" + termOfValidity)
                 .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)

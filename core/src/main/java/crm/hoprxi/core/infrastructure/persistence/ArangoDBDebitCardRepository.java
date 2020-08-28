@@ -31,7 +31,7 @@ import crm.hoprxi.core.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.DebitCard;
 import crm.hoprxi.core.domain.model.card.DebitCardRepository;
-import crm.hoprxi.core.domain.model.card.TermOfValidity;
+import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import crm.hoprxi.core.domain.model.card.appearance.Appearance;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.FastMoney;
@@ -64,7 +64,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
 
     static {
         try {
-            debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, boolean.class, TermOfValidity.class, Balance.class, SmallChange.class, Appearance.class);
+            debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, boolean.class, ValidityPeriod.class, Balance.class, SmallChange.class, Appearance.class);
             debitCardConstructor.setAccessible(true);
             passwordField = DebitCard.class.getDeclaredField("password");
             passwordField.setAccessible(true);
@@ -206,7 +206,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         VPackSlice termOfValiditySlice = slice.get("termOfValidity");
         LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        TermOfValidity termOfValidity = TermOfValidity.getInstance(startDate, expiryDate);
+        ValidityPeriod validityPeriod = ValidityPeriod.getInstance(startDate, expiryDate);
         //balance
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
@@ -221,7 +221,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
 
-        DebitCard debitCard = debitCardConstructor.newInstance(issuer, customerId, id, cardFaceNumber, freeze, termOfValidity, balance, smallChange, null);
+        DebitCard debitCard = debitCardConstructor.newInstance(issuer, customerId, id, cardFaceNumber, freeze, validityPeriod, balance, smallChange, null);
         passwordField.set(debitCard, password);
         return debitCard;
     }

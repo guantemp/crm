@@ -34,7 +34,7 @@ import java.util.Locale;
 public class CreditCardTest {
     public static LineOfCredit lineOfCredit = new LineOfCredit(FastMoney.of(100, "CNY"), 30);
     public static CreditCard card = new CreditCard(new Issuer("968974548754158X", "小市店"), "18982455066", "20281405", "112233", "81405",
-            true, TermOfValidity.PERMANENCE, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
+            true, lineOfCredit, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), null);
 
     @Test(priority = 0)
     public void testPassword() {

@@ -135,9 +135,9 @@ public class SmallChange {
 
     public SmallChange changeSmallChangDenominationEnum(SmallChangDenominationEnum newSmallChangDenominationEnum) {
         Objects.requireNonNull(newSmallChangDenominationEnum, "newSmallChangDenominationEnum required");
-        if (smallChangDenominationEnum != newSmallChangDenominationEnum)
-            return new SmallChange(amount, newSmallChangDenominationEnum);
-        return this;
+        if (smallChangDenominationEnum == newSmallChangDenominationEnum)
+            return this;
+        return new SmallChange(amount, newSmallChangDenominationEnum);
     }
 
     @Override
