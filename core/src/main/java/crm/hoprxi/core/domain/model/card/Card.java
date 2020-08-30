@@ -140,13 +140,19 @@ public abstract class Card {
     }
 
     public void credit(MonetaryAmount amount) {
-        balance = balance.deposit(amount);
-        DomainRegistry.domainEventPublisher().publish(new CardCredited(id, amount));
+        Balance temp = balance.deposit(amount);
+        if (temp != balance) {
+            balance = temp;
+            DomainRegistry.domainEventPublisher().publish(new CardCredited(id, amount));
+        }
     }
 
     public void awardRedEnvelope(MonetaryAmount redEnvelope) {
-        balance = balance.awardRedEnvelope(redEnvelope);
-        DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeAwarded(id, redEnvelope));
+        Balance temp = balance.awardRedEnvelope(redEnvelope);
+        if (temp != balance) {
+            balance = temp;
+            DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeAwarded(id, redEnvelope));
+        }
     }
 
     /**
@@ -155,8 +161,11 @@ public abstract class Card {
      * @param redEnvelope
      */
     public void revokeRedEnvelope(MonetaryAmount redEnvelope) {
-        balance = balance.revokeRedEnvelope(redEnvelope);
-        DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeRevoked(id, redEnvelope));
+        Balance temp = balance.revokeRedEnvelope(redEnvelope);
+        if (temp != balance) {
+            balance = temp;
+            DomainRegistry.domainEventPublisher().publish(new CardRedEnvelopeRevoked(id, redEnvelope));
+        }
     }
 
     /**
@@ -177,12 +186,13 @@ public abstract class Card {
             throw new InsufficientBalanceException("Insufficient balance");
         if (balance.valuable().isGreaterThanOrEqualTo(amount)) {
             balance = balance.withdrawalCash(amount);
+            DomainRegistry.domainEventPublisher().publish(new CardWithdrewCash(id, amount));
         } else {
             MonetaryAmount temp = amount.subtract(balance.valuable());
             balance = new Balance(Money.zero(balance.valuable().getCurrency()), balance.redEnvelope());
             smallChange = smallChange.pay(temp);
+            DomainRegistry.domainEventPublisher().publish(new CardWithdrewCash(id, amount));
         }
-        DomainRegistry.domainEventPublisher().publish(new CardWithdrewCash(id, amount));
     }
 
     public void withdrawalAllCash() {
@@ -196,7 +206,7 @@ public abstract class Card {
     }
 
     public void cancel() {
-
+        DomainRegistry.domainEventPublisher().publish(new CardCancelled(id));
     }
 
     @Override

@@ -30,17 +30,30 @@ public class CardDebited implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
-    private MonetaryAmount valuable;
-    private MonetaryAmount redPackets;
-    private MonetaryAmount smallChange;
+    private MonetaryAmount amount;
+
+    public CardDebited(String id, MonetaryAmount amount) {
+        this.id = id;
+        this.amount = amount;
+        occurredOn = LocalDateTime.now();
+        version = 1;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public MonetaryAmount amount() {
+        return amount;
+    }
 
     @Override
     public LocalDateTime occurredOn() {
-        return null;
+        return occurredOn;
     }
 
     @Override
     public int version() {
-        return 0;
+        return version;
     }
 }

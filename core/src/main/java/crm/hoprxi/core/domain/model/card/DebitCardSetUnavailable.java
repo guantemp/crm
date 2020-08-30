@@ -23,14 +23,14 @@ import java.time.LocalDateTime;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-26
+ * @version 0.0.1 builder 2020-08-30
  */
-public class DebitCardPasswordChanged implements DomainEvent {
+public class DebitCardSetUnavailable implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
 
-    public DebitCardPasswordChanged(String id) {
+    public DebitCardSetUnavailable(String id) {
         this.id = id;
         occurredOn = LocalDateTime.now();
         version = 1;

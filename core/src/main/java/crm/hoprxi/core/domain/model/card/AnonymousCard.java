@@ -111,15 +111,15 @@ public class AnonymousCard extends Card {
 
     @Override
     public void debit(MonetaryAmount amount) {
-        if (!validityPeriod.isValidityPeriod())
-            throw new BeOverdueException("Card be overdue");
-        if (amount.isNegative())
-            throw new IllegalArgumentException("Amount must is positive");
         CurrencyUnit currencyUnit = balance.currencyUnit();
         if (!currencyUnit.equals(amount.getCurrency()))
             throw new IllegalArgumentException("Amount currency required equal balance currency");
+        if (amount.isNegative())
+            throw new IllegalArgumentException("Amount must is positive");
         if (amount.isZero())
             return;
+        if (!validityPeriod.isValidityPeriod())
+            throw new BeOverdueException("Card be overdue");
         MonetaryAmount difference = balance.total().subtract(amount);
         if (difference.isPositiveOrZero()) {
             balance = balance.pay(amount);
@@ -131,6 +131,7 @@ public class AnonymousCard extends Card {
                 smallChange = smallChange.pay(difference.negate());
             }
         }
+        DomainRegistry.domainEventPublisher().publish(new CardDebited(id, amount));
         /*
         Rounded rounded = smallChange.round(amount);
         if (rounded.isOverflow()) {

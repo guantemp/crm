@@ -102,6 +102,7 @@ public class DebitCard extends Card {
             HashService hashService = DomainRegistry.getHashService();
             if (hashService.check(currentPassword, password)) {
                 this.password = hashService.hash(newPassword);
+                DomainRegistry.domainEventPublisher().publish(new DebitCardPasswordChanged(id()));
             }
         }
     }
@@ -120,6 +121,20 @@ public class DebitCard extends Card {
 
     public boolean isAvailable() {
         return available;
+    }
+
+    public void setAvailable() {
+        if (available == false) {
+            this.available = true;
+            DomainRegistry.domainEventPublisher().publish(new DebitCardSetAvailable(id()));
+        }
+    }
+
+    public void setUnavailable() {
+        if (available == true) {
+            this.available = true;
+            DomainRegistry.domainEventPublisher().publish(new DebitCardSetUnavailable(id()));
+        }
     }
 
     public String customerId() {

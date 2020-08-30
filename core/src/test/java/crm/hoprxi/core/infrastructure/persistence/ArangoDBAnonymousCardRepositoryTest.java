@@ -24,12 +24,14 @@ import crm.hoprxi.core.domain.model.card.AnonymousCard;
 import crm.hoprxi.core.domain.model.card.AnonymousCardRepository;
 import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
+import org.javamoney.moneta.FastMoney;
 import org.javamoney.moneta.Money;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.money.Monetary;
 import java.util.Locale;
 
 
@@ -44,12 +46,13 @@ public class ArangoDBAnonymousCardRepositoryTest {
     @BeforeClass
     public void setUpBeforeClass() {
         Issuer issuer = new Issuer("9678512046PX", "总公司");
-        AnonymousCard a1 = new AnonymousCard(issuer, "a1", "22156789", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
+        AnonymousCard a1 = new AnonymousCard(issuer, "a1", "22156789", ValidityPeriod.threeYears(), Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a1);
-        AnonymousCard a2 = new AnonymousCard(issuer, "a2", "22156790", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
+        AnonymousCard a2 = new AnonymousCard(issuer, "a2", "22156790", ValidityPeriod.threeYears(), Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
         repository.save(a2);
-        issuer = new Issuer("9678512046PX", "self");
-        AnonymousCard a3 = new AnonymousCard(issuer, "a3", "22156791", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), SmallChange.zero(Locale.CHINESE), Bonus.ZERO, null);
+        issuer = new Issuer("9688512046GJ", "意向不到");
+        AnonymousCard a3 = new AnonymousCard(issuer, "a3", "22156791", ValidityPeriod.PERMANENCE, Balance.zero(Locale.CHINESE), new SmallChange(FastMoney.zero((Monetary.getCurrency(Locale.CHINA))),
+                SmallChangDenominationEnum.ONE), Bonus.ZERO, null);
         repository.save(a3);
     }
 
@@ -69,11 +72,15 @@ public class ArangoDBAnonymousCardRepositoryTest {
         a.awardRedEnvelope(Money.of(20, "CNY"));
         repository.save(a);
         a = repository.find("a2");
-        a.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
+        a.changeSmallChangDenominationEnum(SmallChangDenominationEnum.FIVE);
         a.debit(Money.of(67.52, "CNY"));
         a.debit(Money.of(67.45, "CNY"));
         a.debit(Money.of(67.45, "CNY"));
         repository.save(a);
+        a = repository.find("a2");
+        Assert.assertEquals(Money.of(17.58, "CNY"), a.balance().total());
+        Assert.assertEquals(Money.of(17.58, "CNY"), a.balance().redEnvelope());
+        Assert.assertTrue(SmallChangDenominationEnum.FIVE == a.smallChange().smallChangDenominationEnum());
     }
 
     @Test(invocationCount = 100, threadPoolSize = 4)
@@ -82,7 +89,7 @@ public class ArangoDBAnonymousCardRepositoryTest {
         Assert.assertEquals(3, size);
     }
 
-    @Test(invocationCount = 100, threadPoolSize = 4)
+    @Test(invocationCount = 1, threadPoolSize = 1)
     public void testFindAll() {
         AnonymousCard[] anonymousCards = repository.findAll(0, 3);
         Assert.assertEquals(3, anonymousCards.length);

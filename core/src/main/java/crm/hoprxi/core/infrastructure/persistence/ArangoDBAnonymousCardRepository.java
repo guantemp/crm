@@ -108,7 +108,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card LIMIT @offset,@limit \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'validityPeriod':c.validityPeriod,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         for (int i = 0; slices.hasNext(); i++)
@@ -122,7 +122,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card FILTER c.cardFaceNumber == @cardFaceNumber \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'validityPeriod':c.validityPeriod,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         while (slices.hasNext())
@@ -135,7 +135,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         final String query = "WITH anonymous_card,appearance\n" +
                 "FOR c IN anonymous_card FILTER c._key == @key \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
+                "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'validityPeriod':c.validityPeriod,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         if (slices.hasNext())
@@ -150,18 +150,18 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         Issuer issuer = new Issuer(issuerSlice.get("id").getAsString(), issuerSlice.get("name").getAsString());
         String id = slice.get("id").getAsString();
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
-        //termOfValidity
-        VPackSlice termOfValiditySlice = slice.get("termOfValidity");
-        LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        //ValidityPeriod
+        VPackSlice validityPeriodSlice = slice.get("validityPeriod");
+        LocalDate startDate = LocalDate.parse(validityPeriodSlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate expiryDate = LocalDate.parse(validityPeriodSlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
         ValidityPeriod validityPeriod = ValidityPeriod.getInstance(startDate, expiryDate);
         //balance
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
         MonetaryAmount valuable = toMonetaryAmount(valuableSlice);
-        VPackSlice redPacketsSlice = balanceSlice.get("redPackets");
-        MonetaryAmount redPackets = this.toMonetaryAmount(redPacketsSlice);
-        Balance balance = new Balance(valuable, redPackets);
+        VPackSlice redEnvelopeSlice = balanceSlice.get("redEnvelope");
+        MonetaryAmount redEnvelope = this.toMonetaryAmount(redEnvelopeSlice);
+        Balance balance = new Balance(valuable, redEnvelope);
         //smallChange
         VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
@@ -170,7 +170,6 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
         //bonus
         Bonus bonus = new Bonus(slice.get("bonus").get("value").getAsLong());
-
         return new AnonymousCard(issuer, id, cardFaceNumber, validityPeriod, balance, smallChange, bonus, null);
     }
 

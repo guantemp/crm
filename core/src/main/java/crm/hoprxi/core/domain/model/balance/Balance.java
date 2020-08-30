@@ -141,7 +141,7 @@ public class Balance {
      * @return
      */
     public Balance revokeRedEnvelope(MonetaryAmount redEnvelope) {
-        if (redEnvelope == null)
+        if (redEnvelope == null || redEnvelope.isNegativeOrZero())
             return this;
         CurrencyUnit currencyUnit = this.valuable.getCurrency();
         if (!currencyUnit.equals(redEnvelope.getCurrency()))

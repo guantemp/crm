@@ -14,35 +14,43 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.card;
+package crm.hoprxi.core.domain.model.customer;
 
-import event.hoprxi.domain.model.DomainEvent;
-
-import java.time.LocalDateTime;
+import mi.hoprxi.id.LongId;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 2019-12-26
+ * @version 0.0.1 builder 2020-08-28
  */
-public class DebitCardPasswordChanged implements DomainEvent {
-    private LocalDateTime occurredOn;
-    private int version;
-    private String id;
+public interface CustomerRepository {
+    /**
+     * @param customer
+     */
+    void save(Customer customer);
 
-    public DebitCardPasswordChanged(String id) {
-        this.id = id;
-        occurredOn = LocalDateTime.now();
-        version = 1;
+    /**
+     * @param id
+     * @return
+     */
+    Customer find(String id);
+
+    /**
+     * @param offset
+     * @param limit
+     * @return
+     */
+    Customer[] findAll(long offset, int limit);
+
+    /**
+     * @return
+     */
+    default String nextIdentity() {
+        return String.valueOf(LongId.generate());
     }
 
-    @Override
-    public LocalDateTime occurredOn() {
-        return occurredOn;
-    }
-
-    @Override
-    public int version() {
-        return version;
-    }
+    /**
+     * @param id
+     */
+    void remove(String id);
 }

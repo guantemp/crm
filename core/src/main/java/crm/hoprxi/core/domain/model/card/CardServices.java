@@ -17,6 +17,7 @@
 package crm.hoprxi.core.domain.model.card;
 
 import crm.hoprxi.core.domain.model.balance.Rounded;
+import crm.hoprxi.core.domain.model.customer.person.PersonRepository;
 
 import javax.money.MonetaryAmount;
 
@@ -28,6 +29,7 @@ import javax.money.MonetaryAmount;
 public class CardServices {
     private AnonymousCardRepository anonymousCardRepository;
     private DebitCardRepository debitCardRepository;
+    private PersonRepository personRepository;
 
     public Rounded smallChangCalculation(MonetaryAmount receivables, Card card) {
         return null;
