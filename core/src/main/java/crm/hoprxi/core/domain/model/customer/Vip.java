@@ -40,7 +40,7 @@ public class Vip {
 
     public Vip(LocalDate validUntil) {
         Objects.requireNonNull(validUntil, "validUntil required.");
-        if (validUntil.isBefore(LocalDate.now()))
+        if (validUntil != LocalDate.MIN && validUntil.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Valid for at least 1 day");
         this.validUntil = validUntil;
     }

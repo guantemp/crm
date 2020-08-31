@@ -31,7 +31,6 @@ import crm.hoprxi.core.domain.model.balance.SmallChangDenominationEnum;
 import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.DebitCard;
 import crm.hoprxi.core.domain.model.card.DebitCardRepository;
-import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import crm.hoprxi.core.domain.model.card.appearance.Appearance;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 import org.javamoney.moneta.FastMoney;
@@ -44,8 +43,6 @@ import javax.money.MonetaryAmount;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +61,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
 
     static {
         try {
-            debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, boolean.class, ValidityPeriod.class, Balance.class, SmallChange.class, Appearance.class);
+            debitCardConstructor = DebitCard.class.getDeclaredConstructor(Issuer.class, String.class, String.class, String.class, boolean.class, Balance.class, SmallChange.class, Appearance.class);
             debitCardConstructor.setAccessible(true);
             passwordField = DebitCard.class.getDeclaredField("password");
             passwordField.setAccessible(true);
@@ -115,7 +112,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 "FOR c IN debit_card FILTER c._key == @key\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         try {
@@ -136,7 +133,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 "FOR c IN debit_card LIMIT @offset,@limit\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         try {
@@ -156,7 +153,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 "FOR p IN person FILTER p._key == @key\n" +
                 "FOR c IN 1..1 OUTBOUND p._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", customerId).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         return transform(slices);
@@ -168,7 +165,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 "FOR c IN debit_card FILTER c.cardFaceNumber == @cardFaceNumber\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
         try {
@@ -201,19 +198,14 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         String id = slice.get("id").getAsString();
         String password = slice.get("password").getAsString();
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
-        boolean freeze = slice.get("freeze").getAsBoolean();
-        //termOfValidity
-        VPackSlice termOfValiditySlice = slice.get("termOfValidity");
-        LocalDate startDate = LocalDate.parse(termOfValiditySlice.get("startDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalDate expiryDate = LocalDate.parse(termOfValiditySlice.get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE);
-        ValidityPeriod validityPeriod = ValidityPeriod.getInstance(startDate, expiryDate);
+        boolean available = slice.get("available").getAsBoolean();
         //balance
         VPackSlice balanceSlice = slice.get("balance");
         VPackSlice valuableSlice = balanceSlice.get("valuable");
-        MonetaryAmount valuable = this.toMonetaryAmount(valuableSlice);
-        VPackSlice redPacketsSlice = balanceSlice.get("redPackets");
-        MonetaryAmount redPackets = this.toMonetaryAmount(redPacketsSlice);
-        Balance balance = new Balance(valuable, redPackets);
+        MonetaryAmount valuable = toMonetaryAmount(valuableSlice);
+        VPackSlice redEnvelopeSlice = balanceSlice.get("redEnvelope");
+        MonetaryAmount redEnvelope = this.toMonetaryAmount(redEnvelopeSlice);
+        Balance balance = new Balance(valuable, redEnvelope);
         //smallChange
         VPackSlice smallChangeSlice = slice.get("smallChange");
         SmallChangDenominationEnum smallChangDenominationEnum = SmallChangDenominationEnum.valueOf(smallChangeSlice.get("smallChangDenominationEnum").getAsString());
@@ -221,7 +213,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
 
-        DebitCard debitCard = debitCardConstructor.newInstance(issuer, customerId, id, cardFaceNumber, freeze, validityPeriod, balance, smallChange, null);
+        DebitCard debitCard = debitCardConstructor.newInstance(issuer, customerId, id, cardFaceNumber, available, balance, smallChange, null);
         passwordField.set(debitCard, password);
         return debitCard;
     }
