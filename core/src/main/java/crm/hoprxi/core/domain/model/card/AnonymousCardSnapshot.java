@@ -28,10 +28,10 @@ import crm.hoprxi.core.domain.model.collaborator.Issuer;
  * @version 0.0.1 builder 2020-08-26
  */
 public class AnonymousCardSnapshot {
-    protected ValidityPeriod validityPeriod;
-    protected String cardFaceNumber;
-    protected Balance balance;
-    protected SmallChange smallChange;
+    private ValidityPeriod validityPeriod;
+    private String cardFaceNumber;
+    private Balance balance;
+    private SmallChange smallChange;
     private String id;
     private Issuer issuer;
     private Appearance appearance;

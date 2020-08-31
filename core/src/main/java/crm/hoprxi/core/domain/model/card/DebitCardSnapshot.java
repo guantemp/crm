@@ -27,13 +27,55 @@ import crm.hoprxi.core.domain.model.collaborator.Issuer;
  * @version 0.0.1 builder 2020-05-19
  */
 public class DebitCardSnapshot {
-    protected ValidityPeriod validityPeriod;
-    protected String cardFaceNumber;
-    protected Balance balance;
-    protected SmallChange smallChange;
+    private String cardFaceNumber;
+    private Balance balance;
+    private SmallChange smallChange;
     private String id;
     private Issuer issuer;
     private Appearance appearance;
     private String customerId;
-    private boolean freeze;
+    private boolean available;
+
+    public DebitCardSnapshot(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean available, Balance balance, SmallChange smallChange, Appearance appearance) {
+        this.cardFaceNumber = cardFaceNumber;
+        this.balance = balance;
+        this.smallChange = smallChange;
+        this.id = id;
+        this.issuer = issuer;
+        this.appearance = appearance;
+        this.customerId = customerId;
+        this.available = available;
+    }
+
+    public String getCardFaceNumber() {
+        return cardFaceNumber;
+    }
+
+    public Balance getBalance() {
+        return balance;
+    }
+
+    public SmallChange getSmallChange() {
+        return smallChange;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Issuer getIssuer() {
+        return issuer;
+    }
+
+    public Appearance getAppearance() {
+        return appearance;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
 }

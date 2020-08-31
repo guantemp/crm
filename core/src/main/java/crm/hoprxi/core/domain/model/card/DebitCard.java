@@ -143,11 +143,12 @@ public class DebitCard extends Card {
 
     @Override
     public void debit(MonetaryAmount amount) {
-        if (amount.isNegative())
-            throw new IllegalArgumentException("Amount must is positive");
+        Objects.requireNonNull(amount, "amount required");
         CurrencyUnit currencyUnit = balance.currencyUnit();
         if (!currencyUnit.equals(amount.getCurrency()))
-            throw new IllegalArgumentException("Amount currency required equal balance currency");
+            throw new IllegalArgumentException("The amount currency required equal balance currency");
+        if (amount.isNegative())
+            throw new IllegalArgumentException("The amount must is positive");
         if (amount.isZero())
             return;
         MonetaryAmount difference = balance.total().subtract(amount);
@@ -161,21 +162,14 @@ public class DebitCard extends Card {
                 smallChange = smallChange.pay(difference.negate());
             }
         }
-    }
-
-    public void freeze() {
-        available = true;
-    }
-
-    public void unfreeze() {
-        available = false;
+        DomainRegistry.domainEventPublisher().publish(new CardDebited(id, amount));
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
                 .add("customerId='" + customerId + "'")
-                .add("freeze=" + available)
+                .add("available=" + available)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)
@@ -183,6 +177,6 @@ public class DebitCard extends Card {
     }
 
     public DebitCardSnapshot toSnapshot() {
-        return null;
+        return new DebitCardSnapshot(issuer, customerId, id, cardFaceNumber, available, balance, smallChange, appearance);
     }
 }

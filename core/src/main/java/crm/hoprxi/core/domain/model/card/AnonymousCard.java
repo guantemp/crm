@@ -25,6 +25,7 @@ import crm.hoprxi.core.domain.model.collaborator.Issuer;
 
 import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
@@ -111,11 +112,12 @@ public class AnonymousCard extends Card {
 
     @Override
     public void debit(MonetaryAmount amount) {
+        Objects.requireNonNull(amount, "The amount required");
         CurrencyUnit currencyUnit = balance.currencyUnit();
         if (!currencyUnit.equals(amount.getCurrency()))
-            throw new IllegalArgumentException("Amount currency required equal balance currency");
+            throw new IllegalArgumentException("The amount currency required equal balance currency");
         if (amount.isNegative())
-            throw new IllegalArgumentException("Amount must is positive");
+            throw new IllegalArgumentException("The amount must is positive");
         if (amount.isZero())
             return;
         if (!validityPeriod.isValidityPeriod())
@@ -150,7 +152,7 @@ public class AnonymousCard extends Card {
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
                 .add("bonus=" + bonus)
-                .add("termOfValidity=" + validityPeriod)
+                .add("validityPeriod=" + validityPeriod)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)
