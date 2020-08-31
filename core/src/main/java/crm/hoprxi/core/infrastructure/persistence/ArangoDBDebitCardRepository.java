@@ -160,23 +160,16 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
     }
 
     @Override
-    public DebitCard findByCardFaceNumber(String cardFaceNumber) {
+    public DebitCard[] findByCardFaceNumber(String cardFaceNumber) {
+        List<DebitCard> debitCardList = new ArrayList<>();
         final String query = "WITH person,debit_card,appearance\n" +
-                "FOR c IN debit_card FILTER c.cardFaceNumber == @cardFaceNumber\n" +
+                "FOR c IN debit_card FILTER c.cardFaceNumber =~ @cardFaceNumber\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
-        try {
-            if (slices.hasNext())
-                return rebuild(slices.next());
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Can't rebuild DebitCard", e);
-            }
-        }
-        return null;
+        return transform(slices);
     }
 
     @Override
@@ -237,7 +230,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
                 debitCardList.add(rebuild(slices.next()));
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Can't rebuild credit card.", e);
+                    LOGGER.debug("Can't rebuild debit card.", e);
             }
         }
         return debitCardList.toArray(new DebitCard[debitCardList.size()]);

@@ -64,7 +64,7 @@ public interface DebitCardRepository {
      * @param cardFaceNumber
      * @return
      */
-    DebitCard findByCardFaceNumber(String cardFaceNumber);
+    DebitCard[] findByCardFaceNumber(String cardFaceNumber);
 
     int size();
 }

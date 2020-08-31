@@ -120,7 +120,7 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
     public AnonymousCard[] findByCardFaceNumber(String cardFaceNumber) {
         List<AnonymousCard> anonymousCardList = new ArrayList<>();
         final String query = "WITH anonymous_card,appearance\n" +
-                "FOR c IN anonymous_card FILTER c.cardFaceNumber == @cardFaceNumber \n" +
+                "FOR c IN anonymous_card FILTER c.cardFaceNumber =~ @cardFaceNumber \n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
                 "RETURN {'id':c._key,'issuer':c.issuer,'cardFaceNumber':c.cardFaceNumber,'validityPeriod':c.validityPeriod,'balance':c.balance,'smallChange':c.smallChange,'bonus':c.bonus}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();

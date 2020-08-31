@@ -92,8 +92,8 @@ public class ArangoDBDebitCardRepositoryTest {
         debitCard.changeSmallChangDenominationEnum(SmallChangDenominationEnum.ONE);
         debitCard.debit(Money.of(62.75, "CNY"));
         repository.save(debitCard);
-        debitCard = repository.findByCardFaceNumber("777777");
-        Assert.assertNotNull(debitCard);
+        DebitCard[] debitCards = repository.findByCardFaceNumber("777777");
+        Assert.assertTrue(debitCards.length == 1);
         debitCard = repository.find("889900");
         debitCard.credit(Money.of(50, "USD"));
         repository.save(debitCard);
@@ -112,7 +112,7 @@ public class ArangoDBDebitCardRepositoryTest {
     public void findBy() {
         DebitCard[] debitCards = repository.findByCustomer("18982455055");
         Assert.assertEquals(3, debitCards.length);
-        DebitCard debitCard = repository.findByCardFaceNumber("999999");
-        Assert.assertNotNull(debitCard);
+        debitCards = repository.findByCardFaceNumber("999999");
+        Assert.assertEquals(1, debitCards.length);
     }
 }
