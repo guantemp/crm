@@ -21,6 +21,8 @@ import crm.hoprxi.core.domain.model.balance.SmallChange;
 import crm.hoprxi.core.domain.model.card.appearance.Appearance;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
@@ -36,6 +38,7 @@ public class DebitCardSnapshot {
     private String customerId;
     private boolean available;
 
+
     public DebitCardSnapshot(Issuer issuer, String customerId, String id, String cardFaceNumber, boolean available, Balance balance, SmallChange smallChange, Appearance appearance) {
         this.cardFaceNumber = cardFaceNumber;
         this.balance = balance;
@@ -45,6 +48,21 @@ public class DebitCardSnapshot {
         this.appearance = appearance;
         this.customerId = customerId;
         this.available = available;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DebitCardSnapshot)) return false;
+
+        DebitCardSnapshot that = (DebitCardSnapshot) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
     public String getCardFaceNumber() {
@@ -77,5 +95,19 @@ public class DebitCardSnapshot {
 
     public boolean isAvailable() {
         return available;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", DebitCardSnapshot.class.getSimpleName() + "[", "]")
+                .add("cardFaceNumber='" + cardFaceNumber + "'")
+                .add("balance=" + balance)
+                .add("smallChange=" + smallChange)
+                .add("id='" + id + "'")
+                .add("issuer=" + issuer)
+                .add("appearance=" + appearance)
+                .add("customerId='" + customerId + "'")
+                .add("available=" + available)
+                .toString();
     }
 }

@@ -148,7 +148,6 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
 
     @Override
     public DebitCard[] findByCustomer(String customerId) {
-        List<DebitCard> debitCardList = new ArrayList<>();
         final String query = "WITH person,debit_card,appearance\n" +
                 "FOR p IN person FILTER p._key == @key\n" +
                 "FOR c IN 1..1 OUTBOUND p._id has\n" +
@@ -161,7 +160,6 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
 
     @Override
     public DebitCard[] findByCardFaceNumber(String cardFaceNumber) {
-        List<DebitCard> debitCardList = new ArrayList<>();
         final String query = "WITH person,debit_card,appearance\n" +
                 "FOR c IN debit_card FILTER c.cardFaceNumber =~ @cardFaceNumber\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +

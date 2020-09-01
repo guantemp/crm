@@ -22,6 +22,8 @@ import crm.hoprxi.core.domain.model.bonus.Bonus;
 import crm.hoprxi.core.domain.model.card.appearance.Appearance;
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
@@ -78,5 +80,34 @@ public class AnonymousCardSnapshot {
 
     public Bonus bonus() {
         return bonus;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AnonymousCardSnapshot)) return false;
+
+        AnonymousCardSnapshot that = (AnonymousCardSnapshot) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", AnonymousCardSnapshot.class.getSimpleName() + "[", "]")
+                .add("validityPeriod=" + validityPeriod)
+                .add("cardFaceNumber='" + cardFaceNumber + "'")
+                .add("balance=" + balance)
+                .add("smallChange=" + smallChange)
+                .add("id='" + id + "'")
+                .add("issuer=" + issuer)
+                .add("appearance=" + appearance)
+                .add("bonus=" + bonus)
+                .toString();
     }
 }

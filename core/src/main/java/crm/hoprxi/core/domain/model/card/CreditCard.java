@@ -42,16 +42,16 @@ public class CreditCard extends Card {
     @Expose(serialize = false, deserialize = false)
     private String customerId;
     private String password;
-    private boolean freeze;
+    private boolean available;
     private LineOfCredit lineOfCredit;
 
-    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean freeze,
+    public CreditCard(Issuer issuer, String customerId, String id, String password, String cardFaceNumber, boolean available,
                       LineOfCredit lineOfCredit, Balance balance, SmallChange smallChange, Appearance appearance) {
         super(issuer, id, cardFaceNumber, balance, smallChange, appearance);
         setCustomerId(customerId);
         setPassword(password);
         setLineOfCredit(lineOfCredit);
-        this.freeze = freeze;
+        this.available = available;
     }
 
     private void setLineOfCredit(LineOfCredit lineOfCredit) {
@@ -105,21 +105,23 @@ public class CreditCard extends Card {
             HashService hashService = DomainRegistry.getHashService();
             if (hashService.check(currentPassword, password)) {
                 this.password = hashService.hash(newPassword);
+                DomainRegistry.domainEventPublisher().publish(new CreditCardPasswordChanged(id()));
             }
         }
     }
 
-    public boolean isFreeze() {
-        return freeze;
+    public boolean isAvailable() {
+        return available;
     }
 
     @Override
     public void debit(MonetaryAmount amount) {
-        if (amount.isNegative())
-            throw new IllegalArgumentException("Amount must is positive");
+        Objects.requireNonNull(amount, "The amount required");
         CurrencyUnit currencyUnit = balance.currencyUnit();
         if (!currencyUnit.equals(amount.getCurrency()))
-            throw new IllegalArgumentException("Amount currency required equal balance currency");
+            throw new IllegalArgumentException("The amount currency required equal balance currency:" + currencyUnit);
+        if (amount.isNegative())
+            throw new IllegalArgumentException("The amount must is positive");
         if (amount.isZero())
             return;
         Balance temp = balance.overdraw(amount);
@@ -128,14 +130,21 @@ public class CreditCard extends Card {
         if (temp.valuable().abs().isGreaterThan(lineOfCredit.quota()))
             throw new ExceedQuotaException("The credit card limit exceeded");
         balance = temp;
+        DomainRegistry.domainEventPublisher().publish(new CardDebited(id, amount));
     }
 
-    public void freeze() {
-        freeze = true;
+    public void setAvailable() {
+        if (available == false) {
+            this.available = true;
+            DomainRegistry.domainEventPublisher().publish(new CreditCardSetAvaiable(id()));
+        }
     }
 
-    public void unfreeze() {
-        freeze = false;
+    public void setUnavailable() {
+        if (available == true) {
+            this.available = true;
+            DomainRegistry.domainEventPublisher().publish(new CreditCardSetUnavaiable(id()));
+        }
     }
 
     public String customerId() {
@@ -144,6 +153,10 @@ public class CreditCard extends Card {
 
     public LineOfCredit lineOfCredit() {
         return lineOfCredit;
+    }
+
+    public CreditCardSnapshot toSnapshot() {
+        return new CreditCardSnapshot(issuer, customerId, id, cardFaceNumber, available, lineOfCredit, balance, smallChange, appearance);
     }
 
     /*
@@ -161,9 +174,11 @@ public class CreditCard extends Card {
     public String toString() {
         return new StringJoiner(", ", CreditCard.class.getSimpleName() + "[", "]")
                 .add("customerId='" + customerId + "'")
-                .add("password='" + password + "'")
-                .add("freeze=" + freeze)
+                .add("available=" + available)
                 .add("lineOfCredit=" + lineOfCredit)
+                .add("id='" + id + "'")
+                .add("issuer=" + issuer)
+                .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)

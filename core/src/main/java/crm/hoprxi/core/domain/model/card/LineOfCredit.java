@@ -62,7 +62,7 @@ public class LineOfCredit {
      * @param quota
      * @return this if quota is negative or zero or greater old quota
      */
-    public LineOfCredit reductionQuota(MonetaryAmount quota) {
+    public LineOfCredit reductionQuotaTo(MonetaryAmount quota) {
         Objects.requireNonNull(quota, "quota required");
         if (quota.isNegativeOrZero() || quota.isGreaterThan(this.quota))
             return this;
@@ -74,7 +74,7 @@ public class LineOfCredit {
      * @param quota
      * @return this if quota is negative or zero or less old quota
      */
-    public LineOfCredit upgradeQuota(MonetaryAmount quota) {
+    public LineOfCredit upgradeQuotaTo(MonetaryAmount quota) {
         Objects.requireNonNull(quota, "quota required");
         if (quota.isNegativeOrZero() || quota.isLessThan(this.quota))
             return this;

@@ -146,7 +146,7 @@ public class DebitCard extends Card {
         Objects.requireNonNull(amount, "amount required");
         CurrencyUnit currencyUnit = balance.currencyUnit();
         if (!currencyUnit.equals(amount.getCurrency()))
-            throw new IllegalArgumentException("The amount currency required equal balance currency");
+            throw new IllegalArgumentException("The amount currency required equal balance currency:" + currencyUnit);
         if (amount.isNegative())
             throw new IllegalArgumentException("The amount must is positive");
         if (amount.isZero())
@@ -170,6 +170,9 @@ public class DebitCard extends Card {
         return new StringJoiner(", ", DebitCard.class.getSimpleName() + "[", "]")
                 .add("customerId='" + customerId + "'")
                 .add("available=" + available)
+                .add("id='" + id + "'")
+                .add("issuer=" + issuer)
+                .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)

@@ -151,8 +151,11 @@ public class AnonymousCard extends Card {
     @Override
     public String toString() {
         return new StringJoiner(", ", AnonymousCard.class.getSimpleName() + "[", "]")
-                .add("bonus=" + bonus)
                 .add("validityPeriod=" + validityPeriod)
+                .add("bonus=" + bonus)
+                .add("id='" + id + "'")
+                .add("issuer=" + issuer)
+                .add("appearance=" + appearance)
                 .add("cardFaceNumber='" + cardFaceNumber + "'")
                 .add("balance=" + balance)
                 .add("smallChange=" + smallChange)
