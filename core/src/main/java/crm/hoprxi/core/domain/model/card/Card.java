@@ -104,6 +104,10 @@ public abstract class Card {
     }
 
     private void setAppearance(Appearance appearance) {
+        if (appearance != null) {
+            if (!appearance.issuer().equals(issuer))
+                throw new IllegalArgumentException("The card template should be consistent with the card template defined by the card issuer");
+        }
         this.appearance = appearance;
     }
 

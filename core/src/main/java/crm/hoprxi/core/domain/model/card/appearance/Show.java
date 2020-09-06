@@ -28,9 +28,11 @@ import java.util.Objects;
  * @version 0.0.1 builder 2019-08-07
  */
 public class Show {
-    //Applicable to Wechat Membership Card Size
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 600;
+    //微信会员卡自定义背景设计规范 ,像素大小控制在 1000像素*600像素以下
+    //支付宝 background 图片规范：2M 以内，格式：bmp，png，jpeg，jpg，gif；尺寸不小于 1020px* 643px 的等边矩形；图片不得有圆角，不得拉伸变形；
+    //取最大值，即支付宝会员卡背景图片规范
+    private static final int WIDTH = 1020;
+    private static final int HEIGHT = 643;
     private URL background;
     private Style style;
 
@@ -40,8 +42,9 @@ public class Show {
      */
     public Show(URL background) {
         Objects.requireNonNull(background, "background is required");
-        if (checkBackgroundSize())
-            this.background = background;
+        if (!checkBackgroundSpecification())
+            throw new IllegalArgumentException("");
+        this.background = background;
     }
 
     public URL background() {
@@ -52,10 +55,11 @@ public class Show {
      * @return
      * @throws BackgroundImageNotFoundException
      */
-    private boolean checkBackgroundSize() {
+    private boolean checkBackgroundSpecification() {
         try {
             BufferedImage image = ImageIO.read(background);
-            if (image.getWidth() > WIDTH || image.getHeight() > HEIGHT)
+
+            if (image.getWidth() < WIDTH || image.getHeight() < HEIGHT)
                 return false;
         } catch (IOException e) {
             throw new BackgroundImageNotFoundException("Not found background image" + background.toString());

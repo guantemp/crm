@@ -20,6 +20,7 @@ import crm.hoprxi.core.domain.model.balance.Rounded;
 import crm.hoprxi.core.domain.model.customer.person.PersonRepository;
 
 import javax.money.MonetaryAmount;
+import java.awt.image.BufferedImage;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -43,5 +44,9 @@ public class CardServices {
                 anonymousCard.balance(), anonymousCard.smallChange(), anonymousCard.appearance());
         debitCardRepository.save(debitCard);
         anonymousCardRepository.remove(cardId);
+    }
+
+    public BufferedImage paintCardPositive(Card card) {
+        return null;
     }
 }

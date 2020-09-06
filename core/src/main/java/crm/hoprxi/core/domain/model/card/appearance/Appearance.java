@@ -18,6 +18,9 @@ package crm.hoprxi.core.domain.model.card.appearance;
 
 import crm.hoprxi.core.domain.model.collaborator.Issuer;
 
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
@@ -50,6 +53,14 @@ public class Appearance {
 
     public Show positive() {
         return positive;
+    }
+
+    public BufferedImage paint() {
+        return null;
+    }
+
+    public void paint(OutputStream os) {
+
     }
 
     @Override
