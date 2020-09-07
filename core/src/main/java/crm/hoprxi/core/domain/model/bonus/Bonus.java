@@ -24,10 +24,10 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-05-17
+ * @version 0.0.2 builder 2020-09-07
  */
 public class Bonus implements Comparable<Bonus> {
-    private static int SCALE = 2;
+    private static final int SCALE = 2;
     public static final Bonus ZERO = new Bonus(0);
     private long value;
 
@@ -36,26 +36,17 @@ public class Bonus implements Comparable<Bonus> {
      *
      * @param value
      */
-    private Bonus(long value, int scale) {
+    private Bonus(long value) {
         this.value = value;
-        SCALE = scale;
     }
 
     public Bonus(Number value) {
-        this(NumberToBigDecimal.to(value), 2);
-    }
-
-    public Bonus(Number value, int scale) {
-        this(NumberToBigDecimal.to(value), scale);
+        this(NumberToBigDecimal.to(value));
     }
 
     public Bonus(BigDecimal value) {
-        this(value, 2);
-    }
-
-    public Bonus(BigDecimal value, int scale) {
-        setValue(value);
-        SCALE = scale;
+        value = value.setScale(SCALE, RoundingMode.HALF_EVEN);
+        this.value = value.movePointRight(SCALE).longValue();
     }
 
     public static Bonus of(Number value) {
@@ -64,11 +55,6 @@ public class Bonus implements Comparable<Bonus> {
         if (value.doubleValue() == 0.0)
             return ZERO;
         return new Bonus(value);
-    }
-
-    private void setValue(BigDecimal value) {
-        value.setScale(SCALE, RoundingMode.HALF_EVEN);
-        this.value = value.movePointRight(SCALE).longValue();
     }
 
     public Bonus add(Bonus bonus) {
@@ -80,7 +66,7 @@ public class Bonus implements Comparable<Bonus> {
     public Bonus subtract(Bonus bonus) {
         if (bonus == null || bonus == Bonus.ZERO || bonus.value == 0l)
             return this;
-        if (bonus.value == value)
+        if (value == bonus.value)
             return ZERO;
         return new Bonus(value - bonus.value);
     }

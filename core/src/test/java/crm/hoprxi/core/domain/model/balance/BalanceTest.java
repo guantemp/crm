@@ -46,7 +46,7 @@ public class BalanceTest {
         assertTrue(rmb == Balance.zero(Locale.CHINA));
         assertTrue(rmb.isZero());
         thrown.expect(InsufficientBalanceException.class);
-        rmb = rmb.pay(FastMoney.of(0.0001, "CNY"));
+        rmb = rmb.pay(FastMoney.of(0.00015, "CNY"));
         thrown.expect(InsufficientBalanceException.class);
         rmb = rmb.withdrawalCash(Money.of(0.000000001, "CNY"));
     }
