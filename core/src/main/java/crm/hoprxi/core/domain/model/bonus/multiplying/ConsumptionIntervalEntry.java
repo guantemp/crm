@@ -14,9 +14,7 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus.consumption;
-
-import crm.hoprxi.core.domain.model.bonus.multiplying.MultiplyingEntry;
+package crm.hoprxi.core.domain.model.bonus.multiplying;
 
 import javax.money.MonetaryAmount;
 import java.util.Objects;

@@ -28,11 +28,11 @@ import java.util.StringJoiner;
  */
 public class ItemEntry extends Entry {
     private Item item;
+    private static final String PREFIX = "item_";
 
     public ItemEntry(Item item, Ratio ratio) {
-        super(ratio);
+        super(PREFIX + item.id(), ratio);
         setItem(item);
-        this.id = "item_" + item.id();
     }
 
     public Item item() {
@@ -44,28 +44,10 @@ public class ItemEntry extends Entry {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ItemEntry)) return false;
-        if (!super.equals(o)) return false;
-
-        ItemEntry itemEntry = (ItemEntry) o;
-
-        return item != null ? item.equals(itemEntry.item) : itemEntry.item == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (item != null ? item.hashCode() : 0);
-        return result;
-    }
-
-    @Override
     public String toString() {
         return new StringJoiner(", ", ItemEntry.class.getSimpleName() + "[", "]")
                 .add("item=" + item)
-                .add("ratio=" + ratio)
+                .add("ratio=" + super.ratio())
                 .toString();
     }
 }

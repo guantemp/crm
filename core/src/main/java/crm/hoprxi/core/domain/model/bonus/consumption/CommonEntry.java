@@ -27,14 +27,13 @@ public class CommonEntry extends Entry {
     public static final CommonEntry ONE_TO_ONE = new CommonEntry(Ratio.ONE_TO_ONE);
 
     public CommonEntry(Ratio ratio) {
-        super(ratio);
-        id = "common";
+        super("common", ratio);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", CommonEntry.class.getSimpleName() + "[", "]")
-                .add("ratio=" + ratio)
+                .add("ratio=" + super.ratio())
                 .toString();
     }
 }

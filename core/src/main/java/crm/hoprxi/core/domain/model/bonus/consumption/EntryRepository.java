@@ -23,4 +23,6 @@ package crm.hoprxi.core.domain.model.bonus.consumption;
  */
 public interface EntryRepository {
     void save(Entry entry);
+
+    Entry find(String id);
 }

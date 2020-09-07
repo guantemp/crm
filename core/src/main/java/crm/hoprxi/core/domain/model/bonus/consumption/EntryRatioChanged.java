@@ -29,15 +29,21 @@ public class EntryRatioChanged implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
     private String id;
+    private Ratio ratio;
 
-    public EntryRatioChanged(String id) {
+    public EntryRatioChanged(String id, Ratio ratio) {
         this.id = id;
+        this.ratio = ratio;
         occurredOn = LocalDateTime.now();
         version = 1;
     }
 
     public String id() {
         return id;
+    }
+
+    public Ratio ratio() {
+        return ratio;
     }
 
     @Override

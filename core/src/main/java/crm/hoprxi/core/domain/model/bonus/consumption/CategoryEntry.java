@@ -28,11 +28,11 @@ import java.util.StringJoiner;
  */
 public class CategoryEntry extends Entry {
     private Category category;
+    private static final String PREFIX = "category_";
 
     public CategoryEntry(Category category, Ratio ratio) {
-        super(ratio);
+        super(PREFIX + category.id(), ratio);
         setCategory(category);
-        id = "category_" + category.id();
     }
 
     public Category category() {
@@ -44,28 +44,10 @@ public class CategoryEntry extends Entry {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CategoryEntry)) return false;
-        if (!super.equals(o)) return false;
-
-        CategoryEntry that = (CategoryEntry) o;
-
-        return category != null ? category.equals(that.category) : that.category == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (category != null ? category.hashCode() : 0);
-        return result;
-    }
-
-    @Override
     public String toString() {
         return new StringJoiner(", ", CategoryEntry.class.getSimpleName() + "[", "]")
                 .add("category=" + category)
-                .add("ratio=" + ratio)
+                .add("ratio=" + super.ratio())
                 .toString();
     }
 }

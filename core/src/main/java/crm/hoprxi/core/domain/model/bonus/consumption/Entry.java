@@ -17,6 +17,7 @@
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
 import com.arangodb.entity.DocumentField;
+import crm.hoprxi.core.domain.model.DomainRegistry;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
 
 import java.util.Objects;
@@ -28,11 +29,16 @@ import java.util.Objects;
  */
 public abstract class Entry {
     @DocumentField(DocumentField.Type.KEY)
-    protected String id;
-    protected Ratio ratio;
+    private String id;
+    private Ratio ratio;
 
-    public Entry(Ratio ratio) {
+    public Entry(String id, Ratio ratio) {
+        setId(id);
         setRatio(ratio);
+    }
+
+    private void setId(String id) {
+        this.id = Objects.requireNonNull(id, "id required");
     }
 
     private void setRatio(Ratio ratio) {
@@ -51,8 +57,10 @@ public abstract class Entry {
 
     public void changeRatio(Ratio newRatio) {
         Objects.requireNonNull(newRatio, "newRatio required");
-        if (!ratio.equals(newRatio))
+        if (!ratio.equals(newRatio)) {
             ratio = newRatio;
+            DomainRegistry.domainEventPublisher().publish(new EntryRatioChanged(id, ratio));
+        }
     }
 
     public Bonus calculation(Number consumption) {

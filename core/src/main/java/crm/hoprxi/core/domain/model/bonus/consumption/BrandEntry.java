@@ -28,11 +28,11 @@ import java.util.StringJoiner;
  */
 public class BrandEntry extends Entry {
     private Brand brand;
+    private static final String PREFIX = "brand_";
 
     public BrandEntry(Brand brand, Ratio ratio) {
-        super(ratio);
+        super(PREFIX + brand.id(), ratio);
         setBrand(brand);
-        id = "brand_" + brand.id();
     }
 
     public Brand brand() {
@@ -44,28 +44,10 @@ public class BrandEntry extends Entry {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BrandEntry)) return false;
-        if (!super.equals(o)) return false;
-
-        BrandEntry that = (BrandEntry) o;
-
-        return brand != null ? brand.equals(that.brand) : that.brand == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (brand != null ? brand.hashCode() : 0);
-        return result;
-    }
-
-    @Override
     public String toString() {
         return new StringJoiner(", ", BrandEntry.class.getSimpleName() + "[", "]")
                 .add("brand=" + brand)
-                .add("ratio=" + ratio)
+                .add("ratio=" + super.ratio())
                 .toString();
     }
 }
