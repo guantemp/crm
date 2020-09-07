@@ -29,6 +29,10 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
+ * <p>
+ *     This card is anonymous card. For example, the company does not provide employee information<br/>
+ *     pre issue does not know the information of the buyer
+ * </p>
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 2019-11-14
@@ -55,7 +59,12 @@ public class AnonymousCard extends Card {
         return bonus;
     }
 
-    public ValidityPeriod termOfValidity() {
+    /**
+     * get anonymous card validity period
+     *
+     * @return AnonymousCard ValidityPeriod
+     */
+    public ValidityPeriod validityPeriod() {
         return validityPeriod;
     }
 

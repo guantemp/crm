@@ -16,10 +16,38 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
  * @version 0.0.1 builder 2020-06-11
  */
-public class EntryRatioChanged {
+public class EntryRatioChanged implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private String id;
+
+    public EntryRatioChanged(String id) {
+        this.id = id;
+        occurredOn = LocalDateTime.now();
+        version = 1;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return version;
+    }
 }
+

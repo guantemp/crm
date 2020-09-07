@@ -151,6 +151,11 @@ public abstract class Card {
         }
     }
 
+    /**
+     * Issuing red envelopes
+     *
+     * @param redEnvelope amount
+     */
     public void awardRedEnvelope(MonetaryAmount redEnvelope) {
         Balance temp = balance.awardRedEnvelope(redEnvelope);
         if (temp != balance) {

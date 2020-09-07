@@ -22,6 +22,11 @@ import java.math.RoundingMode;
 import java.util.StringJoiner;
 
 /***
+ * <p>
+ *     Support 2 decimal places of value,such as 45.62<br/>
+ *     Rounding use HALF_EVEN
+ * </p>
+ *
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.2 builder 2020-09-07
@@ -32,7 +37,7 @@ public class Bonus implements Comparable<Bonus> {
     private long value;
 
     /**
-     * this is for rebuild
+     * This is for rebuild
      *
      * @param value
      */
@@ -45,6 +50,8 @@ public class Bonus implements Comparable<Bonus> {
     }
 
     public Bonus(BigDecimal value) {
+        if (value.compareTo(BigDecimal.ZERO) == -1)
+            throw new IllegalArgumentException("The value is positive");
         value = value.setScale(SCALE, RoundingMode.HALF_EVEN);
         this.value = value.movePointRight(SCALE).longValue();
     }
@@ -63,14 +70,22 @@ public class Bonus implements Comparable<Bonus> {
         return new Bonus(value + bonus.value);
     }
 
+    /**
+     * @param bonus
+     * @return this if bonus is null,zero or greater than this,Zero if value is equal
+     */
     public Bonus subtract(Bonus bonus) {
-        if (bonus == null || bonus == Bonus.ZERO || bonus.value == 0l)
+        if (bonus == null || bonus == Bonus.ZERO || bonus.value == 0l || value < bonus.value)
             return this;
         if (value == bonus.value)
             return ZERO;
         return new Bonus(value - bonus.value);
     }
 
+    /**
+     * @param multiplicand
+     * @return
+     */
     public Bonus multiply(Number multiplicand) {
         if (multiplicand.doubleValue() == 0.0)
             return ZERO;

@@ -27,31 +27,36 @@ import org.testng.annotations.Test;
  */
 public class RatioTest {
 
-    @Test(invocationCount = 100, threadPoolSize = 1)
+    @Test(invocationCount = 1, threadPoolSize = 1)
     public void testCalculation() {
         Ratio ratio = Ratio.ONE_TO_ONE;
         Assert.assertEquals(ratio.calculation(1), 1.0);
         Assert.assertEquals(ratio.calculation(0.001), 0.001);
-        Assert.assertEquals(ratio.calculation(-977436534), 0.0);
+        Assert.assertEquals(ratio.calculation(-977436534), 0);
 
         ratio = Ratio.ZERO;
-        Assert.assertEquals(ratio.calculation(1), 0.0);
-        Assert.assertEquals(ratio.calculation(-1000), 0.0);
-        Assert.assertEquals(ratio.calculation(41.25680), 0.0);
+        Assert.assertEquals(ratio.calculation(1), 0);
+        Assert.assertEquals(ratio.calculation(-1000), 0);
+        Assert.assertEquals(ratio.calculation(41.25680), 0);
 
         ratio = new Ratio(5, 2);
         Assert.assertEquals(ratio.calculation(10), 4.0);
         Assert.assertEquals(ratio.calculation(8), 3.2);
         Assert.assertEquals(ratio.calculation(2), 0.8);
+        Assert.assertEquals(ratio.calculation(0), 0);
 
         ratio = new Ratio(3, 2);
+        System.out.println(ratio.calculation(10));
         Assert.assertEquals(ratio.calculation(10), 6.666666666666667);
         Assert.assertEquals(ratio.calculation(10).intValue(), 6);
         Assert.assertEquals(ratio.calculation(9).intValue(), 6);
-        Assert.assertEquals(ratio.calculation(-0.00025), 0.0);
-        Assert.assertEquals(ratio.calculation(-0.0), 0.0);
+        Assert.assertEquals(ratio.calculation(9).doubleValue(), 6.0);
+        Assert.assertEquals(ratio.calculation(-0.00025), 0);
+        Assert.assertEquals(ratio.calculation(-0.0), 0);
 
         ratio = new Ratio(213, 5, true);
-        Assert.assertEquals(ratio.calculation(45635454), 5.0);
+        Assert.assertEquals(ratio.calculation(45635454), 5);
+        Assert.assertEquals(ratio.calculation(0), 5);
+        Assert.assertEquals(ratio.calculation(-0), 5);
     }
 }

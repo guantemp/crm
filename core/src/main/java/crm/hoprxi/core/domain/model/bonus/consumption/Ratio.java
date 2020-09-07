@@ -20,27 +20,33 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-05-31
+ * @version 0.0.3 builder 2020-09-07
  */
 public class Ratio {
-    public static final Ratio ONE_TO_ONE = new Ratio(1, 1);
-    public static final Ratio ZERO = new Ratio(0, 0);
+    public static final Ratio ONE_TO_ONE = new Ratio(1, 1, false);
+    public static final Ratio ZERO = new Ratio(0, 0, true);
     private int costAmount = 1;
     private int increase = 1;
     private boolean fixed = false;
 
-    public Ratio(int costAmount, int increase) {
-        this(costAmount, increase, false);
-    }
-
+    /**
+     * @param costAmount
+     * @param increase
+     * @param fixed      if true, no matter how much it costs amount, just return increase
+     */
     public Ratio(int costAmount, int increase, boolean fixed) {
         setCostAmount(costAmount);
         setIncrease(increase);
         this.fixed = fixed;
     }
 
+    public Ratio(int costAmount, int increase) {
+        this(costAmount, increase, false);
+    }
+
+
     public static Ratio of(int costAmount, int increase) {
-        if (increase == 0)
+        if (increase == 0 || costAmount == 0)
             return ZERO;
         if (costAmount == 1 && increase == 1)
             return ONE_TO_ONE;
@@ -59,13 +65,17 @@ public class Ratio {
         this.costAmount = costAmount;
     }
 
+    /**
+     * @param consumptionAmount
+     * @return increase if fixed is true<br/>
+     * zero if consumptionAmount less than or equal zero<br/>
+     * bonus value after calculation of consumption amount proportion
+     */
     public Number calculation(Number consumptionAmount) {
-        if (increase == 0)
-            return 0.0;
-        if (consumptionAmount.doubleValue() <= 0.0)
-            return 0.0;
         if (fixed)
-            return (double) increase;
+            return increase;
+        if (consumptionAmount.doubleValue() <= 0.0)
+            return 0;
         return consumptionAmount.doubleValue() * increase / costAmount;
     }
 
@@ -76,18 +86,20 @@ public class Ratio {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Ratio)) return false;
 
         Ratio ratio = (Ratio) o;
 
         if (costAmount != ratio.costAmount) return false;
-        return increase == ratio.increase;
+        if (increase != ratio.increase) return false;
+        return fixed == ratio.fixed;
     }
 
     @Override
     public int hashCode() {
         int result = costAmount;
         result = 31 * result + increase;
+        result = 31 * result + (fixed ? 1 : 0);
         return result;
     }
 
@@ -96,6 +108,7 @@ public class Ratio {
         return new StringJoiner(", ", Ratio.class.getSimpleName() + "[", "]")
                 .add("costAmount=" + costAmount)
                 .add("increase=" + increase)
+                .add("fixed=" + fixed)
                 .toString();
     }
 }
