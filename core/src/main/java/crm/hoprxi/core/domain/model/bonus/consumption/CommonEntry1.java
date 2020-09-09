@@ -16,37 +16,23 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.collaborator.Item;
-
-import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-05-22
+ * @version 0.0.2 builder 2020-06-11
  */
-public class ItemEntry extends Entry {
-    private Item item;
-    private static final String PREFIX = "item_";
+public class CommonEntry1 extends Entry1 {
+    public static final CommonEntry1 ONE_TO_ONE = new CommonEntry1(Ratio.ONE_TO_ONE);
 
-    public ItemEntry(Item item, Ratio ratio) {
-        super(PREFIX + item.id(), ratio);
-        setItem(item);
-    }
-
-    public Item item() {
-        return item;
-    }
-
-    private void setItem(Item item) {
-        this.item = Objects.requireNonNull(item, "item required");
+    public CommonEntry1(Ratio ratio) {
+        super("common", ratio);
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ItemEntry.class.getSimpleName() + "[", "]")
-                .add("item=" + item)
+        return new StringJoiner(", ", CommonEntry1.class.getSimpleName() + "[", "]")
                 .add("ratio=" + super.ratio())
                 .toString();
     }

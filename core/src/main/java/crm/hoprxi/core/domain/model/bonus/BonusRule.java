@@ -14,26 +14,19 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus.consumption;
+package crm.hoprxi.core.domain.model.bonus;
 
-import java.util.StringJoiner;
+import com.arangodb.entity.DocumentField;
+import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-06-11
+ * @version 0.0.1 builder 2020-09-08
  */
-public class CommonEntry extends Entry {
-    public static final CommonEntry ONE_TO_ONE = new CommonEntry(Ratio.ONE_TO_ONE);
-
-    public CommonEntry(Ratio ratio) {
-        super("common", ratio);
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", CommonEntry.class.getSimpleName() + "[", "]")
-                .add("ratio=" + super.ratio())
-                .toString();
-    }
+public class BonusRule {
+    @DocumentField(DocumentField.Type.KEY)
+    private String id;
+    private String name;
+    private EntryTemplate entryTemplate;
 }

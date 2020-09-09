@@ -26,11 +26,11 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-05-22
  */
-public class BrandEntry extends Entry {
+public class BrandEntry1 extends Entry1 {
     private Brand brand;
     private static final String PREFIX = "brand_";
 
-    public BrandEntry(Brand brand, Ratio ratio) {
+    public BrandEntry1(Brand brand, Ratio ratio) {
         super(PREFIX + brand.id(), ratio);
         setBrand(brand);
     }
@@ -45,7 +45,7 @@ public class BrandEntry extends Entry {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", BrandEntry.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", BrandEntry1.class.getSimpleName() + "[", "]")
                 .add("brand=" + brand)
                 .add("ratio=" + super.ratio())
                 .toString();

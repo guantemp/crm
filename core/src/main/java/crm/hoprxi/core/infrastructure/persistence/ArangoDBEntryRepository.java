@@ -19,8 +19,8 @@ package crm.hoprxi.core.infrastructure.persistence;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.model.VertexUpdateOptions;
-import crm.hoprxi.core.domain.model.bonus.consumption.Entry;
-import crm.hoprxi.core.domain.model.bonus.consumption.EntryRepository;
+import crm.hoprxi.core.domain.model.bonus.consumption.Entry1;
+import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-06-11
  */
-public class ArangoDBEntryRepository implements EntryRepository {
+public class ArangoDBEntryRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBEntryRepository.class);
     private final ArangoDatabase crm;
@@ -38,14 +38,19 @@ public class ArangoDBEntryRepository implements EntryRepository {
         crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
-    @Override
-    public void save(Entry entry) {
-        boolean exists = crm.collection("bonus_entry").documentExists(entry.id());
+
+    public void save(EntryTemplate template) {
+        boolean exists = crm.collection("bonus_entry").documentExists(template.name());
         ArangoGraph graph = crm.graph("core");
         if (exists) {
-            graph.vertexCollection("bonus_entry").updateVertex(entry.id(), entry, UPDATE_OPTIONS);
+            graph.vertexCollection("bonus_entry").updateVertex(template.name(), template, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("bonus_entry").insertVertex(entry);
+            graph.vertexCollection("bonus_entry").insertVertex(template);
         }
+    }
+
+
+    public Entry1 find(String id) {
+        return null;
     }
 }

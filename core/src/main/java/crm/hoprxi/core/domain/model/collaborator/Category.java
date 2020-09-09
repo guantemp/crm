@@ -18,6 +18,8 @@ package crm.hoprxi.core.domain.model.collaborator;
 
 import crm.hoprxi.core.infrastructure.resource.Label;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
@@ -76,10 +78,10 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category{" +
-                "identity='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", parentIdentity='" + parentId + '\'' +
-                '}';
+        return new StringJoiner(", ", Category.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .add("parentId='" + parentId + "'")
+                .toString();
     }
 }

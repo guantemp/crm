@@ -17,6 +17,7 @@ package crm.hoprxi.core.domain.model.collaborator;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -151,14 +152,14 @@ public final class Address {
 
     @Override
     public String toString() {
-        return "Address{" +
-                "locale=" + locale +
-                ", city='" + city + '\'' +
-                ", province='" + province + '\'' +
-                ", zipCode='" + zipCode + '\'' +
-                ", county='" + county + '\'' +
-                ", street='" + street + '\'' +
-                ", details='" + details + '\'' +
-                '}';
+        return new StringJoiner(", ", Address.class.getSimpleName() + "[", "]")
+                .add("locale=" + locale)
+                .add("city='" + city + "'")
+                .add("province='" + province + "'")
+                .add("zipCode='" + zipCode + "'")
+                .add("county='" + county + "'")
+                .add("street='" + street + "'")
+                .add("details='" + details + "'")
+                .toString();
     }
 }

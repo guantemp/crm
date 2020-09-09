@@ -16,7 +16,7 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.collaborator.Category;
+import crm.hoprxi.core.domain.model.collaborator.Item;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -24,29 +24,29 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-06-10
+ * @version 0.0.1 builder 2020-05-22
  */
-public class CategoryEntry extends Entry {
-    private Category category;
-    private static final String PREFIX = "category_";
+public class ItemEntry1 extends Entry1 {
+    private Item item;
+    private static final String PREFIX = "item_";
 
-    public CategoryEntry(Category category, Ratio ratio) {
-        super(PREFIX + category.id(), ratio);
-        setCategory(category);
+    public ItemEntry1(Item item, Ratio ratio) {
+        super(PREFIX + item.id(), ratio);
+        setItem(item);
     }
 
-    public Category category() {
-        return category;
+    public Item item() {
+        return item;
     }
 
-    private void setCategory(Category category) {
-        this.category = Objects.requireNonNull(category, "category required");
+    private void setItem(Item item) {
+        this.item = Objects.requireNonNull(item, "item required");
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", CategoryEntry.class.getSimpleName() + "[", "]")
-                .add("category=" + category)
+        return new StringJoiner(", ", ItemEntry1.class.getSimpleName() + "[", "]")
+                .add("item=" + item)
                 .add("ratio=" + super.ratio())
                 .toString();
     }

@@ -19,6 +19,7 @@ package crm.hoprxi.core.domain.model.collaborator;
 import crm.hoprxi.core.infrastructure.resource.Label;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -68,9 +69,9 @@ public class Brand {
 
     @Override
     public String toString() {
-        return "Brand{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return new StringJoiner(", ", Brand.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .toString();
     }
 }

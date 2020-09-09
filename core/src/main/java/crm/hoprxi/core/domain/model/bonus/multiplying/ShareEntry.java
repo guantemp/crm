@@ -17,11 +17,8 @@
 package crm.hoprxi.core.domain.model.bonus.multiplying;
 
 
-import crm.hoprxi.core.domain.model.bonus.consumption.Entry;
-import crm.hoprxi.core.domain.model.bonus.consumption.Ratio;
 import crm.hoprxi.core.domain.model.collaborator.Referee;
 
-import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
@@ -29,12 +26,12 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ShareEntry extends Entry {
+public class ShareEntry extends MultiplyingEntry {
     private Referee referee;
 
-    public ShareEntry(Ratio ratio, Referee referee) {
-        super(ratio);
-        this.referee = Objects.requireNonNull(referee, "");
+    public ShareEntry(Number rate, Referee referee) {
+        super(rate);
+        this.referee = referee;
     }
 
     public Referee referee() {
@@ -63,7 +60,6 @@ public class ShareEntry extends Entry {
     public String toString() {
         return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
                 .add("referee=" + referee)
-                .add("ratio=" + ratio)
                 .toString();
     }
 }

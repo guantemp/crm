@@ -14,9 +14,8 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.bonus.consumption.Ratio;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

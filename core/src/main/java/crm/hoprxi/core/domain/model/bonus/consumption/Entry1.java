@@ -16,33 +16,29 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.DomainRegistry;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
 
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-09-09
+ * @version 0.0.1 builder 2020-06-03
  */
-
-public class Entry<T> {
-    private T t;
+public abstract class Entry1<T> {
+    @DocumentField(DocumentField.Type.KEY)
+    private String id;
     private Ratio ratio;
 
-    public Entry(T t, Ratio ratio) {
-        this.t = t;
+    public Entry1(String id, Ratio ratio) {
+        setId(id);
         setRatio(ratio);
     }
 
-    public T t() {
-        return t;
-    }
-
-    public Ratio ratio() {
-        return ratio;
+    private void setId(String id) {
+        this.id = Objects.requireNonNull(id, "id required");
     }
 
     private void setRatio(Ratio ratio) {
@@ -51,41 +47,40 @@ public class Entry<T> {
         this.ratio = ratio;
     }
 
+    public String id() {
+        return id;
+    }
+
+    public Ratio ratio() {
+        return ratio;
+    }
+
+    public Entry1<T> changeRatio(Ratio newRatio) {
+        Objects.requireNonNull(newRatio, "newRatio required");
+        if (!ratio.equals(newRatio)) {
+            ratio = newRatio;
+            DomainRegistry.domainEventPublisher().publish(new EntryRatioChanged(id, newRatio));
+        }
+        return this;
+    }
+
     public Bonus calculation(Number consumption) {
         Number number = ratio.calculation(consumption);
         return new Bonus(number);
     }
 
-    public Entry<T> changeRatio(Ratio newRatio) {
-        Objects.requireNonNull(newRatio, "newRatio required");
-        if (!ratio.equals(newRatio)) {
-            ratio = newRatio;
-            DomainRegistry.domainEventPublisher().publish(new EntryRatioChanged<T>(t, newRatio));
-            return new Entry<T>(t, newRatio);
-        }
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Entry)) return false;
+        if (!(o instanceof Entry1)) return false;
 
-        Entry<?> entry = (Entry<?>) o;
+        Entry1<T> entry1 = (Entry1<T>) o;
 
-        return t != null ? t.equals(entry.t) : entry.t == null;
+        return id != null ? id.equals(entry1.id) : entry1.id == null;
     }
 
     @Override
     public int hashCode() {
-        return t != null ? t.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Entry.class.getSimpleName() + "[", "]")
-                .add("t=" + t)
-                .add("ratio=" + ratio)
-                .toString();
+        return id != null ? id.hashCode() : 0;
     }
 }

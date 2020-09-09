@@ -25,21 +25,21 @@ import java.time.LocalDateTime;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-06-11
  */
-public class EntryRatioChanged implements DomainEvent {
+public class EntryRatioChanged<T> implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
-    private String id;
+    private T t;
     private Ratio ratio;
 
-    public EntryRatioChanged(String id, Ratio ratio) {
-        this.id = id;
+    public EntryRatioChanged(T t, Ratio ratio) {
+        this.t = t;
         this.ratio = ratio;
         occurredOn = LocalDateTime.now();
         version = 1;
     }
 
-    public String id() {
-        return id;
+    public T id() {
+        return t;
     }
 
     public Ratio ratio() {
