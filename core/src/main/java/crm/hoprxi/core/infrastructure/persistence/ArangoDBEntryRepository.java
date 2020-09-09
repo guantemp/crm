@@ -19,7 +19,6 @@ package crm.hoprxi.core.infrastructure.persistence;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.model.VertexUpdateOptions;
-import crm.hoprxi.core.domain.model.bonus.consumption.Entry1;
 import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +48,4 @@ public class ArangoDBEntryRepository {
         }
     }
 
-
-    public Entry1 find(String id) {
-        return null;
-    }
 }

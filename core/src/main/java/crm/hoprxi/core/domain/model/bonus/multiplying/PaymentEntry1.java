@@ -27,10 +27,10 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class PaymentEntry extends MultiplyingEntry {
+public class PaymentEntry1 extends MultiplyingEntry1 {
     private Payment payment;
 
-    public PaymentEntry(Number ratio, Payment payment) {
+    public PaymentEntry1(Number ratio, Payment payment) {
         super(ratio);
         setPayment(payment);
     }
@@ -48,10 +48,10 @@ public class PaymentEntry extends MultiplyingEntry {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PaymentEntry)) return false;
+        if (!(o instanceof PaymentEntry1)) return false;
         if (!super.equals(o)) return false;
 
-        PaymentEntry that = (PaymentEntry) o;
+        PaymentEntry1 that = (PaymentEntry1) o;
 
         return payment == that.payment;
     }
@@ -65,7 +65,7 @@ public class PaymentEntry extends MultiplyingEntry {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", PaymentEntry.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", PaymentEntry1.class.getSimpleName() + "[", "]")
                 .add("payment=" + payment)
                 .add("ratio=" + rate)
                 .toString();

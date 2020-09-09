@@ -33,7 +33,7 @@ public class Entry<T> {
     private Ratio ratio;
 
     public Entry(T t, Ratio ratio) {
-        this.t = t;
+        this.t = Objects.requireNonNull(t, "t is required");
         setRatio(ratio);
     }
 

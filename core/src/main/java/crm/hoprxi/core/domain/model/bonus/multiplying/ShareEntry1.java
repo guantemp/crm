@@ -26,10 +26,10 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ShareEntry extends MultiplyingEntry {
+public class ShareEntry1 extends MultiplyingEntry1 {
     private Referee referee;
 
-    public ShareEntry(Number rate, Referee referee) {
+    public ShareEntry1(Number rate, Referee referee) {
         super(rate);
         this.referee = referee;
     }
@@ -41,10 +41,10 @@ public class ShareEntry extends MultiplyingEntry {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ShareEntry)) return false;
+        if (!(o instanceof ShareEntry1)) return false;
         if (!super.equals(o)) return false;
 
-        ShareEntry that = (ShareEntry) o;
+        ShareEntry1 that = (ShareEntry1) o;
 
         return referee == that.referee;
     }
@@ -58,7 +58,7 @@ public class ShareEntry extends MultiplyingEntry {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ShareEntry.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", ShareEntry1.class.getSimpleName() + "[", "]")
                 .add("referee=" + referee)
                 .toString();
     }

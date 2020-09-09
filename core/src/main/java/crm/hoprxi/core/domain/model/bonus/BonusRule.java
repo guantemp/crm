@@ -17,7 +17,9 @@
 package crm.hoprxi.core.domain.model.bonus;
 
 import com.arangodb.entity.DocumentField;
+import crm.hoprxi.core.domain.model.bonus.consumption.Entry;
 import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
+import crm.hoprxi.core.domain.model.bonus.multiplying.MultiplyingEntryTemplate;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -29,4 +31,37 @@ public class BonusRule {
     private String id;
     private String name;
     private EntryTemplate entryTemplate;
+    private MultiplyingEntryTemplate multiplyingEntryTemplate;
+
+    public BonusRule(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public BonusRule(String id, String name, EntryTemplate entryTemplate, MultiplyingEntryTemplate multiplyingEntryTemplate) {
+        this.id = id;
+        this.name = name;
+        this.entryTemplate = entryTemplate;
+        this.multiplyingEntryTemplate = multiplyingEntryTemplate;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public <T> void addEntry(Entry<T> entry) {
+        entryTemplate.add(entry);
+    }
+
+    public EntryTemplate entryTemplate() {
+        return entryTemplate;
+    }
+
+    public MultiplyingEntryTemplate multiplyingEntryTemplate() {
+        return multiplyingEntryTemplate;
+    }
 }

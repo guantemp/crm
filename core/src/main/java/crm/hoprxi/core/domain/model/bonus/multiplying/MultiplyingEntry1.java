@@ -16,59 +16,55 @@
 
 package crm.hoprxi.core.domain.model.bonus.multiplying;
 
+import com.arangodb.entity.DocumentField;
 import crm.hoprxi.core.domain.model.bonus.Bonus;
+import crm.hoprxi.core.domain.model.card.ValidityPeriod;
 import mi.hoprxi.to.NumberToBigDecimal;
 
 import java.math.BigDecimal;
-import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-09-09
+ * @version 0.0.1 builder 2020-06-03
  */
-public class MultiplyingEntry<T> implements Cloneable {
-    private T t;
-    private Number multiplyingPower;
+public abstract class MultiplyingEntry1 {
+    @DocumentField(DocumentField.Type.KEY)
+    protected String id;
+    protected Number rate;
+    protected ValidityPeriod validityPeriod;
 
-    public MultiplyingEntry(T t, Number multiplyingPower) {
-        this.t = t;
-        this.multiplyingPower = multiplyingPower;
+    public MultiplyingEntry1(Number rate) {
+        if (Double.compare(rate.doubleValue(), 0.0) <= 0)
+            throw new IllegalArgumentException("rate lager zero");
+        this.rate = rate;
     }
 
-    public T t() {
-        return t;
+    public String id() {
+        return id;
     }
 
-    public Number multiplyingPower() {
-        return multiplyingPower;
+    public Number rate() {
+        return rate;
     }
 
     public Bonus calculation(Bonus bonus) {
-        BigDecimal bd = NumberToBigDecimal.to(bonus.toNumber().doubleValue() * multiplyingPower.doubleValue());
+        BigDecimal bd = NumberToBigDecimal.to(bonus.toNumber().doubleValue() * rate.doubleValue());
         return new Bonus(bd);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MultiplyingEntry)) return false;
+        if (!(o instanceof MultiplyingEntry1)) return false;
 
-        MultiplyingEntry<?> that = (MultiplyingEntry<?>) o;
+        MultiplyingEntry1 that = (MultiplyingEntry1) o;
 
-        return t != null ? t.equals(that.t) : that.t == null;
+        return rate != null ? rate.equals(that.rate) : that.rate == null;
     }
 
     @Override
     public int hashCode() {
-        return t != null ? t.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", MultiplyingEntry.class.getSimpleName() + "[", "]")
-                .add("t=" + t)
-                .add("multiplyingPower=" + multiplyingPower)
-                .toString();
+        return rate != null ? rate.hashCode() : 0;
     }
 }

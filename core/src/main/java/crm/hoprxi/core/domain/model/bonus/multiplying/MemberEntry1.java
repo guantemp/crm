@@ -25,10 +25,10 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-11
  */
-public class MemberEntry extends MultiplyingEntry {
+public class MemberEntry1 extends MultiplyingEntry1 {
     private MemberRoleSnapshot memberRoleSnapshot;
 
-    public MemberEntry(Number rate, MemberRoleSnapshot memberRoleSnapshot) {
+    public MemberEntry1(Number rate, MemberRoleSnapshot memberRoleSnapshot) {
         super(rate);
         setMemberRoleSnapshot(memberRoleSnapshot);
     }

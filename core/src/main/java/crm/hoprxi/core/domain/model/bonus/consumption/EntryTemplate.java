@@ -16,8 +16,6 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import com.arangodb.entity.DocumentField;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -27,8 +25,7 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-09-08
  */
-public class EntryTemplate {
-    @DocumentField(DocumentField.Type.KEY)
+public class EntryTemplate implements Cloneable {
     private String name;
     private Set<Entry<?>> entries;
 
@@ -41,10 +38,11 @@ public class EntryTemplate {
         this.entries = entries;
     }
 
-    public <T> void add(Entry<T> entry) {
+    public <T> EntryTemplate add(Entry<T> entry) {
         if (entries == null)
             entries = new HashSet<>();
         entries.add(entry);
+        return new EntryTemplate(name, entries);
     }
 
     public <T> void remove(Entry<T> entry) {

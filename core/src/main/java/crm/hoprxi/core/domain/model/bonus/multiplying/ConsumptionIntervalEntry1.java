@@ -24,10 +24,10 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-08-22
  */
-public class ConsumptionIntervalEntry extends MultiplyingEntry {
+public class ConsumptionIntervalEntry1 extends MultiplyingEntry1 {
     private MonetaryAmount lowerLimit;
 
-    public ConsumptionIntervalEntry(double ratio, MonetaryAmount lowerLimit) {
+    public ConsumptionIntervalEntry1(double ratio, MonetaryAmount lowerLimit) {
         super(ratio);
         setLowerLimit(lowerLimit);
     }

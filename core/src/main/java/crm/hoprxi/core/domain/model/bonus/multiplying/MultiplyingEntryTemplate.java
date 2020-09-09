@@ -14,26 +14,21 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus.consumption;
+package crm.hoprxi.core.domain.model.bonus.multiplying;
 
-import java.util.StringJoiner;
+import java.util.Set;
 
 /***
- * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.2 builder 2020-06-11
+ * @version 0.0.1 builder 2020-09-09
  */
-public class CommonEntry1 extends Entry1 {
-    public static final CommonEntry1 ONE_TO_ONE = new CommonEntry1(Ratio.ONE_TO_ONE);
+public class MultiplyingEntryTemplate {
+    private String name;
+    private Set<MultiplyingEntry<?>> multiplyingEntries;
 
-    public CommonEntry1(Ratio ratio) {
-        super("common", ratio);
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", CommonEntry1.class.getSimpleName() + "[", "]")
-                .add("ratio=" + super.ratio())
-                .toString();
+    public MultiplyingEntryTemplate(String name, Set<MultiplyingEntry<?>> multiplyingEntries) {
+        this.name = name;
+        this.multiplyingEntries = multiplyingEntries;
     }
 }
