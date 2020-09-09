@@ -22,7 +22,13 @@ package crm.hoprxi.core.domain.model.bonus;
  * @version 0.0.1 builder 2020-09-09
  */
 public interface BonusRuleRepository {
+    /**
+     * @param bonusRule
+     */
     void save(BonusRule bonusRule);
 
+    /**
+     * @return
+     */
     BonusRule[] findAll();
 }

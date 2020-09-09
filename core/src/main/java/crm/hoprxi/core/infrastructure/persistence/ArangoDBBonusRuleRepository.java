@@ -19,7 +19,8 @@ package crm.hoprxi.core.infrastructure.persistence;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.model.VertexUpdateOptions;
-import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
+import crm.hoprxi.core.domain.model.bonus.BonusRule;
+import crm.hoprxi.core.domain.model.bonus.BonusRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,24 +29,28 @@ import org.slf4j.LoggerFactory;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-06-11
  */
-public class ArangoDBEntryRepository {
+public class ArangoDBBonusRuleRepository implements BonusRuleRepository {
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBEntryRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBBonusRuleRepository.class);
     private final ArangoDatabase crm;
 
-    public ArangoDBEntryRepository(String databaseName) {
+    public ArangoDBBonusRuleRepository(String databaseName) {
         crm = ArangoDBUtil.getResource().db(databaseName);
     }
 
 
-    public void save(EntryTemplate template) {
-        boolean exists = crm.collection("bonus_entry").documentExists(template.name());
+    public void save(BonusRule bonusRule) {
+        boolean exists = crm.collection("bonus_entry").documentExists(bonusRule.id());
         ArangoGraph graph = crm.graph("core");
         if (exists) {
-            graph.vertexCollection("bonus_entry").updateVertex(template.name(), template, UPDATE_OPTIONS);
+            graph.vertexCollection("bonus_entry").updateVertex(bonusRule.id(), bonusRule, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("bonus_entry").insertVertex(template);
+            graph.vertexCollection("bonus_entry").insertVertex(bonusRule);
         }
     }
 
+    @Override
+    public BonusRule[] findAll() {
+        return new BonusRule[0];
+    }
 }
