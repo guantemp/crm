@@ -14,31 +14,27 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.domain.model.bonus.multiplying;
-
-import crm.hoprxi.core.domain.model.memberRole.MemberRoleSnapshot;
-
-import java.util.Objects;
+package crm.hoprxi.core.domain.model.bonus.consumption;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-08-11
+ * @version 0.0.1 builder 2020-09-10
  */
-public class MemberEntry1 extends MultiplyingEntry1 {
-    private MemberRoleSnapshot memberRoleSnapshot;
+public class CommonEntry extends Entry {
+    public static final CommonEntry ONE_TO_ONE = new CommonEntry(Ratio.ONE_TO_ONE);
+    public static final CommonEntry ZERO = new CommonEntry(Ratio.ZERO);
 
-    public MemberEntry1(Number rate, MemberRoleSnapshot memberRoleSnapshot) {
-        super(rate);
-        setMemberRoleSnapshot(memberRoleSnapshot);
+    public CommonEntry(Ratio ratio) {
+        super(ratio);
     }
 
-    private void setMemberRoleSnapshot(MemberRoleSnapshot memberRoleSnapshot) {
-        Objects.requireNonNull(memberRoleSnapshot, "memberRoleSnapshot required");
-        this.memberRoleSnapshot = memberRoleSnapshot;
+    public String name() {
+        return "common";
     }
 
-    public MemberRoleSnapshot memberRoleSnapshot() {
-        return memberRoleSnapshot;
+    @Override
+    public <T extends Entry> T changeRatio(Ratio newRatio) {
+        return null;
     }
 }

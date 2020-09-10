@@ -16,35 +16,44 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.bonus.Bonus;
+import crm.hoprxi.core.domain.model.collaborator.Category;
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-09-09
+ * @version 0.0.1 builder 2020-09-10
  */
+public class CategoryEntryRatioChanged implements DomainEvent {
+    private LocalDateTime occurredOn;
+    private int version;
+    private Category category;
+    private Ratio ratio;
 
-public abstract class Entry {
-    protected Ratio ratio;
+    public CategoryEntryRatioChanged(Category category, Ratio ratio) {
+        this.category = category;
+        this.ratio = ratio;
+        occurredOn = LocalDateTime.now();
+        version = 1;
+    }
 
-    public Entry(Ratio ratio) {
-        setRatio(ratio);
+    public Category item() {
+        return category;
     }
 
     public Ratio ratio() {
         return ratio;
     }
 
-    private void setRatio(Ratio ratio) {
-        if (ratio == null)
-            ratio = Ratio.ZERO;
-        this.ratio = ratio;
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
     }
 
-    public Bonus calculation(Number consumption) {
-        Number number = ratio.calculation(consumption);
-        return new Bonus(number);
+    @Override
+    public int version() {
+        return version;
     }
-
-    public abstract <T extends Entry> T changeRatio(Ratio newRatio);
 }

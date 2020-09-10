@@ -16,35 +16,10 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.bonus.Bonus;
-
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
- * @version 0.0.1 builder 2020-09-09
+ * @version 0.0.1 builder 2020-09-10
  */
-
-public abstract class Entry {
-    protected Ratio ratio;
-
-    public Entry(Ratio ratio) {
-        setRatio(ratio);
-    }
-
-    public Ratio ratio() {
-        return ratio;
-    }
-
-    private void setRatio(Ratio ratio) {
-        if (ratio == null)
-            ratio = Ratio.ZERO;
-        this.ratio = ratio;
-    }
-
-    public Bonus calculation(Number consumption) {
-        Number number = ratio.calculation(consumption);
-        return new Bonus(number);
-    }
-
-    public abstract <T extends Entry> T changeRatio(Ratio newRatio);
+public class BrandEntryRatioChanged {
 }

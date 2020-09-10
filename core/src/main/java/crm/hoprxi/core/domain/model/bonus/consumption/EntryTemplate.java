@@ -16,9 +16,9 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import java.util.HashSet;
+import com.arangodb.entity.DocumentField;
+
 import java.util.Set;
-import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -26,37 +26,45 @@ import java.util.StringJoiner;
  * @version 0.0.1 builder 2020-09-08
  */
 public class EntryTemplate implements Cloneable {
+    @DocumentField(DocumentField.Type.KEY)
+    private String id;
     private String name;
-    private Set<Entry<?>> entries;
+    private Set<ItemEntry> itemEntries;
+    private Set<CategoryEntry> categoryEntries;
+    private Set<BrandEntry> brandEntries;
+    private CommonEntry commonEntry;
 
-    public EntryTemplate(String name) {
+    public EntryTemplate(String id, String name, Set<ItemEntry> itemEntries, Set<CategoryEntry> categoryEntries, Set<BrandEntry> brandEntries, CommonEntry commonEntry) {
+        this.id = id;
         this.name = name;
+        this.itemEntries = itemEntries;
+        this.categoryEntries = categoryEntries;
+        this.brandEntries = brandEntries;
+        this.commonEntry = commonEntry;
     }
 
-    public EntryTemplate(String name, Set<Entry<?>> entries) {
-        this.name = name;
-        this.entries = entries;
+    public String getId() {
+        return id;
     }
 
-    public <T> EntryTemplate add(Entry<T> entry) {
-        if (entries == null)
-            entries = new HashSet<>();
-        entries.add(entry);
-        return new EntryTemplate(name, entries);
+    public Set<ItemEntry> getItemEntries() {
+        return itemEntries;
     }
 
-    public <T> void remove(Entry<T> entry) {
-        if (entries == null)
-            return;
-        entries.remove(entry);
+    public Set<CategoryEntry> getCategoryEntries() {
+        return categoryEntries;
+    }
+
+    public Set<BrandEntry> getBrandEntries() {
+        return brandEntries;
+    }
+
+    public CommonEntry getCommonEntry() {
+        return commonEntry;
     }
 
     public String name() {
         return name;
-    }
-
-    public Set<Entry<?>> getEntries() {
-        return entries;
     }
 
     @Override
@@ -66,19 +74,11 @@ public class EntryTemplate implements Cloneable {
 
         EntryTemplate that = (EntryTemplate) o;
 
-        return name != null ? name.equals(that.name) : that.name == null;
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", EntryTemplate.class.getSimpleName() + "[", "]")
-                .add("name='" + name + "'")
-                .add("entries=" + entries)
-                .toString();
+        return id != null ? id.hashCode() : 0;
     }
 }

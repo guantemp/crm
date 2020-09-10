@@ -19,6 +19,7 @@ package crm.hoprxi.core.infrastructure.persistence;
 import crm.hoprxi.core.domain.model.bonus.consumption.Entry;
 import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
 import crm.hoprxi.core.domain.model.bonus.consumption.Ratio;
+import crm.hoprxi.core.domain.model.bonus.multiplying.MultiplyingEntryTemplate;
 import crm.hoprxi.core.domain.model.collaborator.Brand;
 import crm.hoprxi.core.domain.model.collaborator.Category;
 import crm.hoprxi.core.domain.model.collaborator.Item;
@@ -58,6 +59,9 @@ public class ArangoDBBonusRuleRepositoryTest {
         entryTemplate.add(categoryEntry3);
 
         System.out.println(entryTemplate);
+
+        MultiplyingEntryTemplate multiplyingEntryTemplate = null;
+        //payment,memberRole,currency,Reference,ConsumptionInterval
         //repository.save(template);
     }
 
