@@ -16,7 +16,6 @@
 package crm.hoprxi.core.infrastructure.persistence;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.KeyType;
 import com.arangodb.model.CollectionCreateOptions;
@@ -35,8 +34,8 @@ import java.util.Collection;
  * @version 0.0.1 2019-11-25
  */
 
-public class CoreSetup {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoreSetup.class);
+public class CrmSetup {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrmSetup.class);
 
     public static void setup(String databaseName) {
         ArangoDB arangoDB = ArangoDBUtil.getResource();
@@ -60,21 +59,22 @@ public class CoreSetup {
         arangoDB.db(databaseName).collection("person").ensureSkiplistIndex(index, skiplistIndexOptions);
         arangoDB.db(databaseName).collection("enterprise").ensureSkiplistIndex(index, skiplistIndexOptions);
         //name.mnemonic
+        //index.clear();
+        //index.add("name.mnemonic");
+        //cardFaceNumber
         index.clear();
         index.add("cardFaceNumber");
         HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(true).sparse(true);
         arangoDB.db(databaseName).collection("debit_card").ensureHashIndex(index, hashIndexOptions);
         arangoDB.db(databaseName).collection("anonymous_card").ensureHashIndex(index, hashIndexOptions);
         arangoDB.db(databaseName).collection("credit_card").ensureHashIndex(index, hashIndexOptions);
-
-        //edge
-        for (String s : new String[]{"has"}) {
+        /*edge
+        for (String s : new String[]{"has","of","sub"}) {
             CollectionCreateOptions options = new CollectionCreateOptions().type(CollectionType.EDGES);
             arangoDB.db(databaseName).createCollection(s, options);
-        }
+        }*/
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
-        //edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
         edgeList.add(new EdgeDefinition().collection("has").from("person", "enterprise").to("debit_card", "credit_card"));
         edgeList.add(new EdgeDefinition().collection("of").from("debit_card", "anonymous_card", "credit_card").to("appearance"));
         edgeList.add(new EdgeDefinition().collection("sub").from("bonus_rule").to("bonus_entry_template", "bonus_multiplying_entry_template"));

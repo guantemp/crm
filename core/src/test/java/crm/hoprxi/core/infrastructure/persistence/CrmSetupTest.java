@@ -24,10 +24,10 @@ import org.testng.annotations.Test;
  * @since JDK8.0
  * @version 0.0.1 builder 2020-05-27
  */
-public class CoreSetupTest {
+public class CrmSetupTest {
 
     @Test
     public void testSetup() {
-        CoreSetup.setup("crm");
+        CrmSetup.setup("crm");
     }
 }
