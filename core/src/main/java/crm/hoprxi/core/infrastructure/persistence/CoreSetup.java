@@ -47,7 +47,7 @@ public class CoreSetup {
         arangoDB.createDatabase(databaseName);
         //vertex
         for (String s : new String[]{"person", "enterprise", "debit_card", "anonymous_card", "credit_card", "appearance", "memberRole", "bonus_history", "balance_history",
-                "change_history", "bonus_entry"}) {
+                "change_history", "bonus_rule", "bonus_entry_template", "bonus_multiplying_entry_template"}) {
             CollectionCreateOptions options = new CollectionCreateOptions();
             options.keyOptions(true, KeyType.traditional, 1, 1);
             arangoDB.db(databaseName).createCollection(s, options);
@@ -75,7 +75,9 @@ public class CoreSetup {
         //graph
         Collection<EdgeDefinition> edgeList = new ArrayList<>();
         //edgeList.add(new EdgeDefinition().collection("belong").from("debit_card").to("person", "frozen_person"));
-        edgeList.add(new EdgeDefinition().collection("has").from("debit_card", "anonymous_card", "credit_card", "person", "enterprise").to("debit_card", "credit_card", "appearance"));
+        edgeList.add(new EdgeDefinition().collection("has").from("person", "enterprise").to("debit_card", "credit_card"));
+        edgeList.add(new EdgeDefinition().collection("of").from("debit_card", "anonymous_card", "credit_card").to("appearance"));
+        edgeList.add(new EdgeDefinition().collection("sub").from("bonus_rule").to("bonus_entry_template", "bonus_multiplying_entry_template"));
         arangoDB.db(databaseName).createGraph("core", edgeList);
         arangoDB.shutdown();
         LOGGER.info("{} create success.", databaseName);

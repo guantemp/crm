@@ -110,10 +110,6 @@ public class CreditCard extends Card {
         }
     }
 
-    public boolean isAvailable() {
-        return available;
-    }
-
     @Override
     public void debit(MonetaryAmount amount) {
         Objects.requireNonNull(amount, "The amount required");
@@ -131,6 +127,10 @@ public class CreditCard extends Card {
             throw new ExceedQuotaException("The credit card limit exceeded");
         balance = temp;
         DomainRegistry.domainEventPublisher().publish(new CardDebited(id, amount));
+    }
+
+    public boolean isAvailable() {
+        return available;
     }
 
     public void setAvailable() {

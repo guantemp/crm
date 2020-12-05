@@ -16,6 +16,7 @@
 
 package crm.hoprxi.core.infrastructure.persistence;
 
+import crm.hoprxi.core.domain.model.bonus.BonusRule;
 import crm.hoprxi.core.domain.model.bonus.consumption.*;
 import crm.hoprxi.core.domain.model.bonus.multiplying.MultiplyingEntryTemplate;
 import crm.hoprxi.core.domain.model.collaborator.Brand;
@@ -60,7 +61,8 @@ public class ArangoDBBonusRuleRepositoryTest {
 
         MultiplyingEntryTemplate multiplyingEntryTemplate = null;
         //payment,memberRole,currency,Reference,ConsumptionInterval
-        //repository.save(template);
+        BonusRule bonusRule = new BonusRule("123", "命名1", entryTemplate, multiplyingEntryTemplate);
+        repository.save(bonusRule);
     }
 
     @Test

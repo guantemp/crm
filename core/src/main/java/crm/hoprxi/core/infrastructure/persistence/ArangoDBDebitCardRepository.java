@@ -111,7 +111,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         final String query = "WITH person,debit_card,appearance\n" +
                 "FOR c IN debit_card FILTER c._key == @key\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
-                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id of\n" +
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
@@ -132,7 +132,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         final String query = "WITH person,debit_card,appearance\n" +
                 "FOR c IN debit_card LIMIT @offset,@limit\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
-                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id of\n" +
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
@@ -151,7 +151,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         final String query = "WITH person,debit_card,appearance\n" +
                 "FOR p IN person FILTER p._key == @key\n" +
                 "FOR c IN 1..1 OUTBOUND p._id has\n" +
-                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id of\n" +
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", customerId).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
@@ -163,7 +163,7 @@ public class ArangoDBDebitCardRepository implements DebitCardRepository {
         final String query = "WITH person,debit_card,appearance\n" +
                 "FOR c IN debit_card FILTER c.cardFaceNumber =~ @cardFaceNumber\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
-                //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
+                //"FOR appearance IN 1..1 OUTBOUND a._id of\n" +
                 "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);

@@ -40,12 +40,12 @@ public class ArangoDBBonusRuleRepository implements BonusRuleRepository {
 
 
     public void save(BonusRule bonusRule) {
-        boolean exists = crm.collection("bonus_entry").documentExists(bonusRule.id());
+        boolean exists = crm.collection("bonus_rule").documentExists(bonusRule.id());
         ArangoGraph graph = crm.graph("core");
         if (exists) {
-            graph.vertexCollection("bonus_entry").updateVertex(bonusRule.id(), bonusRule, UPDATE_OPTIONS);
+            graph.vertexCollection("bonus_rule").updateVertex(bonusRule.id(), bonusRule, UPDATE_OPTIONS);
         } else {
-            graph.vertexCollection("bonus_entry").insertVertex(bonusRule);
+            graph.vertexCollection("bonus_rule").insertVertex(bonusRule);
         }
     }
 

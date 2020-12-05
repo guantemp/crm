@@ -111,7 +111,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
                 "FOR c IN credit_card FILTER c._key == @key\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND c._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity," +
                 "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", id).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
@@ -135,7 +135,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         String id = slice.get("id").getAsString();
         String password = slice.get("password").getAsString();
         String cardFaceNumber = slice.get("cardFaceNumber").getAsString();
-        boolean freeze = slice.get("freeze").getAsBoolean();
+        boolean available = slice.get("available").getAsBoolean();
         //lineOfCredit
         VPackSlice lineOfCreditSlice = slice.get("lineOfCredit");
         VPackSlice quotaSlice = lineOfCreditSlice.get("quota");
@@ -145,9 +145,10 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         LineOfCredit lineOfCredit = new LineOfCredit(quota, billDays, repaymentDate);
         //balance
         VPackSlice balanceSlice = slice.get("balance");
+        System.out.println(balanceSlice);
         VPackSlice valuableSlice = balanceSlice.get("valuable");
         MonetaryAmount valuable = toMonetaryAmount(valuableSlice);
-        VPackSlice redPacketsSlice = balanceSlice.get("redPackets");
+        VPackSlice redPacketsSlice = balanceSlice.get("redEnvelope");
         MonetaryAmount redPackets = this.toMonetaryAmount(redPacketsSlice);
         Balance balance = new Balance(valuable, redPackets);
         //smallChange
@@ -157,7 +158,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
         MonetaryAmount amount = this.toMonetaryAmount(smallChangeAmountSlice);
         SmallChange smallChange = new SmallChange(amount, smallChangDenominationEnum);
 
-        CreditCard creditCard = new CreditCard(issuer, customerId, id, "", cardFaceNumber, freeze, lineOfCredit, balance, smallChange, null);
+        CreditCard creditCard = new CreditCard(issuer, customerId, id, "", cardFaceNumber, available, lineOfCredit, balance, smallChange, null);
         passwordField.set(creditCard, password);
         return creditCard;
     }
@@ -180,7 +181,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
                 "FOR c IN credit_card FILTER c.cardFaceNumber =~ @cardFaceNumber\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND c._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity," +
                 "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("cardFaceNumber", cardFaceNumber).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
@@ -194,7 +195,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
                 "FOR p IN person FILTER p._key == @key\n" +
                 "FOR c IN 1..1 OUTBOUND p._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity," +
                 "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("key", customerId).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);
@@ -208,7 +209,7 @@ public class ArangoDBCreditCardRepository implements CreditCardRepository {
                 "FOR c IN credit_card LIMIT @offset,@limit\n" +
                 "FOR p in 1..1 INBOUND c._id has\n" +
                 //"FOR appearance IN 1..1 OUTBOUND a._id has\n" +
-                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'freeze':c.freeze,'termOfValidity':c.termOfValidity," +
+                "RETURN {'issuer':c.issuer,'customerId':p._key,'id':c._key,'password':c.password,'cardFaceNumber':c.cardFaceNumber,'available':c.available,'termOfValidity':c.termOfValidity," +
                 "'lineOfCredit':c.lineOfCredit,'balance':c.balance,'smallChange':c.smallChange}";
         final Map<String, Object> bindVars = new MapBuilder().put("offset", offset).put("limit", limit).get();
         ArangoCursor<VPackSlice> slices = crm.query(query, bindVars, null, VPackSlice.class);

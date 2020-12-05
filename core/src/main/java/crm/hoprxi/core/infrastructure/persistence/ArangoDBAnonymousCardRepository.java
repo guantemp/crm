@@ -85,10 +85,10 @@ public class ArangoDBAnonymousCardRepository implements AnonymousCardRepository 
         ArangoCursor<VertexEntity> slices = crm.query(query, bindVars, null, VertexEntity.class);
         if (slices.hasNext()) {
             VertexUpdateEntity appear = graph.vertexCollection("appearance").updateVertex(slices.next().getId(), appearance);
-            graph.edgeCollection("has").insertEdge(new HasEdge(cardVertex.getId(), appear.getId()));
+            graph.edgeCollection("of").insertEdge(new HasEdge(cardVertex.getId(), appear.getId()));
         } else {
             VertexEntity appear = graph.vertexCollection("appearance").insertVertex(appearance);
-            graph.edgeCollection("has").insertEdge(new HasEdge(cardVertex.getId(), appear.getId()));
+            graph.edgeCollection("of").insertEdge(new HasEdge(cardVertex.getId(), appear.getId()));
         }
     }
 
