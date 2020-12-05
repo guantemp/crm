@@ -16,15 +16,20 @@
 
 package crm.hoprxi.core.application;
 
-import crm.hoprxi.core.domain.model.customer.person.Person;
+import crm.hoprxi.core.domain.model.balance.Balance;
+import crm.hoprxi.core.domain.model.balance.SmallChange;
+import crm.hoprxi.core.domain.model.bonus.Bonus;
+import crm.hoprxi.core.domain.model.card.ValidityPeriod;
+import crm.hoprxi.core.domain.model.card.appearance.Appearance;
+import crm.hoprxi.core.domain.model.collaborator.Issuer;
 
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
  * @version 0.0.1 2020-12-05
  * @since JDK8.0
  */
-public class CustomerApplicationService {
-    Person registerPerson(String id, String name) {
-        return null;
+public class CardApplicationService {
+    void registerAnonymousCard(Issuer issuer, String cardFaceNumber, ValidityPeriod validityPeriod, Balance balance, SmallChange smallChange, Bonus bonus, Appearance appearance) {
+
     }
 }

@@ -103,8 +103,8 @@ public class ArangoDBPersonRepositoryTest {
         people = repository.findAll(2, 1);
         Assert.assertTrue(people.length == 1);
         people = repository.findAll(0, 5);
-        Assert.assertTrue(people.length == 4);
+        Assert.assertTrue(people.length == 5);
         people = repository.findAll(4, 5);
-        Assert.assertTrue(people.length == 0);
+        Assert.assertTrue(people.length == 1);
     }
 }

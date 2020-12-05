@@ -73,6 +73,9 @@ public abstract class Customer {
     private PostalAddressBook postalAddressBook;
     private boolean freeze;
 
+    public Customer(String id, String name) {
+        this(id, name, false, Vip.NOT, Spss.EMPTY_SPSS, null, new PostalAddressBook());
+    }
 
     public Customer(String id, String name, boolean freeze, Spss spss, URI headPortrait, PostalAddressBook postalAddressBook) {
         this(id, name, freeze, Vip.NOT, spss, headPortrait, postalAddressBook);

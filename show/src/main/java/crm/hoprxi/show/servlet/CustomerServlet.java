@@ -14,17 +14,22 @@
  *  limitations under the License.
  */
 
-package crm.hoprxi.core.application;
+package crm.hoprxi.show.servlet;
 
-import crm.hoprxi.core.domain.model.customer.person.Person;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
  * @version 0.0.1 2020-12-05
  * @since JDK8.0
  */
-public class CustomerApplicationService {
-    Person registerPerson(String id, String name) {
-        return null;
+public class CustomerServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doGet(req, resp);
     }
 }
