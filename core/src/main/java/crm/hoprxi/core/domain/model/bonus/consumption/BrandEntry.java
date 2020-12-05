@@ -26,7 +26,7 @@ import crm.hoprxi.core.domain.model.collaborator.Brand;
 public class BrandEntry extends Entry {
     private Brand brand;
 
-    public BrandEntry(Ratio ratio, Brand brand) {
+    public BrandEntry(Brand brand, Ratio ratio) {
         super(ratio);
         this.brand = brand;
     }

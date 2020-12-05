@@ -34,7 +34,7 @@ public class CommonEntry extends Entry {
     }
 
     @Override
-    public <T extends Entry> T changeRatio(Ratio newRatio) {
+    public CommonEntry changeRatio(Ratio newRatio) {
         return null;
     }
 }

@@ -43,23 +43,28 @@ public class EntryTemplate implements Cloneable {
         this.commonEntry = commonEntry;
     }
 
+    public EntryTemplate(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }
 
-    public Set<ItemEntry> getItemEntries() {
+    public Set<ItemEntry> itemEntries() {
         return itemEntries;
     }
 
-    public Set<CategoryEntry> getCategoryEntries() {
+    public Set<CategoryEntry> categoryEntries() {
         return categoryEntries;
     }
 
-    public Set<BrandEntry> getBrandEntries() {
+    public Set<BrandEntry> brandEntries() {
         return brandEntries;
     }
 
-    public CommonEntry getCommonEntry() {
+    public CommonEntry commonEntry() {
         return commonEntry;
     }
 
@@ -80,5 +85,10 @@ public class EntryTemplate implements Cloneable {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public void add(Entry entry) {
+        if (entry instanceof ItemEntry)
+            itemEntries.add((ItemEntry) entry);
     }
 }

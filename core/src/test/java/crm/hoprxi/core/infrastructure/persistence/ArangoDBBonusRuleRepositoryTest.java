@@ -16,9 +16,7 @@
 
 package crm.hoprxi.core.infrastructure.persistence;
 
-import crm.hoprxi.core.domain.model.bonus.consumption.Entry;
-import crm.hoprxi.core.domain.model.bonus.consumption.EntryTemplate;
-import crm.hoprxi.core.domain.model.bonus.consumption.Ratio;
+import crm.hoprxi.core.domain.model.bonus.consumption.*;
 import crm.hoprxi.core.domain.model.bonus.multiplying.MultiplyingEntryTemplate;
 import crm.hoprxi.core.domain.model.collaborator.Brand;
 import crm.hoprxi.core.domain.model.collaborator.Category;
@@ -35,27 +33,27 @@ public class ArangoDBBonusRuleRepositoryTest {
 
     @Test
     public void testTestSave() {
-        EntryTemplate entryTemplate = new EntryTemplate("t1");
+        EntryTemplate entryTemplate = new EntryTemplate("t1", "测试");
         Category c1 = new Category("ry", "2", "杀虫");
         Category c2 = new Category("bh", "3", "清醒");
 
         Brand b1 = new Brand("ch", "彩虹");
-        Entry<Item> itemEntry1 = new Entry<>(new Item("11", "彩虹灭蚊灯片", c1, b1), Ratio.ONE_TO_ONE);
+        Entry itemEntry1 = new ItemEntry(new Item("11", "彩虹灭蚊灯片", c1, b1), Ratio.ONE_TO_ONE);
         entryTemplate.add(itemEntry1);
-        Entry<Item> itemEntry2 = new Entry<>(new Item("22", "彩虹灭蚊加热器", c1, b1), new Ratio(2, 1));
+        Entry itemEntry2 = new ItemEntry(new Item("22", "彩虹灭蚊加热器", c1, b1), new Ratio(2, 1));
         entryTemplate.add(itemEntry2);
-        Entry<Item> itemEntry3 = new Entry<>(new Item("33", "保温杯剧", c2, Brand.UNDEFINED), new Ratio(154, 17, true));
+        Entry itemEntry3 = new ItemEntry(new Item("33", "保温杯剧", c2, Brand.UNDEFINED), new Ratio(154, 17, true));
         entryTemplate.add(itemEntry3);
 
-        Entry<Brand> brandEntry1 = new Entry<>(new Brand("hkws", "海康威视"), new Ratio(1, 2));
+        Entry brandEntry1 = new BrandEntry(new Brand("hkws", "海康威视"), new Ratio(1, 2));
         brandEntry1 = brandEntry1.changeRatio(new Ratio(1, 3));
         entryTemplate.add(brandEntry1);
 
-        Entry<Category> categoryEntry1 = new Entry<>(new Category("sx", "xr", "鲜肉"), new Ratio(5, 1));
+        Entry categoryEntry1 = new CategoryEntry(new Category("sx", "xr", "鲜肉"), new Ratio(5, 1));
         entryTemplate.add(categoryEntry1);
-        Entry<Category> categoryEntry2 = new Entry<>(new Category("sx", "sc", "水产"), new Ratio(5, 2));
+        Entry categoryEntry2 = new CategoryEntry(new Category("sx", "sc", "水产"), new Ratio(5, 2));
         entryTemplate.add(categoryEntry2);
-        Entry<Category> categoryEntry3 = new Entry<>(new Category("sx", "sx", "生鲜"), Ratio.ONE_TO_ONE);
+        Entry categoryEntry3 = new CategoryEntry(new Category("sx", "sx", "生鲜"), Ratio.ONE_TO_ONE);
         entryTemplate.add(categoryEntry3);
 
         System.out.println(entryTemplate);

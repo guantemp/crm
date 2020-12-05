@@ -53,7 +53,7 @@ public class BonusRule {
         return name;
     }
 
-    public <T> void addEntry(Entry<T> entry) {
+    public <T> void addEntry(Entry entry) {
         entryTemplate.add(entry);
     }
 
