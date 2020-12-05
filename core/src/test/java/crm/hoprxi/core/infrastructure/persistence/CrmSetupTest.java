@@ -29,5 +29,6 @@ public class CrmSetupTest {
     @Test
     public void testSetup() {
         CrmSetup.setup("crm");
+        CrmSetup.builderUserAndGrant("18982455056", "Qwe123465");
     }
 }

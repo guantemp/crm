@@ -18,6 +18,7 @@ package crm.hoprxi.core.infrastructure.persistence;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.KeyType;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
@@ -87,6 +88,9 @@ public class CrmSetup {
     public static void builderUserAndGrant(String username, String password) {
         ArangoDB arangoDB = ArangoDBUtil.getResource();
         UserCreateOptions userCreateOptions = new UserCreateOptions();
+        UserEntity userEntity = arangoDB.getUser(username);
+        if (userEntity != null)
+            arangoDB.deleteUser(username);
         arangoDB.createUser(username, username);
     }
 }
