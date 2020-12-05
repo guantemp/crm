@@ -16,6 +16,11 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import crm.hoprxi.core.domain.model.DomainRegistry;
+
+import java.util.Objects;
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
  * @since JDK8.0
@@ -35,6 +40,18 @@ public class CommonEntry extends Entry {
 
     @Override
     public CommonEntry changeRatio(Ratio newRatio) {
-        return null;
+        Objects.requireNonNull(newRatio, "newRatio required");
+        if (!ratio.equals(newRatio)) {
+            DomainRegistry.domainEventPublisher().publish(new CommonEntryRatioChanged(newRatio));
+            return new CommonEntry(newRatio);
+        }
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", CommonEntry.class.getSimpleName() + "[", "]")
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

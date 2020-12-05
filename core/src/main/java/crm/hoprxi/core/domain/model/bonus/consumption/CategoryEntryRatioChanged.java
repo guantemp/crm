@@ -39,7 +39,7 @@ public class CategoryEntryRatioChanged implements DomainEvent {
         version = 1;
     }
 
-    public Category item() {
+    public Category category() {
         return category;
     }
 

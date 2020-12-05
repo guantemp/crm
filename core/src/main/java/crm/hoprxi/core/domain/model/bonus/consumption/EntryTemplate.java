@@ -18,7 +18,9 @@ package crm.hoprxi.core.domain.model.bonus.consumption;
 
 import com.arangodb.entity.DocumentField;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -35,8 +37,8 @@ public class EntryTemplate implements Cloneable {
     private CommonEntry commonEntry;
 
     public EntryTemplate(String id, String name, Set<ItemEntry> itemEntries, Set<CategoryEntry> categoryEntries, Set<BrandEntry> brandEntries, CommonEntry commonEntry) {
-        this.id = id;
-        this.name = name;
+        setId(id);
+        setName(name);
         this.itemEntries = itemEntries;
         this.categoryEntries = categoryEntries;
         this.brandEntries = brandEntries;
@@ -44,11 +46,19 @@ public class EntryTemplate implements Cloneable {
     }
 
     public EntryTemplate(String id, String name) {
+        this(id, name, new HashSet<ItemEntry>(0), new HashSet<CategoryEntry>(0), new HashSet<BrandEntry>(0), CommonEntry.ONE_TO_ONE);
+    }
+
+    private void setId(String id) {
         this.id = id;
+    }
+
+    private void setName(String name) {
         this.name = name;
     }
 
-    public String getId() {
+
+    public String id() {
         return id;
     }
 
@@ -88,7 +98,32 @@ public class EntryTemplate implements Cloneable {
     }
 
     public void add(Entry entry) {
-        if (entry instanceof ItemEntry)
-            itemEntries.add((ItemEntry) entry);
+        String className = entry.getClass().getName();
+        switch (className) {
+            case "crm.hoprxi.core.domain.model.bonus.consumption.ItemEntry":
+                itemEntries.add((ItemEntry) entry);
+                break;
+            case "crm.hoprxi.core.domain.model.bonus.consumption.CategoryEntry":
+                categoryEntries.add((CategoryEntry) entry);
+                break;
+            case "crm.hoprxi.core.domain.model.bonus.consumption.BrandEntry":
+                brandEntries.add((BrandEntry) entry);
+                break;
+            case "crm.hoprxi.core.domain.model.bonus.consumption.CommonEntry":
+                this.commonEntry = (CommonEntry) entry;
+                break;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", EntryTemplate.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .add("itemEntries=" + itemEntries)
+                .add("categoryEntries=" + categoryEntries)
+                .add("brandEntries=" + brandEntries)
+                .add("commonEntry=" + commonEntry)
+                .toString();
     }
 }

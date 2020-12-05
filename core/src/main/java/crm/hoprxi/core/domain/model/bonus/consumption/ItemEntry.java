@@ -62,7 +62,6 @@ public class ItemEntry extends Entry {
     public ItemEntry changeRatio(Ratio newRatio) {
         Objects.requireNonNull(newRatio, "newRatio required");
         if (!ratio.equals(newRatio)) {
-            ratio = newRatio;
             DomainRegistry.domainEventPublisher().publish(new ItemEntryRatioChanged(item, newRatio));
             return new ItemEntry(item, newRatio);
         }

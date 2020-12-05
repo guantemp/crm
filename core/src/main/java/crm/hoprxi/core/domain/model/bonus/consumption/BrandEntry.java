@@ -16,7 +16,11 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import crm.hoprxi.core.domain.model.DomainRegistry;
 import crm.hoprxi.core.domain.model.collaborator.Brand;
+
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
@@ -32,8 +36,13 @@ public class BrandEntry extends Entry {
     }
 
     @Override
-    public <T extends Entry> T changeRatio(Ratio newRatio) {
-        return null;
+    public BrandEntry changeRatio(Ratio newRatio) {
+        Objects.requireNonNull(newRatio, "newRatio required");
+        if (!ratio.equals(newRatio)) {
+            DomainRegistry.domainEventPublisher().publish(new BrandEntryRatioChanged(brand, newRatio));
+            return new BrandEntry(brand, newRatio);
+        }
+        return this;
     }
 
     @Override
@@ -49,5 +58,13 @@ public class BrandEntry extends Entry {
     @Override
     public int hashCode() {
         return brand != null ? brand.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", BrandEntry.class.getSimpleName() + "[", "]")
+                .add("brand=" + brand)
+                .add("ratio=" + ratio)
+                .toString();
     }
 }

@@ -16,8 +16,10 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
+import crm.hoprxi.core.domain.model.DomainRegistry;
 import crm.hoprxi.core.domain.model.collaborator.Category;
 
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
@@ -35,7 +37,12 @@ public class CategoryEntry extends Entry {
 
     @Override
     public CategoryEntry changeRatio(Ratio newRatio) {
-        return null;
+        Objects.requireNonNull(newRatio, "newRatio required");
+        if (!ratio.equals(newRatio)) {
+            DomainRegistry.domainEventPublisher().publish(new CategoryEntryRatioChanged(category, newRatio));
+            return new CategoryEntry(category, newRatio);
+        }
+        return this;
     }
 
     public Category category() {

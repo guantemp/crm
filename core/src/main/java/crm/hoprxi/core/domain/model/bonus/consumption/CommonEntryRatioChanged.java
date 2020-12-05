@@ -16,31 +16,24 @@
 
 package crm.hoprxi.core.domain.model.bonus.consumption;
 
-import crm.hoprxi.core.domain.model.collaborator.Brand;
 import event.hoprxi.domain.model.DomainEvent;
 
 import java.time.LocalDateTime;
 
-/***
- * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuang</a>
+/**
+ * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
+ * @version 0.0.1 2020-12-05
  * @since JDK8.0
- * @version 0.0.1 builder 2020-09-10
  */
-public class BrandEntryRatioChanged implements DomainEvent {
+public class CommonEntryRatioChanged implements DomainEvent {
     private LocalDateTime occurredOn;
     private int version;
-    private Brand brand;
     private Ratio ratio;
 
-    public BrandEntryRatioChanged(Brand brand, Ratio ratio) {
-        this.brand = brand;
+    public CommonEntryRatioChanged(Ratio ratio) {
         this.ratio = ratio;
         occurredOn = LocalDateTime.now();
         version = 1;
-    }
-
-    public Brand brand() {
-        return brand;
     }
 
     public Ratio ratio() {
